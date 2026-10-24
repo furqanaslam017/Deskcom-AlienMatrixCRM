@@ -24,13 +24,14 @@ import {
   Copy,
   Sliders,
   Article,
+  Handshake,
 } from "@/lib/ui/icons";
 
 interface WhatsAppNumber {
   id: string;
   name: string;
   phone_number: string;
-  provider: "waha" | "meta_cloud";
+  provider: "session" | "cloud_api";
   status: string;
   qr_code_data?: string;
   battery_level?: number;
@@ -173,7 +174,7 @@ export function WhatsAppFlagshipViewClient({
   // New Number form states
   const [numName, setNumName] = useState("");
   const [numPhone, setNumPhone] = useState("");
-  const [numProvider, setNumProvider] = useState<"waha" | "meta_cloud">("waha");
+  const [numProvider, setNumProvider] = useState<"session" | "cloud_api">("session");
 
   // Load conversation messages when selected
   React.useEffect(() => {
@@ -214,10 +215,10 @@ export function WhatsAppFlagshipViewClient({
       if (res.ok && json.data) {
         setMessages([...messages, json.data]);
         setReplyText("");
-        setStatusMessage("Message sent successfully via WhatsApp channel!");
+        setStatusMessage("Message delivered successfully via WhatsApp gateway.");
       }
     } catch (err: any) {
-      setStatusMessage(`Erro ao enviar: ${err.message}`);
+      setStatusMessage(`Error sending message: ${err.message}`);
     } finally {
       setLoading(false);
       setTimeout(() => setStatusMessage(null), 4000);
@@ -227,7 +228,7 @@ export function WhatsAppFlagshipViewClient({
   async function handleSendInvoiceMessage() {
     if (!selectedConv) return;
     setLoading(true);
-    const invoiceMsg = `📄 Fatura / Proposta Comercial Gerada\nValor: USD $2,500.00\nVencimento: 5 dias\nLink PDF: ${window.location.origin}/app/crm/invoices`;
+    const invoiceMsg = `📄 Commercial Proposal & Invoice Generated\nAmount: USD $2,500.00\nPayment Due: 5 business days\nPDF Document: ${window.location.origin}/app/crm/invoices`;
     try {
       const res = await fetch(`/api/v1/alien-matrix/whatsapp/inbox/${selectedConv.id}/messages`, {
         method: "POST",
@@ -240,7 +241,7 @@ export function WhatsAppFlagshipViewClient({
       const json = await res.json();
       if (res.ok && json.data) {
         setMessages([...messages, json.data]);
-        setStatusMessage("Proposta comercial enviada diretamente no chat do cliente!");
+        setStatusMessage("Commercial invoice proposal sent directly to customer WhatsApp thread.");
       }
     } finally {
       setLoading(false);
@@ -259,7 +260,7 @@ export function WhatsAppFlagshipViewClient({
       });
       if (res.ok) {
         setInternalNoteText("");
-        setStatusMessage("Nota interna salva! Visível apenas para a equipe.");
+        setStatusMessage("Internal team note saved. Visible only to internal workspace staff.");
       }
     } finally {
       setTimeout(() => setStatusMessage(null), 4000);
@@ -278,7 +279,7 @@ export function WhatsAppFlagshipViewClient({
             n.id === num.id ? { ...n, status: "connected", health_status: "healthy" } : n
           )
         );
-        setStatusMessage(`Sessão do número ${num.phone_number} reconectada e saudável!`);
+        setStatusMessage(`Session for ${num.phone_number} successfully reconnected and healthy.`);
       }
     } finally {
       setLoading(false);
@@ -295,25 +296,27 @@ export function WhatsAppFlagshipViewClient({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(updated),
       });
-      setStatusMessage("Safety guardrails updated successfully!");
+      setStatusMessage("Safety guardrails updated successfully.");
     } finally {
       setTimeout(() => setStatusMessage(null), 4000);
     }
   }
 
   return (
-    <div className="flex flex-col gap-5 p-6 max-w-7xl mx-auto">
-      {/* Top Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
+    <div className="flex flex-col gap-6 max-w-[var(--app-max)] mx-auto p-4 md:p-6 animate-in fade-in duration-200">
+      {/* Top Banner / Header in Bento Style */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--line-2)]">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="p-2 rounded-lg bg-emerald-500/10 text-emerald-500">
-              <WhatsappLogo size={26} weight="bold" />
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--well)] text-emerald-600 dark:text-emerald-400 border border-[var(--line-2)]">
+              <WhatsappLogo size={22} weight="bold" />
             </span>
-            <h1 className="text-2xl font-bold tracking-tight">WhatsApp Flagship & Shared Inbox</h1>
+            <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--text)]">
+              WhatsApp Omnichannel & Shared Inbox
+            </h1>
           </div>
-          <p className="text-sm text-muted-foreground mt-1">
-            Multi-number support (WAHA & Meta Cloud API), shared team inbox, anti-ban broadcasts, and 7 configurable safety guardrails.
+          <p className="text-xs text-[var(--muted)] mt-1.5">
+            Multi-number routing (Session Gateway & Cloud API), team collaboration, anti-ban pacing, and pre-send safety guardrails.
           </p>
         </div>
 
@@ -322,290 +325,295 @@ export function WhatsAppFlagshipViewClient({
           {activeTab === "numbers" && (
             <button
               onClick={() => setShowNewNumberModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-emerald-600 text-white font-medium text-sm hover:bg-emerald-700 transition shadow-sm"
+              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
             >
-              <Plus size={16} weight="bold" />
-              Adicionar Número
+              <Plus size={15} weight="bold" />
+              Add WhatsApp Number
             </button>
           )}
           {activeTab === "broadcasts" && (
             <button
               onClick={() => setShowBroadcastModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition shadow-sm"
+              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
             >
-              <Plus size={16} weight="bold" />
-              New Broadcast
+              <Plus size={15} weight="bold" />
+              New Broadcast Campaign
             </button>
           )}
           {activeTab === "chatbots" && (
             <button
               onClick={() => setShowChatbotModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition shadow-sm"
+              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
             >
-              <Plus size={16} weight="bold" />
-              Novo Chatbot
+              <Plus size={15} weight="bold" />
+              Create Chatbot Trigger
             </button>
           )}
           {activeTab === "links" && (
             <button
               onClick={() => setShowLinkModal(true)}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-primary-foreground font-medium text-sm hover:opacity-90 transition shadow-sm"
+              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
             >
-              <Plus size={16} weight="bold" />
-              Gerar Link WhatsApp
+              <Plus size={15} weight="bold" />
+              Generate Click-to-WhatsApp
             </button>
           )}
         </div>
       </div>
 
       {statusMessage && (
-        <div className="p-3 bg-emerald-50 border border-emerald-200 text-emerald-900 rounded-lg text-sm flex items-center justify-between animate-fadeIn">
-          <span>{statusMessage}</span>
-          <button onClick={() => setStatusMessage(null)} className="text-xs font-semibold hover:underline">
-            Fechar
+        <div className="p-3.5 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] text-[var(--text)] text-xs flex items-center justify-between shadow-[var(--shadow-pop)] animate-in fade-in duration-150">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[var(--pine)]" />
+            <span>{statusMessage}</span>
+          </div>
+          <button
+            onClick={() => setStatusMessage(null)}
+            className="text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--text)] transition-colors ml-4"
+          >
+            Dismiss
           </button>
         </div>
       )}
 
-      {/* Tabs */}
-      <div className="flex border-b border-border gap-6 overflow-x-auto">
-        <button
-          onClick={() => setActiveTab("inbox")}
-          className={`pb-3 text-sm font-medium border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "inbox"
-              ? "border-emerald-600 text-emerald-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <ChatCircle size={16} />
-          Shared Team Inbox ({conversations.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("numbers")}
-          className={`pb-3 text-sm font-medium border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "numbers"
-              ? "border-emerald-600 text-emerald-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Phone size={16} />
-          Multi-Numbers & Sessions ({numbers.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("broadcasts")}
-          className={`pb-3 text-sm font-medium border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "broadcasts"
-              ? "border-emerald-600 text-emerald-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <PaperPlaneTilt size={16} />
-          Transmissões Anti-Ban ({broadcasts.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("chatbots")}
-          className={`pb-3 text-sm font-medium border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "chatbots"
-              ? "border-emerald-600 text-emerald-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Sparkle size={16} />
-          Chatbots & Palavras-Chave ({chatbots.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("links")}
-          className={`pb-3 text-sm font-medium border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "links"
-              ? "border-emerald-600 text-emerald-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Tag size={16} />
-          Links & Rastreio ({links.length})
-        </button>
-        <button
-          onClick={() => setActiveTab("guardrails")}
-          className={`pb-3 text-sm font-medium border-b-2 transition flex items-center gap-2 whitespace-nowrap ${
-            activeTab === "guardrails"
-              ? "border-emerald-600 text-emerald-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <ShieldCheck size={16} />
-          Os 7 Guardrails
-        </button>
+      {/* Rapport Segmented Pill Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        <div className="tabs__track p-1 flex items-center gap-1 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("inbox")}
+            data-active={activeTab === "inbox"}
+            className="tab"
+          >
+            <ChatCircle size={15} />
+            Shared Inbox ({conversations.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("numbers")}
+            data-active={activeTab === "numbers"}
+            className="tab"
+          >
+            <Phone size={15} />
+            Numbers & Sessions ({numbers.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("broadcasts")}
+            data-active={activeTab === "broadcasts"}
+            className="tab"
+          >
+            <PaperPlaneTilt size={15} />
+            Anti-Ban Broadcasts ({broadcasts.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("chatbots")}
+            data-active={activeTab === "chatbots"}
+            className="tab"
+          >
+            <Sparkle size={15} />
+            Chatbots & Keywords ({chatbots.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("links")}
+            data-active={activeTab === "links"}
+            className="tab"
+          >
+            <Tag size={15} />
+            Tracking Links ({links.length})
+          </button>
+          <button
+            onClick={() => setActiveTab("guardrails")}
+            data-active={activeTab === "guardrails"}
+            className="tab"
+          >
+            <ShieldCheck size={15} />
+            The 7 Guardrails
+          </button>
+        </div>
       </div>
 
       {/* TAB 1: SHARED TEAM INBOX */}
       {activeTab === "inbox" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 h-[720px] border border-border rounded-xl bg-card overflow-hidden shadow-sm">
+        <div className="grid grid-cols-1 lg:grid-cols-12 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden min-h-[720px]">
           {/* Left Column: Conversations List */}
-          <div className="lg:col-span-4 border-r border-border flex flex-col h-full bg-muted/10">
-            <div className="p-3 border-b border-border bg-muted/30 flex items-center justify-between">
-              <span className="text-xs font-semibold text-foreground">Conversas Ativas</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 font-medium">
+          <div className="lg:col-span-4 border-r border-[var(--line-2)] flex flex-col h-full bg-[var(--well)]">
+            <div className="p-3.5 border-b border-[var(--line-2)] flex items-center justify-between">
+              <span className="text-xs font-semibold text-[var(--text)]">Active Conversations</span>
+              <span className="badge badge--pine text-[10px]">
                 {conversations.length} total
               </span>
             </div>
 
-            <div className="flex-1 overflow-y-auto divide-y divide-border">
+            <div className="flex-1 overflow-y-auto divide-y divide-[var(--line-2)]">
               {conversations.map((c) => (
                 <div
                   key={c.id}
                   onClick={() => setSelectedConv(c)}
                   className={`p-3.5 cursor-pointer transition flex flex-col gap-1.5 ${
-                    selectedConv?.id === c.id ? "bg-muted/80 border-l-4 border-emerald-500" : "hover:bg-muted/40"
+                    selectedConv?.id === c.id
+                      ? "bg-[var(--solid)] border-l-4 border-[var(--tomato)]"
+                      : "hover:bg-[var(--solid)]/50"
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <span className="font-semibold text-xs text-foreground truncate">
-                      {c.contact?.name || "Contato WhatsApp"}
+                    <span className="font-semibold text-xs text-[var(--text)] truncate">
+                      {c.contact?.name || "WhatsApp Contact"}
                     </span>
-                    <span className="text-[10px] text-muted-foreground">
+                    <span className="text-[10px] text-[var(--muted)]">
                       {new Date(c.last_message_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
                     </span>
                   </div>
 
-                  <p className="text-xs text-muted-foreground line-clamp-1">
-                    {c.last_message_text || "Sem mensagens recentes"}
+                  <p className="text-xs text-[var(--muted)] line-clamp-1">
+                    {c.last_message_text || "No recent messages"}
                   </p>
 
                   <div className="flex items-center gap-1.5 mt-1 flex-wrap">
                     {c.deal && (
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-700 font-medium border border-blue-200">
+                      <span className="badge badge--plain text-[10px]">
                         Deal: {c.deal.title}
                       </span>
                     )}
-                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-700 font-medium">
+                    <span className="badge badge--pine text-[10px]">
                       SLA: OK
                     </span>
                   </div>
                 </div>
               ))}
+              {conversations.length === 0 && (
+                <div className="p-8 text-center text-xs text-[var(--muted)]">
+                  No active conversations found.
+                </div>
+              )}
             </div>
           </div>
 
           {/* Center Column: Active Conversation Messages & Composer */}
-          <div className="lg:col-span-5 flex flex-col h-full bg-background border-r border-border">
+          <div className="lg:col-span-5 flex flex-col h-full bg-[var(--solid)] border-r border-[var(--line-2)]">
             {selectedConv ? (
               <>
                 {/* Thread Header */}
-                <div className="p-3 border-b border-border flex items-center justify-between bg-muted/20">
+                <div className="p-3.5 border-b border-[var(--line-2)] flex items-center justify-between bg-[var(--solid)]">
                   <div>
-                    <h3 className="font-semibold text-sm">{selectedConv.contact?.name || "Contato"}</h3>
-                    <p className="text-xs text-muted-foreground">{selectedConv.contact?.phone_number}</p>
+                    <h3 className="font-semibold text-xs text-[var(--text)]">
+                      {selectedConv.contact?.name || "Contact"}
+                    </h3>
+                    <p className="text-[11px] font-mono text-[var(--muted)]">
+                      {selectedConv.contact?.phone_number}
+                    </p>
                   </div>
 
                   <div className="flex items-center gap-2">
                     <button
                       onClick={handleSendInvoiceMessage}
-                      className="px-2.5 py-1 text-xs font-medium rounded border border-border bg-card hover:bg-muted transition flex items-center gap-1"
+                      className="btn btn--ghost btn--sm inline-flex items-center gap-1.5 text-xs"
+                      title="Send commercial proposal into chat"
                     >
-                      <Receipt size={13} />
-                      Enviar Fatura
+                      <Receipt size={14} />
+                      Send Invoice
                     </button>
                   </div>
                 </div>
 
                 {/* Messages Thread */}
-                <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-muted/5">
+                <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-[var(--bg)]/50">
                   {messages.map((m) => (
                     <div
                       key={m.id}
-                      className={`flex flex-col max-w-[80%] rounded-xl p-3 text-xs shadow-sm ${
+                      className={`flex flex-col max-w-[80%] p-3 text-xs shadow-sm transition-all ${
                         m.direction === "outbound"
-                          ? "ml-auto bg-emerald-600 text-white rounded-br-none"
-                          : "mr-auto bg-card border border-border text-foreground rounded-bl-none"
+                          ? "ml-auto bg-[var(--pill)] text-[var(--on-pill)] rounded-[20px] rounded-br-[4px]"
+                          : "mr-auto bg-[var(--solid)] text-[var(--text)] border border-[var(--line-2)] rounded-[20px] rounded-bl-[4px]"
                       }`}
                     >
                       {m.message_type === "invoice" && (
-                        <div className="mb-2 p-2 rounded bg-black/10 flex items-center gap-2 font-mono text-[11px]">
+                        <div className="mb-2 p-2 rounded-[var(--r-tile)] bg-black/10 flex items-center gap-2 font-mono text-[11px]">
                           <Receipt size={14} />
-                          <span>FATURA COMERCIAL</span>
+                          <span className="font-bold">COMMERCIAL INVOICE PROPOSAL</span>
                         </div>
                       )}
-                      <p className="whitespace-pre-wrap">{m.content}</p>
-                      <div className="flex items-center justify-end gap-1 mt-1 text-[10px] opacity-70">
+                      <p className="whitespace-pre-wrap leading-relaxed">{m.content}</p>
+                      <div className="flex items-center justify-end gap-1 mt-1 text-[10px] opacity-75">
                         <span>{new Date(m.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                         {m.direction === "outbound" && <span>✓✓</span>}
                       </div>
                     </div>
                   ))}
                   {messages.length === 0 && (
-                    <div className="p-8 text-center text-xs text-muted-foreground">
-                      Inicie a conversa ou envie uma resposta abaixo.
+                    <div className="p-12 text-center text-xs text-[var(--muted)]">
+                      Start the conversation or send a reply below.
                     </div>
                   )}
                 </div>
 
                 {/* Composer */}
-                <form onSubmit={handleSendMessage} className="p-3 border-t border-border flex items-center gap-2">
+                <form
+                  onSubmit={handleSendMessage}
+                  className="p-3 border-t border-[var(--line-2)] flex items-center gap-2 bg-[var(--solid)]"
+                >
                   <input
                     type="text"
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Type your WhatsApp reply... (use /demo or /pricing for quick templates)"
-                    className="flex-1 text-xs p-2.5 rounded-lg border border-border bg-card"
+                    placeholder="Type your WhatsApp reply... (or type /quick for templates)"
+                    className="flex-1 text-xs px-4 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   />
                   <button
                     type="submit"
                     disabled={loading || !replyText.trim()}
-                    className="px-4 py-2.5 rounded-lg bg-emerald-600 text-white text-xs font-medium hover:bg-emerald-700 transition flex items-center gap-1.5"
+                    className="w-9 h-9 rounded-full bg-[var(--pill)] text-[var(--on-pill)] flex items-center justify-center hover:opacity-90 transition shrink-0 disabled:opacity-50"
+                    title="Send message"
                   >
-                    <PaperPlaneTilt size={14} weight="bold" />
-                    Enviar
+                    <PaperPlaneTilt size={15} weight="bold" />
                   </button>
                 </form>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-xs text-muted-foreground">
-                Selecione uma conversa ao lado para ver o histórico.
+              <div className="flex-1 flex items-center justify-center text-xs text-[var(--muted)]">
+                Select a conversation on the left to view message history.
               </div>
             )}
           </div>
 
           {/* Right Column: Contact, Deal & Internal Team Notes */}
-          <div className="lg:col-span-3 flex flex-col h-full p-4 overflow-y-auto space-y-4 bg-muted/10">
+          <div className="lg:col-span-3 flex flex-col h-full p-4 overflow-y-auto space-y-4 bg-[var(--well)]">
             {selectedConv && (
               <>
-                <div className="p-3 rounded-xl border border-border bg-card space-y-2 text-xs">
-                  <p className="font-semibold text-foreground">Ficha do Cliente</p>
-                  <p className="text-muted-foreground">Nome: {selectedConv.contact?.name}</p>
-                  <p className="text-muted-foreground">Telefone: {selectedConv.contact?.phone_number}</p>
-                  <p className="text-muted-foreground">Canal: {selectedConv.number?.name || "WhatsApp Oficial"}</p>
+                <div className="p-3.5 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] space-y-1.5 text-xs shadow-sm">
+                  <p className="font-semibold text-[var(--text)]">Customer Profile</p>
+                  <p className="text-[var(--muted)]">Name: <span className="text-[var(--text)]">{selectedConv.contact?.name}</span></p>
+                  <p className="text-[var(--muted)]">Phone: <span className="text-[var(--text)] font-mono">{selectedConv.contact?.phone_number}</span></p>
+                  <p className="text-[var(--muted)]">Channel: <span className="text-[var(--text)]">{selectedConv.number?.name || "Official WhatsApp"}</span></p>
                 </div>
 
                 {selectedConv.deal && (
-                  <div className="p-3 rounded-xl border border-border bg-card space-y-2 text-xs">
-                    <p className="font-semibold text-foreground flex items-center gap-1.5">
-                      <Handshake size={14} className="text-primary" />
-                      Oportunidade Vinculada
+                  <div className="p-3.5 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] space-y-1.5 text-xs shadow-sm">
+                    <p className="font-semibold text-[var(--text)] flex items-center gap-1.5">
+                      <Handshake size={15} className="text-[var(--tomato)]" />
+                      Associated Deal
                     </p>
-                    <p className="text-muted-foreground">Negócio: {selectedConv.deal.title}</p>
-                    <p className="font-semibold text-foreground">
-                      Valor: {selectedConv.deal.currency} ${(selectedConv.deal.value_cents / 100).toLocaleString()}
+                    <p className="text-[var(--muted)]">Deal: <span className="text-[var(--text)] font-medium">{selectedConv.deal.title}</span></p>
+                    <p className="font-semibold text-[var(--text)]">
+                      Value: {selectedConv.deal.currency} ${(selectedConv.deal.value_cents / 100).toLocaleString()}
                     </p>
                   </div>
                 )}
 
-                {/* Internal Team Notes (@mentions) */}
-                <div className="p-3 rounded-xl border border-border bg-card space-y-2 text-xs flex-1 flex flex-col">
-                  <p className="font-semibold text-foreground">Notas Internas (@equipe)</p>
-                  <p className="text-[11px] text-muted-foreground">
-                    Anotações visíveis apenas para a equipe, não aparecem para o cliente.
+                {/* Internal Team Notes */}
+                <div className="p-3.5 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] space-y-2 text-xs flex-1 flex flex-col shadow-sm">
+                  <p className="font-semibold text-[var(--text)]">Internal Notes (@team)</p>
+                  <p className="text-[11px] text-[var(--muted)] leading-relaxed">
+                    Notes saved here are strictly visible to teammates and hidden from customers.
                   </p>
                   <form onSubmit={handleAddInternalNote} className="space-y-2 mt-auto">
                     <textarea
                       value={internalNoteText}
                       onChange={(e) => setInternalNoteText(e.target.value)}
-                      placeholder="e.g. @carlos client requested a 10% discount on annual plan..."
-                      className="w-full text-xs p-2 rounded-lg border border-border bg-background h-20"
+                      placeholder="e.g. @sales client requested a custom quotation for enterprise seats..."
+                      className="w-full text-xs p-2.5 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] h-20 focus:outline-none focus:border-[var(--pill)]"
                     />
                     <button
                       type="submit"
                       disabled={!internalNoteText.trim()}
-                      className="w-full py-1.5 rounded bg-secondary text-secondary-foreground text-xs font-medium hover:bg-secondary/80"
+                      className="w-full btn btn--ink btn--sm py-1.5 text-xs font-medium"
                     >
                       Save Internal Note
                     </button>
@@ -621,64 +629,65 @@ export function WhatsAppFlagshipViewClient({
       {activeTab === "numbers" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {numbers.map((num) => (
-            <div key={num.id} className="p-5 rounded-xl border border-border bg-card shadow-sm flex flex-col justify-between">
+            <div
+              key={num.id}
+              className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] flex flex-col justify-between backdrop-blur-md"
+            >
               <div>
                 <div className="flex items-center justify-between mb-3">
                   <span
-                    className={`text-xs px-2.5 py-0.5 rounded-full font-medium inline-flex items-center gap-1.5 ${
-                      num.status === "connected"
-                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
-                        : "bg-amber-50 text-amber-700 border border-amber-200"
+                    className={`badge ${
+                      num.status === "connected" ? "badge--pine" : "badge--butter"
                     }`}
                   >
-                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    {num.status === "connected" ? "Conectado" : "Aguardando QR"}
+                    <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse mr-1 inline-block" />
+                    {num.status === "connected" ? "Connected" : "Awaiting QR"}
                   </span>
 
-                  <span className="text-xs px-2 py-0.5 rounded bg-muted font-mono font-medium">
-                    {num.provider === "waha" ? "WAHA Engine" : "Meta Cloud API"}
+                  <span className="badge badge--plain font-mono text-[11px]">
+                    {num.provider === "cloud_api" ? "Official Cloud API" : "Session Gateway"}
                   </span>
                 </div>
 
-                <h3 className="font-semibold text-base mb-1">{num.name}</h3>
-                <p className="text-sm font-mono text-muted-foreground mb-4">{num.phone_number}</p>
+                <h3 className="font-semibold text-sm text-[var(--text)] mb-1">{num.name}</h3>
+                <p className="text-xs font-mono text-[var(--muted)] mb-4">{num.phone_number}</p>
 
-                <div className="bg-muted/40 rounded-lg p-3 text-xs space-y-1.5 mb-4">
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Bateria do Dispositivo:</span>
-                    <strong className="text-foreground">{num.battery_level ?? 98}%</strong>
+                <div className="bg-[var(--solid)] border border-[var(--line-2)] rounded-[var(--r-tile)] p-3 text-xs space-y-1.5 mb-4 shadow-sm">
+                  <div className="flex justify-between text-[var(--muted)]">
+                    <span>Device Battery:</span>
+                    <strong className="text-[var(--text)]">{num.battery_level ?? 98}%</strong>
                   </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Saúde da Conexão:</span>
-                    <strong className="text-emerald-600">Saudável (Ativa)</strong>
+                  <div className="flex justify-between text-[var(--muted)]">
+                    <span>Connection Health:</span>
+                    <strong className="text-emerald-600 dark:text-emerald-400 font-semibold">Healthy (Active)</strong>
                   </div>
-                  <div className="flex justify-between text-muted-foreground">
-                    <span>Reconexão Automática:</span>
-                    <strong className="text-foreground">Ativada</strong>
+                  <div className="flex justify-between text-[var(--muted)]">
+                    <span>Auto-Reconnect:</span>
+                    <strong className="text-[var(--text)]">Enabled</strong>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center justify-between pt-3 border-t border-border">
-                {num.provider === "waha" && (
+              <div className="flex items-center justify-between pt-3 border-t border-[var(--line-2)]">
+                {num.provider !== "cloud_api" && (
                   <button
                     onClick={() => setShowQRModal(num)}
-                    className="inline-flex items-center gap-1 text-xs text-primary font-medium hover:underline"
+                    className="inline-flex items-center gap-1.5 text-xs text-[var(--text)] font-semibold hover:underline"
                   >
-                    <QrCode size={14} />
-                    Ver QR Code
+                    <QrCode size={15} />
+                    View QR Code
                   </button>
                 )}
-                {num.provider === "meta_cloud" && (
-                  <span className="text-[11px] text-muted-foreground">Oficial (Sem QR)</span>
+                {num.provider === "cloud_api" && (
+                  <span className="text-[11px] text-[var(--muted)]">Official Cloud API (No QR)</span>
                 )}
 
                 <button
                   onClick={() => handleReconnect(num)}
                   disabled={loading}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 rounded-md bg-secondary text-secondary-foreground text-xs font-medium hover:bg-secondary/80 transition"
+                  className="btn btn--ghost btn--sm text-xs font-medium inline-flex items-center gap-1.5"
                 >
-                  <ArrowsClockwise size={12} />
+                  <ArrowsClockwise size={13} />
                   Reconnect
                 </button>
               </div>
@@ -686,15 +695,15 @@ export function WhatsAppFlagshipViewClient({
           ))}
 
           {numbers.length === 0 && (
-            <div className="col-span-full p-12 text-center border-2 border-dashed border-border rounded-xl">
-              <Phone size={40} className="mx-auto text-muted-foreground/60 mb-3" />
-              <p className="font-medium text-sm">No WhatsApp numbers connected.</p>
-              <p className="text-xs text-muted-foreground mt-1">
-                Connect multiple phone numbers using WAHA or the official Meta Cloud API.
+            <div className="col-span-full p-12 text-center border-2 border-dashed border-[var(--line-2)] rounded-[var(--r-card)] bg-[var(--solid)]/50">
+              <Phone size={36} className="mx-auto text-[var(--muted)] mb-3" />
+              <p className="font-semibold text-sm text-[var(--text)]">No WhatsApp numbers connected.</p>
+              <p className="text-xs text-[var(--muted)] mt-1">
+                Connect multiple phone numbers using Session Gateway or official Cloud API.
               </p>
               <button
                 onClick={() => setShowNewNumberModal(true)}
-                className="mt-4 px-4 py-2 bg-emerald-600 text-white rounded-lg text-xs font-medium"
+                className="mt-4 btn btn--ink btn--sm text-xs font-semibold"
               >
                 Connect First Number
               </button>
@@ -706,47 +715,50 @@ export function WhatsAppFlagshipViewClient({
       {/* TAB 3: BROADCAST CAMPAIGNS */}
       {activeTab === "broadcasts" && (
         <div className="space-y-4">
-          <div className="p-4 bg-muted/30 border border-border rounded-xl text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3">
+          <div className="p-4 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] text-xs flex flex-col md:flex-row items-start md:items-center justify-between gap-3 shadow-sm">
             <div>
-              <p className="font-semibold text-foreground">Regras de Anti-Ban e Espaçamento Seguro</p>
-              <p className="text-muted-foreground">
-                Disparos respeitam delay programado entre cada mensagem e opt-out automático (STOP / SAIR) para manter seu número seguro.
+              <p className="font-semibold text-[var(--text)]">Anti-Ban Pacing & Safe Delivery Policy</p>
+              <p className="text-[var(--muted)] mt-0.5">
+                Campaigns enforce programmed throttle intervals between deliveries and automated opt-out (STOP / UNSUBSCRIBE) compliance.
               </p>
             </div>
-            <span className="px-3 py-1 bg-emerald-100 text-emerald-800 rounded font-semibold text-xs">
-              Proteção Anti-Ban Ativa
+            <span className="badge badge--pine text-xs font-semibold whitespace-nowrap">
+              Anti-Ban Protection Active
             </span>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
             {broadcasts.map((b) => (
-              <div key={b.id} className="p-5 rounded-xl border border-border bg-card shadow-sm flex flex-col justify-between">
+              <div
+                key={b.id}
+                className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] flex flex-col justify-between backdrop-blur-md"
+              >
                 <div>
                   <div className="flex items-center justify-between mb-3">
-                    <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-blue-50 text-blue-700">
-                      {b.status === "completed" ? "Concluída" : "Pronta"}
+                    <span className={`badge ${b.status === "completed" ? "badge--pine" : "badge--butter"}`}>
+                      {b.status === "completed" ? "Completed" : "Scheduled"}
                     </span>
-                    <span className="text-xs font-mono text-muted-foreground">
+                    <span className="text-xs font-mono text-[var(--muted)]">
                       Delay: {b.throttle_delay_seconds}s
                     </span>
                   </div>
 
-                  <h3 className="font-semibold text-base mb-1">{b.name}</h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{b.message_body}</p>
+                  <h3 className="font-semibold text-sm text-[var(--text)] mb-1">{b.name}</h3>
+                  <p className="text-xs text-[var(--muted)] line-clamp-2 mb-4 leading-relaxed">{b.message_body}</p>
 
-                  <div className="bg-muted/40 rounded-lg p-3 text-xs space-y-1 mb-4">
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Destinatários:</span>
-                      <strong>{b.total_recipients} leads</strong>
+                  <div className="bg-[var(--solid)] border border-[var(--line-2)] rounded-[var(--r-tile)] p-3 text-xs space-y-1.5 mb-4 shadow-sm">
+                    <div className="flex justify-between text-[var(--muted)]">
+                      <span>Recipients:</span>
+                      <strong className="text-[var(--text)]">{b.total_recipients} leads</strong>
                     </div>
-                    <div className="flex justify-between">
-                      <span className="text-muted-foreground">Entregues:</span>
-                      <strong className="text-emerald-600">{b.delivered_count || b.total_recipients}</strong>
+                    <div className="flex justify-between text-[var(--muted)]">
+                      <span>Delivered:</span>
+                      <strong className="text-emerald-600 dark:text-emerald-400">{b.delivered_count || b.total_recipients}</strong>
                     </div>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-border flex justify-end">
+                <div className="pt-3 border-t border-[var(--line-2)] flex justify-end">
                   <button
                     onClick={async () => {
                       await fetch(`/api/v1/alien-matrix/whatsapp/broadcasts/${b.id}/start`, { method: "POST" });
@@ -755,9 +767,9 @@ export function WhatsAppFlagshipViewClient({
                           item.id === b.id ? { ...item, status: "completed", delivered_count: item.total_recipients } : item
                         )
                       );
-                      setStatusMessage(`Campaign "${b.name}" triggered successfully!`);
+                      setStatusMessage(`Broadcast campaign "${b.name}" launched successfully.`);
                     }}
-                    className="px-3 py-1.5 bg-primary text-primary-foreground text-xs font-medium rounded-lg"
+                    className="btn btn--ink btn--sm text-xs font-semibold"
                   >
                     Launch Broadcast
                   </button>
@@ -772,34 +784,37 @@ export function WhatsAppFlagshipViewClient({
       {activeTab === "chatbots" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {chatbots.map((cb) => (
-            <div key={cb.id} className="p-5 rounded-xl border border-border bg-card shadow-sm flex flex-col justify-between">
+            <div
+              key={cb.id}
+              className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] flex flex-col justify-between backdrop-blur-md"
+            >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs px-2 py-0.5 rounded font-mono bg-indigo-50 text-indigo-700">
-                    Tipo: {cb.flow_type}
+                  <span className="badge badge--plain font-mono text-[11px]">
+                    Type: {cb.flow_type}
                   </span>
-                  <span className="text-xs font-medium text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded">
+                  <span className="badge badge--pine text-[11px]">
                     Fallback: {cb.fallback_mode}
                   </span>
                 </div>
 
-                <h3 className="font-semibold text-base mb-1">{cb.name}</h3>
-                <div className="flex flex-wrap gap-1 my-2">
+                <h3 className="font-semibold text-sm text-[var(--text)] mb-1">{cb.name}</h3>
+                <div className="flex flex-wrap gap-1.5 my-2.5">
                   {cb.keywords.map((kw, i) => (
-                    <span key={i} className="text-[11px] px-2 py-0.5 rounded bg-muted font-mono">
+                    <span key={i} className="badge badge--plain text-[11px] font-mono">
                       #{kw}
                     </span>
                   ))}
                 </div>
 
-                <p className="text-xs text-muted-foreground line-clamp-2 mt-2 mb-4 bg-muted/40 p-2 rounded">
+                <p className="text-xs text-[var(--muted)] line-clamp-3 mt-2 mb-4 bg-[var(--solid)] p-3 rounded-[var(--r-tile)] border border-[var(--line-2)] leading-relaxed">
                   {cb.response_text}
                 </p>
               </div>
 
-              <div className="pt-3 border-t border-border flex justify-between text-xs text-muted-foreground">
-                <span>Roteia para humano se não entender</span>
-                <span className="text-emerald-600 font-semibold">Ativo</span>
+              <div className="pt-3 border-t border-[var(--line-2)] flex justify-between text-xs text-[var(--muted)]">
+                <span>Auto-route to human fallback</span>
+                <span className="text-emerald-600 dark:text-emerald-400 font-semibold">Active</span>
               </div>
             </div>
           ))}
@@ -810,36 +825,39 @@ export function WhatsAppFlagshipViewClient({
       {activeTab === "links" && (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {links.map((link) => (
-            <div key={link.id} className="p-5 rounded-xl border border-border bg-card shadow-sm flex flex-col justify-between">
+            <div
+              key={link.id}
+              className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] flex flex-col justify-between backdrop-blur-md"
+            >
               <div>
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs px-2 py-0.5 rounded font-mono bg-purple-50 text-purple-700">
+                  <span className="badge badge--plain font-mono text-[11px]">
                     wa.me/{link.slug}
                   </span>
-                  <span className="text-xs font-semibold text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded">
-                    {link.clicks_count} cliques
+                  <span className="badge badge--butter text-[11px]">
+                    {link.clicks_count} clicks
                   </span>
                 </div>
 
-                <h3 className="font-semibold text-base mb-1">{link.title}</h3>
-                <p className="text-xs text-muted-foreground line-clamp-2 mb-4">{link.prefilled_text}</p>
+                <h3 className="font-semibold text-sm text-[var(--text)] mb-1">{link.title}</h3>
+                <p className="text-xs text-[var(--muted)] line-clamp-2 mb-4 leading-relaxed">{link.prefilled_text}</p>
 
-                <div className="bg-muted/40 rounded-lg p-3 text-xs space-y-1 mb-4">
-                  <p className="text-muted-foreground">UTM Origem: {link.utm_source || "meta_ads"}</p>
-                  <p className="text-muted-foreground">Leads Criados: {link.leads_generated_count} no funil</p>
+                <div className="bg-[var(--solid)] border border-[var(--line-2)] rounded-[var(--r-tile)] p-3 text-xs space-y-1.5 mb-4 shadow-sm">
+                  <p className="text-[var(--muted)]">UTM Source: <span className="text-[var(--text)] font-medium">{link.utm_source || "campaign_meta"}</span></p>
+                  <p className="text-[var(--muted)]">Leads Generated: <span className="text-[var(--text)] font-semibold">{link.leads_generated_count} in pipeline</span></p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-border flex justify-between items-center">
+              <div className="pt-3 border-t border-[var(--line-2)] flex justify-between items-center">
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(`https://wa.me/5511988887777?text=${encodeURIComponent(link.prefilled_text || "")}`);
-                    setStatusMessage("Link Click-to-WhatsApp copiado para a área de transferência!");
+                    setStatusMessage("Click-to-WhatsApp URL copied to clipboard.");
                   }}
-                  className="inline-flex items-center gap-1.5 text-xs text-primary font-medium hover:underline"
+                  className="btn btn--ghost btn--sm text-xs font-medium inline-flex items-center gap-1.5"
                 >
                   <Copy size={13} />
-                  Copiar Link
+                  Copy Link
                 </button>
               </div>
             </div>
@@ -850,139 +868,139 @@ export function WhatsAppFlagshipViewClient({
       {/* TAB 6: THE 7 GUARDRAILS CONFIGURATION */}
       {activeTab === "guardrails" && (
         <div className="space-y-4">
-          <div className="p-4 bg-muted/30 border border-border rounded-xl text-xs">
-            <p className="font-semibold text-foreground">Configuration of 7 Pre-Send Safety Guardrails</p>
-            <p className="text-muted-foreground">
-              Cada mensagem gerada por inteligência artificial passa por 7 filtros obrigatórios antes de tocar os servidores do WhatsApp.
+          <div className="p-4 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] text-xs shadow-sm">
+            <p className="font-semibold text-sm text-[var(--text)]">Configuration of 7 Pre-Send Safety Guardrails</p>
+            <p className="text-[var(--muted)] mt-1">
+              Every message composed or processed by AI agents runs through 7 mandatory security checks before reaching WhatsApp carrier endpoints.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Guardrail 1 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">1. Stop / Opt-out Automático</p>
-                <p className="text-xs text-muted-foreground">
-                  Respeita imediatamente palavras como SAIR, PARE ou STOP, impedindo novos envios.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">1. Automated Stop & Opt-Out</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Instantly honors stop triggers (STOP, UNSUBSCRIBE, CANCEL), preventing subsequent messages.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.stopOptoutEnabled}
                 onChange={(e) => handleUpdateGuardrails("stopOptoutEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Guardrail 2 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">2. LGPD & Base Legal de Prospecção</p>
-                <p className="text-xs text-muted-foreground">
-                  Anonimiza dados sensíveis e audita a finalidade legal do contato.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">2. Privacy & Legal Basis Auditing</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Anonymizes sensitive customer information and verifies lawful basis for outbound contact.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.lgpdEnabled}
                 onChange={(e) => handleUpdateGuardrails("lgpdEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Guardrail 3 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">3. Anti-Ban Pacing & Throttle</p>
-                <p className="text-xs text-muted-foreground">
-                  Limita velocidade de disparos por hora e respeita aquecimento do chip.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">3. Anti-Ban Throttle & Pacing</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Enforces warm-up limits and hourly rate quotas to prevent spam-block penalties.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.antiBanPacingEnabled}
                 onChange={(e) => handleUpdateGuardrails("antiBanPacingEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Guardrail 4 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">4. Janela de 24 Horas de Atendimento</p>
-                <p className="text-xs text-muted-foreground">
-                  Impede envio de texto livre fora da janela de 24 horas da Meta.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">4. 24-Hour Messaging Window Gate</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Prevents free-form outbound delivery outside Meta&apos;s standard 24-hour customer window.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.messagingWindowEnabled}
                 onChange={(e) => handleUpdateGuardrails("messagingWindowEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Guardrail 5 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">5. Spinning Anti-Duplicação</p>
-                <p className="text-xs text-muted-foreground">
-                  Evita envio de textos idênticos seguidos para destinatários diferentes.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">5. Content Spinning & Deduplication</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Prevents repeated identical text strings across distinct recipients in short timeframes.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.spinningEnabled}
                 onChange={(e) => handleUpdateGuardrails("spinningEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Guardrail 6 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">6. Promessa Semântica (Anti-Alucinação)</p>
-                <p className="text-xs text-muted-foreground">
-                  Veta promessas comerciais não declaradas na tabela oficial de produtos/preços.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">6. Semantic Consistency (Anti-Hallucination)</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Vetoes unauthorized pricing commitments not declared in the approved organization catalog.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.promiseSemanticEnabled}
                 onChange={(e) => handleUpdateGuardrails("promiseSemanticEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Guardrail 7 */}
-            <div className="p-4 rounded-xl border border-border bg-card flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm">7. Divulgação de Assistente de IA</p>
-                <p className="text-xs text-muted-foreground">
-                  Identifica de forma transparente que a mensagem foi gerada por IA.
+            <div className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-[var(--text)]">7. AI Assistant Transparency Disclosure</p>
+                <p className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Transparently communicates automated assistance whenever required by regional standards.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.disclosureEnabled}
                 onChange={(e) => handleUpdateGuardrails("disclosureEnabled", e.target.checked)}
-                className="w-4 h-4 accent-emerald-600 rounded"
+                className="w-4 h-4 accent-emerald-600 rounded cursor-pointer"
               />
             </div>
 
             {/* Emergency Killswitch */}
-            <div className="p-4 rounded-xl border border-rose-200 bg-rose-50 flex items-center justify-between">
-              <div>
-                <p className="font-semibold text-sm text-rose-900">Killswitch de Emergência</p>
-                <p className="text-xs text-rose-700">
-                  Suspende imediatamente qualquer disparo automatizado de IA na organização.
+            <div className="p-4 rounded-[var(--r-tile)] border border-rose-500/30 bg-rose-500/10 flex items-center justify-between shadow-sm">
+              <div className="pr-4">
+                <p className="font-semibold text-xs text-rose-600 dark:text-rose-400">Emergency AI Killswitch</p>
+                <p className="text-[11px] text-rose-700/80 dark:text-rose-300/80 mt-0.5">
+                  Immediately suspends all automated AI messaging across all connected channels.
                 </p>
               </div>
               <input
                 type="checkbox"
                 checked={guardrails.emergencyKillswitch}
                 onChange={(e) => handleUpdateGuardrails("emergencyKillswitch", e.target.checked)}
-                className="w-4 h-4 accent-rose-600 rounded"
+                className="w-4 h-4 accent-rose-600 rounded cursor-pointer"
               />
             </div>
           </div>
@@ -991,36 +1009,36 @@ export function WhatsAppFlagshipViewClient({
 
       {/* MODAL: QR CODE */}
       {showQRModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl max-w-sm w-full p-6 shadow-xl text-center animate-scaleIn">
-            <h2 className="text-base font-bold mb-1">Escanear WhatsApp QR Code</h2>
-            <p className="text-xs text-muted-foreground mb-4">
-              Open WhatsApp &gt; Linked Devices &gt; Link a Device
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-sm w-full p-6 shadow-[var(--shadow-pop)] text-center animate-in fade-in zoom-in-95 duration-150">
+            <h2 className="text-sm font-bold text-[var(--text)] mb-1">Scan WhatsApp QR Code</h2>
+            <p className="text-xs text-[var(--muted)] mb-4">
+              Open WhatsApp on your mobile &gt; Linked Devices &gt; Link a Device
             </p>
 
-            <div className="p-4 bg-white rounded-lg border border-border inline-block mb-4 shadow-sm">
+            <div className="p-4 bg-white rounded-[var(--r-tile)] border border-[var(--line-2)] inline-block mb-4 shadow-sm">
               <QrCode size={180} className="text-black" />
             </div>
 
-            <p className="text-xs font-mono text-muted-foreground mb-4">{showQRModal.phone_number}</p>
+            <p className="text-xs font-mono text-[var(--muted)] mb-5">{showQRModal.phone_number}</p>
 
             <button
               onClick={() => setShowQRModal(null)}
-              className="w-full py-2 bg-primary text-primary-foreground text-xs font-medium rounded-lg"
+              className="btn btn--ink w-full py-2 text-xs font-semibold"
             >
-              Fechar
+              Close
             </button>
           </div>
         </div>
       )}
 
-      {/* MODAL: NOVO NÚMERO */}
+      {/* MODAL: NEW NUMBER */}
       {showNewNumberModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
-          <div className="bg-background border border-border rounded-xl max-w-md w-full p-6 shadow-xl">
-            <h2 className="text-lg font-bold mb-1">Adicionar Número de WhatsApp</h2>
-            <p className="text-xs text-muted-foreground mb-4">
-              Escolha entre conexão via WAHA (QR Code) ou Oficial (Meta Cloud API).
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-md w-full p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
+            <h2 className="text-base font-bold text-[var(--text)] mb-1">Add WhatsApp Number</h2>
+            <p className="text-xs text-[var(--muted)] mb-4">
+              Connect via Session Gateway (QR Code session) or official Cloud API.
             </p>
 
             <form
@@ -1043,7 +1061,7 @@ export function WhatsAppFlagshipViewClient({
                     setShowNewNumberModal(false);
                     setNumName("");
                     setNumPhone("");
-                    setStatusMessage(`Number ${json.data.phone_number} registered successfully!`);
+                    setStatusMessage(`Number ${json.data.phone_number} connected successfully.`);
                   }
                 } finally {
                   setLoading(false);
@@ -1052,53 +1070,53 @@ export function WhatsAppFlagshipViewClient({
               className="space-y-4"
             >
               <div>
-                <label className="text-xs font-semibold block mb-1">Identificação / Nome</label>
+                <label className="text-xs font-semibold text-[var(--text)] block mb-1">Channel Name</label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Vendas WhatsApp VIP"
+                  placeholder="e.g. VIP Sales Line"
                   value={numName}
                   onChange={(e) => setNumName(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-lg border border-border bg-card"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold block mb-1">Número com DDI (+55...)</label>
+                <label className="text-xs font-semibold text-[var(--text)] block mb-1">International Phone (+1...)</label>
                 <input
                   type="text"
                   required
-                  placeholder="+55 11 98888-7777"
+                  placeholder="+1 555 123 4567"
                   value={numPhone}
                   onChange={(e) => setNumPhone(e.target.value)}
-                  className="w-full text-xs p-2.5 rounded-lg border border-border bg-card font-mono"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] font-mono focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               <div>
-                <label className="text-xs font-semibold block mb-1">Provedor</label>
+                <label className="text-xs font-semibold text-[var(--text)] block mb-1">Provider Engine</label>
                 <select
                   value={numProvider}
                   onChange={(e) => setNumProvider(e.target.value as any)}
-                  className="w-full text-xs p-2 rounded-lg border border-border bg-card"
+                  className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 >
-                  <option value="waha">WAHA Engine (Aparelho Físico / QR Code)</option>
-                  <option value="meta_cloud">Meta Cloud API (Oficial / WABA)</option>
+                  <option value="session">Session Gateway (Physical Device / QR Code)</option>
+                  <option value="cloud_api">Official Cloud API (WABA)</option>
                 </select>
               </div>
 
-              <div className="flex justify-end gap-2 pt-3 border-t border-border">
+              <div className="flex justify-end gap-2 pt-3 border-t border-[var(--line-2)]">
                 <button
                   type="button"
                   onClick={() => setShowNewNumberModal(false)}
-                  className="px-3 py-1.5 text-xs text-muted-foreground hover:text-foreground"
+                  className="btn btn--ghost btn--sm text-xs font-medium"
                 >
-                  Cancelar
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={loading}
-                  className="px-4 py-1.5 bg-emerald-600 text-white text-xs font-medium rounded-lg flex items-center gap-1.5"
+                  className="btn btn--ink btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
                 >
                   {loading && <CircleNotch size={14} className="animate-spin" />}
                   Connect Number

@@ -51,7 +51,13 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
       sumindo. Princípio 2 de `docs/design-system/screen-flow/07-responsive-strategy.md`,
       escrito em abril de 2026 e aplicado em 6 lugares de 33 até aqui.
     */
-    <div className="flex min-h-dvh w-full bg-background">
+    <div className="relative flex min-h-dvh w-full bg-[var(--bg)] font-sans">
+      {/* Ambient Gradient Mesh Background */}
+      <div className="mesh" aria-hidden="true">
+        <i className="mesh__a" />
+        <i className="mesh__b" />
+        <i className="mesh__c" />
+      </div>
       <BarraDeProgressoNavegacao />
       <div className="hidden md:block">
         <Sidebar collapsed={sidebarCollapsed} />
@@ -98,7 +104,7 @@ export function AppShell({ sidebarCollapsed, podeAtender, children }: AppShellPr
           peça fixa quem cobre isso é o terceiro termo do `max()` do contrato.
         */}
         <main
-          className="flex-1 overflow-auto p-4 pb-area-segura sm:p-6"
+          className="flex-1 overflow-auto p-4 pb-area-segura sm:p-6 w-full max-w-[var(--app-max)] mx-auto"
           style={estiloDaReserva(ocupacaoDoRodape)}
           data-rodape-ocupado={ocupacaoDoRodape}
         >

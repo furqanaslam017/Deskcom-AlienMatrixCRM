@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { Receipt, Plus, MagnifyingGlass, Printer, CheckCircle, Clock, X, CircleNotch, ArrowSquareOut, Check } from "@phosphor-icons/react";
+import {
+  Receipt,
+  Plus,
+  MagnifyingGlass,
+  Printer,
+  CheckCircle,
+  Clock,
+  X,
+  CircleNotch,
+  ArrowSquareOut,
+  Check,
+} from "@/lib/ui/icons";
 
 interface Invoice {
   id: string;
@@ -46,6 +57,15 @@ export function InvoicesViewClient({
   ]);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Dynamic KPI Calculations
+  const totalInvoicedCents = invoices.reduce((sum, inv) => sum + (inv.total_cents || 0), 0);
+  const totalCollectedCents = invoices
+    .filter((inv) => inv.status === "paid")
+    .reduce((sum, inv) => sum + (inv.total_cents || 0), 0);
+  const totalOutstandingCents = invoices
+    .filter((inv) => inv.status === "sent" || inv.status === "overdue" || inv.status === "draft")
+    .reduce((sum, inv) => sum + (inv.total_cents || 0), 0);
 
   const filtered = invoices.filter((inv) => {
     if (kindFilter !== "all" && inv.kind !== kindFilter) return false;
@@ -133,7 +153,7 @@ export function InvoicesViewClient({
 
       const json = await res.json();
       if (!res.ok) {
-        throw new Error(json.error || json.message || "Error saving invoice");
+        throw new Error(json.error || json.message || "Error saving invoice document");
       }
 
       const created = json.data || json;
@@ -176,33 +196,88 @@ export function InvoicesViewClient({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Control Header */}
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Top 3 Bento KPI Summary Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        {/* KPI 1: Total Invoiced */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-[var(--muted)]">Total Invoiced</span>
+            <span className="w-8 h-8 rounded-full flex items-center justify-center bg-[var(--well)] text-[var(--text)] border border-[var(--line-2)]">
+              <Receipt size={16} />
+            </span>
+          </div>
+          <div>
+            <div className="text-2xl font-bold tracking-tight text-[var(--text)] font-numeric">
+              {formatMoney(totalInvoicedCents)}
+            </div>
+            <div className="text-[11px] text-[var(--muted)] mt-1">
+              Across all generated quotes and invoices
+            </div>
+          </div>
+        </div>
+
+        {/* KPI 2: Collected Revenue */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-[var(--muted)]">Collected Revenue</span>
+            <span className="badge badge--pine text-[10px] font-bold">PAID</span>
+          </div>
+          <div>
+            <div className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 font-numeric">
+              {formatMoney(totalCollectedCents)}
+            </div>
+            <div className="text-[11px] text-[var(--muted)] mt-1">
+              Confirmed settled transactions
+            </div>
+          </div>
+        </div>
+
+        {/* KPI 3: Outstanding / Pending */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs font-semibold text-[var(--muted)]">Outstanding &amp; Overdue</span>
+            <span className="badge badge--butter text-[10px] font-bold">PENDING</span>
+          </div>
+          <div>
+            <div className="text-2xl font-bold tracking-tight text-[var(--tomato)] font-numeric">
+              {formatMoney(totalOutstandingCents)}
+            </div>
+            <div className="text-[11px] text-[var(--muted)] mt-1">
+              Awaiting client authorization or settlement
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Control Header: Search, Filter Tabs, and Action Button */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           <div className="relative">
-            <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <MagnifyingGlass size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar por número, título ou cliente..."
-              className="w-72 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 pl-9 pr-4 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search by invoice number, title, or client..."
+              className="w-72 rounded-full border border-[var(--line-2)] bg-[var(--well)] pl-9 pr-4 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
             />
           </div>
 
-          <div className="flex items-center rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-0.5 text-xs">
-            {["all", "invoice", "quote"].map((t) => (
+          {/* Segmented Filter Pills */}
+          <div className="tabs__track p-1 flex items-center gap-1">
+            {[
+              { id: "all", label: "All Documents" },
+              { id: "invoice", label: "Invoices" },
+              { id: "quote", label: "Quotations" },
+            ].map((t) => (
               <button
-                key={t}
-                onClick={() => setKindFilter(t)}
-                className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-                  kindFilter === t
-                    ? "bg-blue-600 text-white"
-                    : "text-zinc-600 dark:text-zinc-400 hover:text-zinc-900"
-                }`}
+                key={t.id}
+                onClick={() => setKindFilter(t.id)}
+                data-active={kindFilter === t.id}
+                className="tab text-xs"
               >
-                {t === "all" ? "Todos" : t === "invoice" ? "Faturas" : "Propostas/Cotações"}
+                {t.label}
               </button>
             ))}
           </div>
@@ -210,60 +285,60 @@ export function InvoicesViewClient({
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors"
+          className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
         >
-          <Plus size={16} weight="bold" />
-          Nova Fatura / Proposta
+          <Plus size={15} weight="bold" />
+          Create Invoice / Quote
         </button>
       </div>
 
-      {/* Invoices Table */}
-      <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
+      {/* Invoices Bento Table */}
+      <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-xs">
-            <thead className="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800 uppercase font-semibold text-zinc-500 tracking-wider">
+            <thead className="bg-[var(--well)]/80 border-b border-[var(--line-2)] uppercase font-semibold text-[var(--muted)] tracking-wider">
               <tr>
-                <th className="py-3 px-4">Número</th>
-                <th className="py-3 px-4">Tipo</th>
-                <th className="py-3 px-4">Título / Assunto</th>
-                <th className="py-3 px-4">Cliente</th>
-                <th className="py-3 px-4">Vencimento</th>
-                <th className="py-3 px-4 text-right">Valor Total</th>
+                <th className="py-3 px-4">Number</th>
+                <th className="py-3 px-4">Type</th>
+                <th className="py-3 px-4">Title / Description</th>
+                <th className="py-3 px-4">Client</th>
+                <th className="py-3 px-4">Due Date</th>
+                <th className="py-3 px-4 text-right">Total Amount</th>
                 <th className="py-3 px-4 text-center">Status</th>
-                <th className="py-3 px-4 text-right">Ações</th>
+                <th className="py-3 px-4 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+            <tbody className="divide-y divide-[var(--line-2)]">
               {filtered.map((inv) => (
-                <tr key={inv.id} className="hover:bg-zinc-50/80 dark:hover:bg-zinc-800/40 transition-colors">
-                  <td className="py-3.5 px-4 font-mono font-bold text-blue-600 dark:text-blue-400">
+                <tr key={inv.id} className="hover:bg-[var(--well)]/50 transition-colors">
+                  <td className="py-3.5 px-4 font-mono font-bold text-[var(--text)]">
                     {inv.invoice_number}
                   </td>
                   <td className="py-3.5 px-4">
-                    <span className="inline-block uppercase text-[10px] font-bold tracking-wider rounded px-1.5 py-0.5 bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300">
+                    <span className="badge badge--plain text-[10px] uppercase font-bold tracking-wider">
                       {inv.kind}
                     </span>
                   </td>
-                  <td className="py-3.5 px-4 font-semibold text-zinc-900 dark:text-zinc-100">
+                  <td className="py-3.5 px-4 font-semibold text-[var(--text)]">
                     {inv.title}
                   </td>
-                  <td className="py-3.5 px-4 text-zinc-600 dark:text-zinc-300">
+                  <td className="py-3.5 px-4 text-[var(--muted)]">
                     {inv.contact?.name || inv.company?.trade_name || "—"}
                   </td>
-                  <td className="py-3.5 px-4 text-zinc-500">
-                    {inv.due_date ? new Date(inv.due_date).toLocaleDateString() : "À vista"}
+                  <td className="py-3.5 px-4 text-[var(--muted)]">
+                    {inv.due_date ? new Date(inv.due_date).toLocaleDateString() : "Immediate"}
                   </td>
-                  <td className="py-3.5 px-4 text-right font-bold text-zinc-900 dark:text-zinc-100">
+                  <td className="py-3.5 px-4 text-right font-bold text-[var(--text)] font-numeric">
                     {formatMoney(inv.total_cents, inv.currency)}
                   </td>
                   <td className="py-3.5 px-4 text-center">
                     <span
-                      className={`inline-block px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${
+                      className={`badge text-[10px] font-bold uppercase ${
                         inv.status === "paid"
-                          ? "bg-emerald-100 text-emerald-700 dark:bg-emerald-950/50 dark:text-emerald-400"
-                          : inv.status === "sent"
-                          ? "bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-400"
-                          : "bg-zinc-100 text-zinc-700 dark:bg-zinc-800 dark:text-zinc-300"
+                          ? "badge--pine"
+                          : inv.status === "overdue"
+                          ? "badge--tomato"
+                          : "badge--butter"
                       }`}
                     >
                       {inv.status}
@@ -275,8 +350,8 @@ export function InvoicesViewClient({
                         href={`/api/v1/alien-matrix/invoices/${inv.id}/export`}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center gap-1 p-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700 text-zinc-600 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors"
-                        title="Visualizar / Imprimir PDF"
+                        className="btn btn--ghost btn--sm p-1.5 inline-flex items-center"
+                        title="View / Print PDF Document"
                       >
                         <Printer size={15} />
                       </a>
@@ -284,8 +359,8 @@ export function InvoicesViewClient({
                       {inv.status !== "paid" && (
                         <button
                           onClick={() => handleMarkPaid(inv.id)}
-                          className="inline-flex items-center gap-1 p-1.5 rounded-lg bg-emerald-50 text-emerald-600 dark:bg-emerald-950/40 dark:text-emerald-400 hover:bg-emerald-100 transition-colors"
-                          title="Marcar como Pago"
+                          className="btn btn--ghost btn--sm p-1.5 text-emerald-600 dark:text-emerald-400 inline-flex items-center"
+                          title="Mark Invoice as Paid"
                         >
                           <CheckCircle size={15} weight="bold" />
                         </button>
@@ -297,8 +372,8 @@ export function InvoicesViewClient({
 
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="py-12 text-center text-zinc-400">
-                    No invoices or proposals found.
+                  <td colSpan={8} className="py-12 text-center text-xs text-[var(--muted)]">
+                    No invoices or proposals found matching criteria.
                   </td>
                 </tr>
               )}
@@ -307,53 +382,58 @@ export function InvoicesViewClient({
         </div>
       </div>
 
-      {/* New Invoice / Quote Modal */}
+      {/* New Invoice / Quote Bento Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-2xl rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="relative w-full max-w-2xl rounded-[var(--r-card)] bg-[var(--solid)] border border-[var(--rim)] shadow-[var(--shadow-pop)] p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[var(--line-2)]">
               <div className="flex items-center gap-2">
-                <Receipt size={20} className="text-blue-500" />
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  Emitir Nova {kind === "quote" ? "Proposta Comercial" : "Fatura de Cobrança"}
+                <span className="w-8 h-8 rounded-full bg-[var(--well)] border border-[var(--line-2)] flex items-center justify-center text-[var(--tomato)]">
+                  <Receipt size={16} weight="bold" />
+                </span>
+                <h3 className="text-sm font-bold text-[var(--text)]">
+                  Generate New {kind === "quote" ? "Commercial Quotation" : "Tax Invoice"}
                 </h3>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-zinc-600">
-                <X size={18} />
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--well)] transition-colors"
+              >
+                <X size={15} />
               </button>
             </div>
 
             <form onSubmit={handleCreateInvoice} className="mt-4 space-y-4 max-h-[75vh] overflow-y-auto pr-1">
               {error && (
-                <div className="p-3 text-xs text-red-600 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900">
+                <div className="p-3 text-xs text-rose-600 dark:text-rose-400 rounded-[var(--r-tile)] bg-rose-500/10 border border-rose-500/20">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Tipo de Documento
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Document Type
                   </label>
                   <select
                     value={kind}
                     onChange={(e) => setKind(e.target.value as any)}
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   >
-                    <option value="invoice">Fatura Oficial (Invoice)</option>
-                    <option value="quote">Proposta / Cotação (Quote)</option>
+                    <option value="invoice">Official Invoice</option>
+                    <option value="quote">Commercial Quotation (Quote)</option>
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Cliente / Contato
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Client / Contact
                   </label>
                   <select
                     value={contactId}
                     onChange={(e) => setContactId(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   >
-                    <option value="">Selecione um contato...</option>
+                    <option value="">Select a contact...</option>
                     {contacts.map((c) => (
                       <option key={c.id} value={c.id}>
                         {c.name}
@@ -364,31 +444,31 @@ export function InvoicesViewClient({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Título / Assunto *
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Title / Subject *
                 </label>
                 <input
                   type="text"
                   required
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Ex: Proposta de Implantação e Licenciamento Anual"
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="e.g. Annual Software Licensing & Implementation Proposal"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               {/* Line Items */}
-              <div className="space-y-2 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="space-y-2 pt-2 border-t border-[var(--line-2)]">
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-semibold uppercase tracking-wider text-zinc-500">
-                    Itens / Serviços
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--muted)]">
+                    Line Items &amp; Services
                   </span>
                   <button
                     type="button"
                     onClick={addItem}
-                    className="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                    className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1"
                   >
-                    <Plus size={14} /> Adicionar Linha
+                    <Plus size={14} /> Add Line
                   </button>
                 </div>
 
@@ -398,9 +478,9 @@ export function InvoicesViewClient({
                       {products.length > 0 && (
                         <select
                           onChange={(e) => onSelectProductForItem(idx, e.target.value)}
-                          className="w-36 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs text-zinc-700 dark:text-zinc-300"
+                          className="w-36 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3 py-1.5 text-xs text-[var(--text)]"
                         >
-                          <option value="">Catálogo...</option>
+                          <option value="">Select product...</option>
                           {products.map((p) => (
                             <option key={p.id} value={p.id}>
                               {p.name}
@@ -412,76 +492,76 @@ export function InvoicesViewClient({
                       <input
                         type="text"
                         required
-                        placeholder="Descrição do item ou serviço"
+                        placeholder="Item or service description"
                         value={item.description}
                         onChange={(e) => updateItem(idx, "description", e.target.value)}
-                        className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                        className="flex-1 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-1.5 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                       />
 
                       <input
                         type="number"
                         min="1"
-                        placeholder="Qtd"
+                        placeholder="Qty"
                         value={item.quantity}
                         onChange={(e) => updateItem(idx, "quantity", e.target.value)}
-                        className="w-16 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 text-center"
+                        className="w-16 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-2 py-1.5 text-xs text-[var(--text)] text-center focus:outline-none focus:border-[var(--pill)]"
                       />
 
                       <input
                         type="number"
                         step="0.01"
-                        placeholder="Preço"
+                        placeholder="Price"
                         value={item.unitPrice}
                         onChange={(e) => updateItem(idx, "unitPrice", e.target.value)}
-                        className="w-24 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs text-zinc-900 dark:text-zinc-100 text-right"
+                        className="w-24 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3 py-1.5 text-xs text-[var(--text)] text-right focus:outline-none focus:border-[var(--pill)]"
                       />
 
                       {items.length > 1 && (
                         <button
                           type="button"
                           onClick={() => removeItem(idx)}
-                          className="p-1 text-zinc-400 hover:text-red-500"
+                          className="w-6 h-6 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-rose-500 hover:bg-[var(--well)]"
                         >
-                          <X size={15} />
+                          <X size={14} />
                         </button>
                       )}
                     </div>
                   ))}
                 </div>
 
-                <div className="flex justify-end pt-2 text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                  Total Estimado: ${modalTotal.toFixed(2)}
+                <div className="flex justify-end pt-2 text-sm font-bold text-[var(--text)] font-numeric">
+                  Estimated Total: ${modalTotal.toFixed(2)}
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Observações e Condições de Pagamento
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Terms &amp; Settlement Conditions
                 </label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Validade da proposta, chave PIX, conta bancária, etc."
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Validity period, payment routing instructions, bank details, etc."
+                  className="w-full rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--line-2)]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"
+                  className="btn btn--ghost btn--sm text-xs font-medium"
                 >
-                  Cancelar
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                  className="btn btn--ink btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
                 >
                   {isSubmitting ? <CircleNotch size={14} className="animate-spin" /> : <Check size={14} />}
-                  Emitir Documento
+                  Issue Document
                 </button>
               </div>
             </form>

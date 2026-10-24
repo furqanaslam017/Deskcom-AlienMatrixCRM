@@ -68,7 +68,7 @@ export const DEFAULT_PLANS: Array<Omit<BillingPlan, "id" | "created_at">> = [
     monthly_ai_tokens: 5000000,
     max_custom_objects: 15,
     features: [
-      "4 Números de WhatsApp (WAHA + Meta Cloud)",
+      "4 Dedicated WhatsApp Channels (Multi-Device & Cloud API)",
       "Até 10 Usuários na Equipe",
       "5.000.000 Tokens de IA / mês (Claude 3.5 Sonnet)",
       "Objetos Customizados e Templates de Nicho",

@@ -164,20 +164,20 @@ export function AnalyticsAndBillingViewClient({
   };
 
   return (
-    <div className="flex flex-col gap-6 p-6 max-w-7xl mx-auto">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-5">
+    <div className="flex flex-col gap-6 max-w-[var(--app-max)] mx-auto p-4 md:p-6 animate-in fade-in duration-200">
+      {/* Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--line-2)]">
         <div>
-          <div className="flex items-center gap-2.5">
-            <div className="p-2 bg-blue-500/10 text-blue-600 rounded-lg">
-              <ChartBar size={24} />
-            </div>
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--well)] text-[var(--text)] border border-[var(--line-2)]">
+              <ChartBar size={22} weight="bold" />
+            </span>
             <div>
-              <h1 className="text-2xl font-bold tracking-tight text-foreground">
-                AlienMatrix Analytics & Billing
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--text)]">
+                Analytics &amp; Resource Operations
               </h1>
-              <p className="text-sm text-muted-foreground">
-                Revenue dashboards, weighted forecast, channel performance, scheduled email reports, and billing tiers.
+              <p className="text-xs text-[var(--muted)] mt-1">
+                Executive revenue forecasts, stage conversions, rep leaderboards, scheduled PDF reports, and billing tiers.
               </p>
             </div>
           </div>
@@ -185,11 +185,11 @@ export function AnalyticsAndBillingViewClient({
 
         {/* Current plan status badge */}
         <div className="flex items-center gap-2">
-          <div className="px-3.5 py-1.5 rounded-lg border border-border bg-card flex items-center gap-2 text-xs">
-            <CreditCard size={14} className="text-blue-500" />
-            <span className="text-muted-foreground">Current Plan:</span>
-            <span className="font-semibold text-foreground uppercase">
-              {currentSub?.plan?.name || "Professional"} ({currentSub?.status || "Active"})
+          <div className="px-4 py-2 rounded-full border border-[var(--line-2)] bg-[var(--solid)] flex items-center gap-2 text-xs shadow-sm">
+            <CreditCard size={15} className="text-[var(--tomato)]" />
+            <span className="text-[var(--muted)]">Active Plan:</span>
+            <span className="badge badge--pine text-[11px] font-bold uppercase">
+              {currentSub?.plan?.name || "Professional"}
             </span>
           </div>
         </div>
@@ -197,125 +197,135 @@ export function AnalyticsAndBillingViewClient({
 
       {notification && (
         <div
-          className={`p-3 rounded-lg text-sm flex items-center gap-2 ${
+          className={`p-3.5 rounded-[var(--r-tile)] text-xs flex items-center justify-between shadow-[var(--shadow-pop)] animate-in fade-in duration-150 ${
             notification.type === "success"
-              ? "bg-emerald-50 border border-emerald-200 text-emerald-800"
-              : "bg-red-50 border border-red-200 text-red-800"
+              ? "bg-[var(--solid)] border border-emerald-500/30 text-emerald-700 dark:text-emerald-400"
+              : "bg-[var(--solid)] border border-rose-500/30 text-rose-700 dark:text-rose-400"
           }`}
         >
-          {notification.type === "success" ? <CheckCircle size={16} /> : <Warning size={16} />}
-          <span>{notification.msg}</span>
+          <div className="flex items-center gap-2">
+            {notification.type === "success" ? <CheckCircle size={16} /> : <Warning size={16} />}
+            <span>{notification.msg}</span>
+          </div>
+          <button
+            onClick={() => setNotification(null)}
+            className="text-[11px] font-semibold text-[var(--muted)] hover:text-[var(--text)] ml-4"
+          >
+            Dismiss
+          </button>
         </div>
       )}
 
-      {/* Top 4 KPI Metrics Cards */}
+      {/* Top 4 KPI Metrics Bento Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
-          <span className="text-xs text-muted-foreground flex items-center justify-between">
+        {/* KPI 1 */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <span className="text-xs font-semibold text-[var(--muted)] flex items-center justify-between">
             Total Pipeline Value
-            <Funnel size={14} className="text-blue-500" />
+            <Funnel size={15} className="text-[var(--tomato)]" />
           </span>
-          <p className="text-2xl font-bold text-foreground mt-1">
-            {formatCurrency(dashboard.total_pipeline_value_cents)}
-          </p>
-          <span className="text-[11px] text-muted-foreground mt-1 block">
-            {dashboard.open_deals_count} active deals in progress
-          </span>
+          <div className="mt-2">
+            <p className="text-2xl font-bold tracking-tight text-[var(--text)] font-numeric">
+              {formatCurrency(dashboard.total_pipeline_value_cents)}
+            </p>
+            <span className="text-[11px] text-[var(--muted)] mt-1 block">
+              {dashboard.open_deals_count} active deals in progress
+            </span>
+          </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
-          <span className="text-xs text-muted-foreground flex items-center justify-between">
+        {/* KPI 2 */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <span className="text-xs font-semibold text-[var(--muted)] flex items-center justify-between">
             Weighted Forecast
-            <TrendUp size={14} className="text-emerald-500" />
+            <TrendUp size={15} className="text-emerald-600 dark:text-emerald-400" />
           </span>
-          <p className="text-2xl font-bold text-emerald-600 mt-1">
-            {formatCurrency(dashboard.weighted_forecast_cents)}
-          </p>
-          <span className="text-[11px] text-muted-foreground mt-1 block">
-            Average probability calculated per stage
-          </span>
+          <div className="mt-2">
+            <p className="text-2xl font-bold tracking-tight text-emerald-600 dark:text-emerald-400 font-numeric">
+              {formatCurrency(dashboard.weighted_forecast_cents)}
+            </p>
+            <span className="text-[11px] text-[var(--muted)] mt-1 block">
+              Calculated by historical stage probability
+            </span>
+          </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
-          <span className="text-xs text-muted-foreground flex items-center justify-between">
+        {/* KPI 3 */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <span className="text-xs font-semibold text-[var(--muted)] flex items-center justify-between">
             Overall Win Rate
-            <CheckCircle size={14} className="text-purple-500" />
+            <CheckCircle size={15} className="text-purple-600 dark:text-purple-400" />
           </span>
-          <p className="text-2xl font-bold text-foreground mt-1">
-            {dashboard.overall_win_rate_percent}%
-          </p>
-          <span className="text-[11px] text-muted-foreground mt-1 block">
-            {dashboard.won_deals_count} won vs {dashboard.lost_deals_count} lost
-          </span>
+          <div className="mt-2">
+            <p className="text-2xl font-bold tracking-tight text-[var(--text)] font-numeric">
+              {dashboard.overall_win_rate_percent}%
+            </p>
+            <span className="text-[11px] text-[var(--muted)] mt-1 block">
+              {dashboard.won_deals_count} won vs {dashboard.lost_deals_count} lost
+            </span>
+          </div>
         </div>
 
-        <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
-          <span className="text-xs text-muted-foreground flex items-center justify-between">
+        {/* KPI 4 */}
+        <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col justify-between">
+          <span className="text-xs font-semibold text-[var(--muted)] flex items-center justify-between">
             Avg First Response Time
-            <Clock size={14} className="text-amber-500" />
+            <Clock size={15} className="text-amber-500" />
           </span>
-          <p className="text-2xl font-bold text-foreground mt-1">
-            {dashboard.avg_first_response_minutes} min
-          </p>
-          <span className="text-[11px] text-emerald-600 font-semibold mt-1 block">
-            92% answered by AI Agent in &lt; 2 min
-          </span>
+          <div className="mt-2">
+            <p className="text-2xl font-bold tracking-tight text-[var(--text)] font-numeric">
+              {dashboard.avg_first_response_minutes} min
+            </p>
+            <span className="badge badge--pine text-[10px] mt-1 inline-block">
+              92% answered by AI Agent &lt; 2 min
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Tabs Navigation */}
-      <div className="flex border-b border-border gap-6 overflow-x-auto text-sm font-medium">
-        <button
-          onClick={() => setActiveTab("dashboard")}
-          data-testid="tab-dashboard"
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
-            activeTab === "dashboard"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <ChartBar size={16} />
-          Executive Dashboard
-        </button>
+      {/* Rapport Segmented Pill Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        <div className="tabs__track p-1 flex items-center gap-1 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("dashboard")}
+            data-testid="tab-dashboard"
+            data-active={activeTab === "dashboard"}
+            className="tab"
+          >
+            <ChartBar size={15} />
+            Executive Dashboard
+          </button>
 
-        <button
-          onClick={() => setActiveTab("reports")}
-          data-testid="tab-reports"
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
-            activeTab === "reports"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Download size={16} />
-          Custom Reports & Export ({currentReports.length})
-        </button>
+          <button
+            onClick={() => setActiveTab("reports")}
+            data-testid="tab-reports"
+            data-active={activeTab === "reports"}
+            className="tab"
+          >
+            <Download size={15} />
+            Custom Reports &amp; Export ({currentReports.length})
+          </button>
 
-        <button
-          onClick={() => setActiveTab("scheduled")}
-          data-testid="tab-scheduled"
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
-            activeTab === "scheduled"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <Calendar size={16} />
-          Scheduled Deliveries ({currentScheduled.length})
-        </button>
+          <button
+            onClick={() => setActiveTab("scheduled")}
+            data-testid="tab-scheduled"
+            data-active={activeTab === "scheduled"}
+            className="tab"
+          >
+            <Calendar size={15} />
+            Scheduled Deliveries ({currentScheduled.length})
+          </button>
 
-        <button
-          onClick={() => setActiveTab("billing")}
-          data-testid="tab-billing"
-          className={`pb-3 border-b-2 flex items-center gap-2 transition ${
-            activeTab === "billing"
-              ? "border-blue-600 text-blue-600 font-semibold"
-              : "border-transparent text-muted-foreground hover:text-foreground"
-          }`}
-        >
-          <CreditCard size={16} />
-          Plans & Billing
-        </button>
+          <button
+            onClick={() => setActiveTab("billing")}
+            data-testid="tab-billing"
+            data-active={activeTab === "billing"}
+            className="tab"
+          >
+            <CreditCard size={15} />
+            Plans &amp; Billing
+          </button>
+        </div>
       </div>
 
       {/* TAB 1: EXECUTIVE DASHBOARD */}
@@ -323,29 +333,29 @@ export function AnalyticsAndBillingViewClient({
         <div className="space-y-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Funnel Conversion by Stage */}
-            <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4">
+            <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Funnel size={16} className="text-blue-600" />
-                  Sales Funnel & Stage Conversion
+                <h3 className="text-xs font-semibold text-[var(--text)] flex items-center gap-2">
+                  <Funnel size={16} className="text-[var(--tomato)]" />
+                  Sales Funnel &amp; Stage Conversion
                 </h3>
-                <span className="text-xs text-muted-foreground">Total: {dashboard.open_deals_count} active</span>
+                <span className="text-[11px] text-[var(--muted)]">Total: {dashboard.open_deals_count} active</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-3.5">
                 {dashboard.stages_funnel.map((st) => (
-                  <div key={st.stage_id} className="space-y-1">
+                  <div key={st.stage_id} className="space-y-1.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-medium text-foreground">{st.stage_name}</span>
-                      <span className="text-muted-foreground font-mono">
+                      <span className="font-medium text-[var(--text)]">{st.stage_name}</span>
+                      <span className="text-[var(--muted)] font-mono text-[11px]">
                         {st.deals_count} deals · {formatCurrency(st.total_value_cents)} ({st.conversion_rate_percent}%)
                       </span>
                     </div>
-                    <div className="w-full bg-muted rounded-full h-2 overflow-hidden">
+                    <div className="w-full bg-[var(--well)] rounded-full h-2 overflow-hidden border border-[var(--line-2)]">
                       <div
-                        className="bg-blue-600 h-2 rounded-full transition-all"
+                        className="bg-[var(--pill)] h-2 rounded-full transition-all"
                         style={{ width: `${Math.max(5, st.conversion_rate_percent)}%` }}
-                      ></div>
+                      />
                     </div>
                   </div>
                 ))}
@@ -353,22 +363,25 @@ export function AnalyticsAndBillingViewClient({
             </div>
 
             {/* Leads by Source & Channel */}
-            <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4">
+            <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md space-y-4">
               <div className="flex items-center justify-between">
-                <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Megaphone size={16} className="text-purple-600" />
-                  Lead Sources & Channel Attribution
+                <h3 className="text-xs font-semibold text-[var(--text)] flex items-center gap-2">
+                  <Megaphone size={16} className="text-purple-600 dark:text-purple-400" />
+                  Lead Sources &amp; Channel Attribution
                 </h3>
-                <span className="text-xs text-muted-foreground">Last 30 days</span>
+                <span className="text-[11px] text-[var(--muted)]">Last 30 days</span>
               </div>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {dashboard.leads_by_source.map((src) => (
-                  <div key={src.source} className="flex items-center justify-between p-2.5 rounded-lg bg-muted/30 text-xs">
-                    <span className="font-medium text-foreground">{src.source}</span>
+                  <div
+                    key={src.source}
+                    className="flex items-center justify-between p-3 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] text-xs shadow-sm"
+                  >
+                    <span className="font-medium text-[var(--text)]">{src.source}</span>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-foreground">{src.count} leads</span>
-                      <span className="px-2 py-0.5 rounded-full bg-purple-100 text-purple-700 font-semibold text-[10px]">
+                      <span className="font-bold text-[var(--text)] font-numeric">{src.count} leads</span>
+                      <span className="badge badge--plain text-[10px] font-bold">
                         {src.percentage}%
                       </span>
                     </div>
@@ -380,30 +393,30 @@ export function AnalyticsAndBillingViewClient({
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Owner & Agent Leaderboard */}
-            <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Users size={16} className="text-emerald-600" />
-                Sales Reps & AI Agents Leaderboard
+            <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md space-y-4">
+              <h3 className="text-xs font-semibold text-[var(--text)] flex items-center gap-2">
+                <Users size={16} className="text-emerald-600 dark:text-emerald-400" />
+                Sales Reps &amp; AI Agents Leaderboard
               </h3>
 
-              <div className="space-y-3">
+              <div className="space-y-2.5">
                 {dashboard.rep_leaderboard.map((rep, idx) => (
                   <div
                     key={rep.owner_id}
-                    className="p-3 rounded-lg border border-border bg-background flex items-center justify-between text-xs"
+                    className="p-3 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] flex items-center justify-between text-xs shadow-sm"
                   >
                     <div className="flex items-center gap-2.5">
-                      <span className="w-6 h-6 rounded-full bg-muted flex items-center justify-center font-bold text-[11px]">
+                      <span className="w-6 h-6 rounded-full bg-[var(--well)] border border-[var(--line-2)] flex items-center justify-center font-bold text-[11px] text-[var(--text)]">
                         #{idx + 1}
                       </span>
                       <div>
-                        <span className="font-semibold text-foreground block">{rep.owner_name}</span>
-                        <span className="text-[11px] text-muted-foreground">
-                          {rep.deals_won_count} deals closed · Win Rate: {rep.win_rate_percent}%
+                        <span className="font-semibold text-[var(--text)] block">{rep.owner_name}</span>
+                        <span className="text-[11px] text-[var(--muted)]">
+                          {rep.deals_won_count} closed · Win Rate: {rep.win_rate_percent}%
                         </span>
                       </div>
                     </div>
-                    <span className="font-bold text-emerald-600 text-sm">
+                    <span className="font-bold text-emerald-600 dark:text-emerald-400 text-xs font-numeric">
                       {formatCurrency(rep.won_value_cents)}
                     </span>
                   </div>
@@ -412,37 +425,37 @@ export function AnalyticsAndBillingViewClient({
             </div>
 
             {/* WhatsApp & AI Operational Metrics */}
-            <div className="p-5 rounded-xl border border-border bg-card shadow-sm space-y-4">
-              <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-                <Robot size={16} className="text-blue-600" />
+            <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md space-y-4">
+              <h3 className="text-xs font-semibold text-[var(--text)] flex items-center gap-2">
+                <Robot size={16} className="text-[var(--tomato)]" />
                 Operational Efficiency: AI vs Human
               </h3>
 
               <div className="grid grid-cols-2 gap-3 text-xs">
-                <div className="p-3 rounded-lg bg-blue-50/40 border border-blue-200">
-                  <span className="text-muted-foreground block mb-1">WhatsApp Volume</span>
-                  <p className="text-lg font-bold text-blue-900">
+                <div className="p-3.5 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] shadow-sm">
+                  <span className="text-[var(--muted)] block mb-1">WhatsApp Volume</span>
+                  <p className="text-lg font-bold text-[var(--text)] font-numeric">
                     {dashboard.whatsapp_volume.total_messages} msgs
                   </p>
-                  <span className="text-[10px] text-muted-foreground">
+                  <span className="text-[10px] text-[var(--muted)]">
                     {dashboard.whatsapp_volume.inbound_messages} in / {dashboard.whatsapp_volume.outbound_messages} out
                   </span>
                 </div>
 
-                <div className="p-3 rounded-lg bg-emerald-50/40 border border-emerald-200">
-                  <span className="text-muted-foreground block mb-1">AI Autonomous Resolution</span>
-                  <p className="text-lg font-bold text-emerald-900">
+                <div className="p-3.5 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] shadow-sm">
+                  <span className="text-[var(--muted)] block mb-1">AI Autonomous Resolution</span>
+                  <p className="text-lg font-bold text-emerald-600 dark:text-emerald-400 font-numeric">
                     {dashboard.ai_vs_human.ai_resolution_percent}%
                   </p>
-                  <span className="text-[10px] text-muted-foreground">
-                    {dashboard.ai_vs_human.ai_resolved_count} resolved without human handoff
+                  <span className="text-[10px] text-[var(--muted)]">
+                    {dashboard.ai_vs_human.ai_resolved_count} without human handoff
                   </span>
                 </div>
               </div>
 
-              <div className="p-3 rounded-lg bg-muted/20 border border-border text-xs text-muted-foreground flex items-center justify-between">
+              <div className="p-3 rounded-[var(--r-tile)] bg-[var(--well)] border border-[var(--line-2)] text-xs text-[var(--muted)] flex items-center justify-between">
                 <span>Average Full Resolution Time:</span>
-                <strong className="text-foreground">{dashboard.avg_resolution_minutes} min</strong>
+                <strong className="text-[var(--text)] font-numeric">{dashboard.avg_resolution_minutes} min</strong>
               </div>
             </div>
           </div>
@@ -454,17 +467,17 @@ export function AnalyticsAndBillingViewClient({
         <div className="space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-semibold text-foreground">Custom Reports & Data Export</h2>
-              <p className="text-xs text-muted-foreground">
+              <h2 className="text-sm font-semibold text-[var(--text)]">Custom Reports &amp; Data Export</h2>
+              <p className="text-xs text-[var(--muted)] mt-0.5">
                 Generate reports with customized filters and instantly download datasets in CSV or PDF format.
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2">
               <a
                 href="/api/v1/alien-matrix/analytics/reports/export?type=sales_funnel"
                 download
-                className="px-3.5 py-2 border border-border text-foreground hover:bg-muted text-xs font-medium rounded-lg flex items-center gap-1.5 transition"
+                className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
               >
                 <Download size={14} />
                 Export Funnel CSV
@@ -473,7 +486,7 @@ export function AnalyticsAndBillingViewClient({
               <a
                 href="/api/v1/alien-matrix/analytics/reports/export?type=rep_leaderboard"
                 download
-                className="px-3.5 py-2 border border-border text-foreground hover:bg-muted text-xs font-medium rounded-lg flex items-center gap-1.5 transition"
+                className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
               >
                 <Download size={14} />
                 Export Leaderboard CSV
@@ -481,9 +494,9 @@ export function AnalyticsAndBillingViewClient({
 
               <button
                 onClick={() => setShowReportModal(true)}
-                className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg flex items-center gap-1.5 transition"
+                className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
               >
-                <Plus size={14} />
+                <Plus size={14} weight="bold" />
                 New Report
               </button>
             </div>
@@ -491,30 +504,33 @@ export function AnalyticsAndBillingViewClient({
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {currentReports.map((rep) => (
-              <div key={rep.id} className="p-4 rounded-xl border border-border bg-card shadow-sm space-y-3">
-                <div className="flex items-start justify-between">
-                  <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-100 text-blue-800">
-                    {rep.report_type}
-                  </span>
-                  {rep.is_favorite && (
-                    <span className="text-[10px] text-amber-500 font-semibold">★ Favorite</span>
-                  )}
-                </div>
-
+              <div
+                key={rep.id}
+                className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md space-y-3 flex flex-col justify-between"
+              >
                 <div>
-                  <h3 className="font-semibold text-xs text-foreground">{rep.title}</h3>
-                  <p className="text-[11px] text-muted-foreground mt-1">
+                  <div className="flex items-start justify-between mb-2">
+                    <span className="badge badge--plain text-[10px] uppercase font-bold tracking-wider">
+                      {rep.report_type}
+                    </span>
+                    {rep.is_favorite && (
+                      <span className="text-[10px] text-amber-500 font-semibold">★ Favorite</span>
+                    )}
+                  </div>
+
+                  <h3 className="font-semibold text-xs text-[var(--text)]">{rep.title}</h3>
+                  <p className="text-[11px] text-[var(--muted)] mt-1">
                     Created on {new Date(rep.created_at).toLocaleDateString("en-US")}
                   </p>
                 </div>
 
-                <div className="pt-2 border-t border-border flex items-center justify-between text-xs">
+                <div className="pt-3 border-t border-[var(--line-2)] flex items-center justify-between text-xs">
                   <a
                     href={`/api/v1/alien-matrix/analytics/reports/export?type=${rep.report_type}`}
                     download
-                    className="text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                    className="text-[var(--text)] font-semibold hover:underline inline-flex items-center gap-1 text-xs"
                   >
-                    <Download size={12} />
+                    <Download size={13} />
                     Download CSV
                   </a>
                   <button
@@ -523,7 +539,7 @@ export function AnalyticsAndBillingViewClient({
                       setCurrentReports((prev) => prev.filter((r) => r.id !== rep.id));
                       notify("Report deleted successfully.");
                     }}
-                    className="text-red-500 hover:text-red-700"
+                    className="w-7 h-7 rounded-full inline-flex items-center justify-center text-[var(--muted)] hover:text-rose-600 hover:bg-[var(--well)] transition-colors"
                   >
                     <Trash size={14} />
                   </button>
@@ -534,36 +550,39 @@ export function AnalyticsAndBillingViewClient({
 
           {/* Modal New Report */}
           {showReportModal && (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-border pb-3">
-                  <h3 className="font-semibold text-base text-foreground">Create Custom Report</h3>
-                  <button onClick={() => setShowReportModal(false)} className="text-muted-foreground hover:text-foreground">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between border-b border-[var(--line-2)] pb-3">
+                  <h3 className="font-bold text-sm text-[var(--text)]">Create Custom Report</h3>
+                  <button
+                    onClick={() => setShowReportModal(false)}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--well)]"
+                  >
                     ✕
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   <div>
-                    <label className="text-xs font-semibold text-foreground block mb-1">Report Title</label>
+                    <label className="text-xs font-semibold text-[var(--text)] block mb-1">Report Title</label>
                     <input
                       type="text"
                       placeholder="e.g. Monthly WhatsApp Conversion Analysis"
                       value={newReport.title}
                       onChange={(e) => setNewReport({ ...newReport, title: e.target.value })}
-                      className="w-full text-xs p-2.5 rounded-lg border border-border bg-background"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                     />
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-foreground block mb-1">Metric Type</label>
+                    <label className="text-xs font-semibold text-[var(--text)] block mb-1">Metric Type</label>
                     <select
                       value={newReport.report_type}
                       onChange={(e) => setNewReport({ ...newReport, report_type: e.target.value as any })}
-                      className="w-full text-xs p-2.5 rounded-lg border border-border bg-background"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                     >
-                      <option value="sales_funnel">Sales Funnel & Stage Conversion</option>
-                      <option value="whatsapp_performance">WhatsApp Volume & Response Speed</option>
+                      <option value="sales_funnel">Sales Funnel &amp; Stage Conversion</option>
+                      <option value="whatsapp_performance">WhatsApp Volume &amp; Response Speed</option>
                       <option value="rep_leaderboard">Sales Rep Performance Leaderboard</option>
                       <option value="revenue_forecast">Weighted Revenue Forecast</option>
                       <option value="ai_resolution">AI Resolutions vs Human Handoffs</option>
@@ -571,16 +590,16 @@ export function AnalyticsAndBillingViewClient({
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-border">
+                <div className="flex justify-end gap-2 pt-3 border-t border-[var(--line-2)]">
                   <button
                     onClick={() => setShowReportModal(false)}
-                    className="px-4 py-2 border border-border rounded-lg text-xs font-medium hover:bg-muted"
+                    className="btn btn--ghost btn--sm text-xs font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreateReport}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium"
+                    className="btn btn--ink btn--sm text-xs font-semibold"
                   >
                     Save Report
                   </button>
@@ -596,43 +615,46 @@ export function AnalyticsAndBillingViewClient({
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-base font-semibold text-foreground">Scheduled Email Deliveries</h2>
-              <p className="text-xs text-muted-foreground">
-                Receive automated executive summaries in PDF format or CSV spreadsheets directly in your team's inbox.
+              <h2 className="text-sm font-semibold text-[var(--text)]">Scheduled Email Deliveries</h2>
+              <p className="text-xs text-[var(--muted)] mt-0.5">
+                Automated executive summaries delivered in PDF format or CSV spreadsheets directly to your leadership team.
               </p>
             </div>
 
             <button
               onClick={() => setShowScheduleModal(true)}
-              className="px-3.5 py-2 bg-blue-600 hover:bg-blue-700 text-white text-xs font-medium rounded-lg flex items-center gap-1.5 transition"
+              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
             >
-              <Plus size={14} />
+              <Plus size={14} weight="bold" />
               Schedule Delivery
             </button>
           </div>
 
           <div className="space-y-3">
             {currentScheduled.map((sc) => (
-              <div key={sc.id} className="p-4 rounded-xl border border-border bg-card shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+              <div
+                key={sc.id}
+                className="p-4 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs"
+              >
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <span className="font-semibold text-foreground text-sm">
+                    <span className="font-semibold text-[var(--text)] text-sm">
                       {sc.report?.title || "Scheduled Report"}
                     </span>
-                    <span className="text-[10px] uppercase px-2 py-0.5 rounded bg-blue-50 text-blue-700 font-bold">
+                    <span className="badge badge--plain text-[10px] uppercase font-bold">
                       {sc.frequency}
                     </span>
-                    <span className="text-[10px] uppercase px-1.5 py-0.5 rounded bg-muted text-muted-foreground font-mono">
+                    <span className="badge badge--plain text-[10px] uppercase font-mono">
                       {sc.format}
                     </span>
                   </div>
-                  <p className="text-muted-foreground">
+                  <p className="text-[var(--muted)]">
                     Recipients: {sc.recipient_emails?.join(", ")}
                   </p>
                 </div>
 
                 <div className="flex items-center gap-2">
-                  <span className="text-emerald-600 font-medium flex items-center gap-1">
+                  <span className="badge badge--pine text-xs font-semibold inline-flex items-center gap-1">
                     <CheckCircle size={14} /> Active
                   </span>
                 </div>
@@ -642,22 +664,25 @@ export function AnalyticsAndBillingViewClient({
 
           {/* Modal Schedule */}
           {showScheduleModal && (
-            <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-card border border-border rounded-xl shadow-xl w-full max-w-md p-6 space-y-4">
-                <div className="flex items-center justify-between border-b border-border pb-3">
-                  <h3 className="font-semibold text-base text-foreground">Schedule Periodic Report</h3>
-                  <button onClick={() => setShowScheduleModal(false)} className="text-muted-foreground hover:text-foreground">
+            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+                <div className="flex items-center justify-between border-b border-[var(--line-2)] pb-3">
+                  <h3 className="font-bold text-sm text-[var(--text)]">Schedule Periodic Report</h3>
+                  <button
+                    onClick={() => setShowScheduleModal(false)}
+                    className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--well)]"
+                  >
                     ✕
                   </button>
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-3.5">
                   <div>
-                    <label className="text-xs font-semibold text-foreground block mb-1">Base Report</label>
+                    <label className="text-xs font-semibold text-[var(--text)] block mb-1">Base Report</label>
                     <select
                       value={newSchedule.report_id}
                       onChange={(e) => setNewSchedule({ ...newSchedule, report_id: e.target.value })}
-                      className="w-full text-xs p-2.5 rounded-lg border border-border bg-background"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                     >
                       {currentReports.map((r) => (
                         <option key={r.id} value={r.id}>
@@ -669,11 +694,11 @@ export function AnalyticsAndBillingViewClient({
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-xs font-semibold text-foreground block mb-1">Frequency</label>
+                      <label className="text-xs font-semibold text-[var(--text)] block mb-1">Frequency</label>
                       <select
                         value={newSchedule.frequency}
                         onChange={(e) => setNewSchedule({ ...newSchedule, frequency: e.target.value as any })}
-                        className="w-full text-xs p-2.5 rounded-lg border border-border bg-background"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                       >
                         <option value="daily">Daily (Every day at 08:00 AM)</option>
                         <option value="weekly">Weekly (Monday at 08:00 AM)</option>
@@ -682,11 +707,11 @@ export function AnalyticsAndBillingViewClient({
                     </div>
 
                     <div>
-                      <label className="text-xs font-semibold text-foreground block mb-1">Format</label>
+                      <label className="text-xs font-semibold text-[var(--text)] block mb-1">Format</label>
                       <select
                         value={newSchedule.format}
                         onChange={(e) => setNewSchedule({ ...newSchedule, format: e.target.value as any })}
-                        className="w-full text-xs p-2.5 rounded-lg border border-border bg-background"
+                        className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                       >
                         <option value="pdf">PDF Document</option>
                         <option value="csv">CSV Spreadsheet</option>
@@ -695,7 +720,7 @@ export function AnalyticsAndBillingViewClient({
                   </div>
 
                   <div>
-                    <label className="text-xs font-semibold text-foreground block mb-1">
+                    <label className="text-xs font-semibold text-[var(--text)] block mb-1">
                       Recipient Emails (comma separated)
                     </label>
                     <input
@@ -703,21 +728,21 @@ export function AnalyticsAndBillingViewClient({
                       placeholder="leadership@alienmatrix.io, sales@alienmatrix.io"
                       value={newSchedule.recipient_emails}
                       onChange={(e) => setNewSchedule({ ...newSchedule, recipient_emails: e.target.value })}
-                      className="w-full text-xs p-2.5 rounded-lg border border-border bg-background"
+                      className="w-full text-xs px-3.5 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                     />
                   </div>
                 </div>
 
-                <div className="flex justify-end gap-2 pt-3 border-t border-border">
+                <div className="flex justify-end gap-2 pt-3 border-t border-[var(--line-2)]">
                   <button
                     onClick={() => setShowScheduleModal(false)}
-                    className="px-4 py-2 border border-border rounded-lg text-xs font-medium hover:bg-muted"
+                    className="btn btn--ghost btn--sm text-xs font-medium"
                   >
                     Cancel
                   </button>
                   <button
                     onClick={handleCreateSchedule}
-                    className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-medium"
+                    className="btn btn--ink btn--sm text-xs font-semibold"
                   >
                     Activate Schedule
                   </button>
@@ -733,84 +758,82 @@ export function AnalyticsAndBillingViewClient({
         <div className="space-y-6">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h2 className="text-base font-semibold text-foreground">Plans, Subscriptions & Limits</h2>
-              <p className="text-xs text-muted-foreground">
-                Select the plan that best fits your commercial operations and configure billing details.
+              <h2 className="text-sm font-semibold text-[var(--text)]">Plans, Subscriptions &amp; Resource Limits</h2>
+              <p className="text-xs text-[var(--muted)] mt-0.5">
+                Select the plan that matches your operations and manage subscription billing.
               </p>
             </div>
 
-            {/* Cycle toggle */}
-            <div className="p-1 bg-muted rounded-lg flex items-center gap-1 self-start">
+            {/* Cycle toggle as segmented tabs */}
+            <div className="tabs__track p-1 flex items-center gap-1 self-start">
               <button
                 onClick={() => setBillingCycle("monthly")}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition ${
-                  billingCycle === "monthly" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-                }`}
+                data-active={billingCycle === "monthly"}
+                className="tab text-xs"
               >
                 Monthly
               </button>
               <button
                 onClick={() => setBillingCycle("yearly")}
-                className={`px-3 py-1.5 text-xs font-semibold rounded-md transition flex items-center gap-1.5 ${
-                  billingCycle === "yearly" ? "bg-background text-foreground shadow-sm" : "text-muted-foreground"
-                }`}
+                data-active={billingCycle === "yearly"}
+                className="tab text-xs inline-flex items-center gap-1.5"
               >
                 Yearly
-                <span className="text-[10px] px-1.5 py-0.2 rounded bg-emerald-100 text-emerald-800">
+                <span className="badge badge--pine text-[10px]">
                   -17% off
                 </span>
               </button>
             </div>
           </div>
 
-          {/* Usage Limits Card */}
-          <div className="p-4 rounded-xl border border-border bg-card shadow-sm">
-            <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground mb-3">
+          {/* Usage Limits Bento Card */}
+          <div className="p-5 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md">
+            <h3 className="text-xs font-bold uppercase tracking-wider text-[var(--muted)] mb-3.5">
               Tenant Resource Utilization
             </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
-              <div className="space-y-1">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 text-xs">
+              <div className="space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Seats / Team Members:</span>
-                  <span className="font-semibold text-foreground">
+                  <span className="text-[var(--muted)]">Seats / Team Members:</span>
+                  <span className="font-semibold text-[var(--text)] font-numeric">
                     {limits.seats_used} / {limits.max_seats}
                   </span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-1.5">
+                <div className="w-full bg-[var(--well)] rounded-full h-1.5 border border-[var(--line-2)] overflow-hidden">
                   <div
-                    className="bg-blue-600 h-1.5 rounded-full"
+                    className="bg-[var(--pill)] h-1.5 rounded-full"
                     style={{ width: `${Math.min(100, (limits.seats_used / limits.max_seats) * 100)}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">WhatsApp Channels:</span>
-                  <span className="font-semibold text-foreground">
+                  <span className="text-[var(--muted)]">WhatsApp Channels:</span>
+                  <span className="font-semibold text-[var(--text)] font-numeric">
                     {limits.numbers_used} / {limits.max_numbers}
                   </span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-1.5">
+                <div className="w-full bg-[var(--well)] rounded-full h-1.5 border border-[var(--line-2)] overflow-hidden">
                   <div
-                    className="bg-blue-600 h-1.5 rounded-full"
+                    className="bg-[var(--pill)] h-1.5 rounded-full"
                     style={{ width: `${Math.min(100, (limits.numbers_used / limits.max_numbers) * 100)}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
 
-              <div className="space-y-1">
+              <div className="space-y-1.5">
                 <div className="flex justify-between">
-                  <span className="text-muted-foreground">Custom Objects:</span>
-                  <span className="font-semibold text-foreground">
+                  <span className="text-[var(--muted)]">Custom Objects:</span>
+                  <span className="font-semibold text-[var(--text)] font-numeric">
                     {limits.objects_used} / {limits.max_objects}
                   </span>
                 </div>
-                <div className="w-full bg-muted rounded-full h-1.5">
+                <div className="w-full bg-[var(--well)] rounded-full h-1.5 border border-[var(--line-2)] overflow-hidden">
                   <div
-                    className="bg-blue-600 h-1.5 rounded-full"
+                    className="bg-[var(--pill)] h-1.5 rounded-full"
                     style={{ width: `${Math.min(100, (limits.objects_used / limits.max_objects) * 100)}%` }}
-                  ></div>
+                  />
                 </div>
               </div>
             </div>
@@ -826,53 +849,53 @@ export function AnalyticsAndBillingViewClient({
               return (
                 <div
                   key={p.id}
-                  className={`p-6 rounded-2xl border transition flex flex-col justify-between ${
+                  className={`p-6 rounded-[var(--r-card)] border transition flex flex-col justify-between backdrop-blur-md ${
                     isCurrent
-                      ? "border-blue-500 bg-blue-50/15 shadow-md relative"
-                      : "border-border bg-card shadow-sm"
+                      ? "border-[var(--tomato)] bg-[var(--solid)] shadow-[var(--shadow-pop)] relative"
+                      : "border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)]"
                   }`}
                 >
                   {isCurrent && (
-                    <span className="absolute -top-3 left-6 px-3 py-0.5 rounded-full bg-blue-600 text-white text-[10px] font-bold uppercase tracking-wider">
+                    <span className="absolute -top-3 left-6 badge badge--pine text-[10px] font-bold uppercase tracking-wider">
                       Current Plan
                     </span>
                   )}
 
                   <div className="space-y-4">
                     <div>
-                      <h3 className="text-lg font-bold text-foreground">{p.name}</h3>
-                      <p className="text-xs text-muted-foreground mt-1">{p.description}</p>
+                      <h3 className="text-base font-bold text-[var(--text)]">{p.name}</h3>
+                      <p className="text-xs text-[var(--muted)] mt-1">{p.description}</p>
                     </div>
 
                     <div>
                       <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-extrabold text-foreground">
+                        <span className="text-3xl font-extrabold text-[var(--text)] font-numeric">
                           {formatCurrency(priceCents)}
                         </span>
-                        <span className="text-xs text-muted-foreground">/ month</span>
+                        <span className="text-xs text-[var(--muted)]">/ month</span>
                       </div>
                       {billingCycle === "yearly" && (
-                        <span className="text-[10px] text-muted-foreground block mt-0.5">
+                        <span className="text-[10px] text-[var(--muted)] block mt-0.5">
                           Billed annually ({formatCurrency(p.price_yearly_cents)}/yr)
                         </span>
                       )}
                     </div>
 
-                    <div className="pt-4 border-t border-border space-y-2 text-xs">
+                    <div className="pt-4 border-t border-[var(--line-2)] space-y-2 text-xs">
                       {p.features?.map((feat, idx) => (
                         <div key={idx} className="flex items-start gap-2">
-                          <CheckCircle size={14} className="text-emerald-500 mt-0.5 shrink-0" />
-                          <span className="text-foreground">{feat}</span>
+                          <CheckCircle size={14} className="text-emerald-600 dark:text-emerald-400 mt-0.5 shrink-0" />
+                          <span className="text-[var(--text)]">{feat}</span>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="pt-6 border-t border-border mt-6 space-y-2">
+                  <div className="pt-6 border-t border-[var(--line-2)] mt-6 space-y-2">
                     {isCurrent ? (
                       <button
                         disabled
-                        className="w-full py-2.5 rounded-xl border border-blue-200 bg-blue-50 text-blue-700 text-xs font-bold uppercase tracking-wider"
+                        className="w-full py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] text-xs font-bold uppercase tracking-wider"
                       >
                         Active Subscription
                       </button>
@@ -880,15 +903,15 @@ export function AnalyticsAndBillingViewClient({
                       <div className="grid grid-cols-2 gap-2">
                         <button
                           onClick={() => handleChangePlan(p.id, "stripe")}
-                          className="py-2.5 px-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold rounded-xl transition"
+                          className="btn btn--ink text-xs font-semibold py-2"
                         >
                           Credit Card (Stripe)
                         </button>
                         <button
                           onClick={() => handleChangePlan(p.id, "pix_local")}
-                          className="py-2.5 px-3 border border-border hover:bg-muted text-foreground text-xs font-semibold rounded-xl transition"
+                          className="btn btn--ghost text-xs font-semibold py-2"
                         >
-                          Local Payment / PIX
+                          Local / PIX
                         </button>
                       </div>
                     )}

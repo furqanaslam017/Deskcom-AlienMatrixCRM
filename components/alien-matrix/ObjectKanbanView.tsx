@@ -1,8 +1,6 @@
 "use client";
 
 import { useMemo } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { CustomField, CustomRecord, CustomObject } from "@/lib/alien-matrix/types";
 
 interface ObjectKanbanViewProps {
@@ -72,7 +70,7 @@ export function ObjectKanbanView({
 
   if (!groupField) {
     return (
-      <div className="p-8 text-center text-muted-foreground bg-card border rounded-lg">
+      <div className="p-8 text-center text-[var(--muted)] text-xs rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)]">
         This object has no &quot;select&quot; field to group into Kanban stages. Add a status or stage
         field to enable Kanban view.
       </div>
@@ -87,43 +85,44 @@ export function ObjectKanbanView({
         return (
           <div
             key={col.value}
-            className="flex-shrink-0 w-80 bg-muted/40 rounded-lg border flex flex-col max-h-[80vh]"
+            className="flex-shrink-0 w-80 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col max-h-[80vh] overflow-hidden"
           >
             {/* Column Header */}
-            <div className="p-3 border-b flex items-center justify-between bg-card/60 rounded-t-lg">
+            <div className="p-3.5 border-b border-[var(--line-2)] flex items-center justify-between bg-[var(--surface-tint)]">
               <div className="flex items-center gap-2">
                 {col.color && (
                   <span
-                    className="w-2.5 h-2.5 rounded-full inline-block"
+                    className="w-2.5 h-2.5 rounded-full inline-block ring-2 ring-[var(--line-2)]"
                     style={{ backgroundColor: col.color }}
                   />
                 )}
-                <h3 className="font-semibold text-sm text-foreground">{col.label}</h3>
+                <h3 className="font-semibold text-xs uppercase tracking-wider text-[var(--ink)]">
+                  {col.label}
+                </h3>
               </div>
-              <Badge variant="secondary" className="text-xs px-2 py-0.5 font-mono">
+              <span className="rounded-full px-2 py-0.5 text-[11px] font-mono font-semibold bg-[var(--solid)] border border-[var(--line-2)] text-[var(--muted)]">
                 {colRecords.length}
-              </Badge>
+              </span>
             </div>
 
             {/* Column Cards */}
-            <div className="p-2 space-y-2 overflow-y-auto flex-1">
+            <div className="p-3 space-y-2.5 overflow-y-auto flex-1">
               {colRecords.length === 0 ? (
-                <div className="py-8 text-center text-xs text-muted-foreground/60 italic">
-                  No records
+                <div className="py-8 text-center text-xs text-[var(--muted)]/60 italic">
+                  No records in this stage
                 </div>
               ) : (
                 colRecords.map((record) => (
-                  <Card
+                  <div
                     key={record.id}
                     onClick={() => onSelectRecord(record)}
-                    className="p-3 cursor-pointer hover:border-primary/50 hover:shadow-sm transition-all bg-card"
+                    className="rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] p-3.5 cursor-pointer hover:border-[var(--line)] hover:shadow-md transition-all space-y-2"
                   >
-                    <CardHeader className="p-0 pb-1.5">
-                      <CardTitle className="text-xs font-semibold leading-snug line-clamp-2">
-                        {record.title}
-                      </CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-0 space-y-1 text-xs text-muted-foreground">
+                    <div className="text-xs font-semibold leading-snug line-clamp-2 text-[var(--ink)]">
+                      {record.title}
+                    </div>
+
+                    <div className="space-y-1 text-xs text-[var(--muted)]">
                       {object.fields
                         .filter(
                           (f) =>
@@ -136,22 +135,30 @@ export function ObjectKanbanView({
                         .slice(0, 3)
                         .map((f) => (
                           <div key={f.id} className="flex justify-between items-center text-[11px]">
-                            <span className="text-muted-foreground/80">{f.label}:</span>
-                            <span className="font-medium text-foreground truncate max-w-[140px]">
-                              {f.field_type === "currency"
-                                ? new Intl.NumberFormat(undefined, {
+                            <span className="text-[var(--muted)]">{f.label}:</span>
+                            <span className="font-medium text-[var(--ink)] truncate max-w-[140px]">
+                              {f.field_type === "currency" ? (
+                                <span className="font-numeric">
+                                  {new Intl.NumberFormat(undefined, {
                                     style: "currency",
                                     currency: "USD",
-                                  }).format(Number(record.values[f.slug]))
-                                : String(record.values[f.slug])}
+                                  }).format(Number(record.values[f.slug]))}
+                                </span>
+                              ) : (
+                                String(record.values[f.slug])
+                              )}
                             </span>
                           </div>
                         ))}
-                      <div className="pt-2 flex justify-between items-center text-[10px] text-muted-foreground/60 border-t border-muted/30">
-                        <span>{new Date(record.created_at).toLocaleDateString()}</span>
+                      <div className="pt-2 flex justify-between items-center text-[10px] text-[var(--muted)]/70 border-t border-[var(--line-2)]/60 font-mono">
+                        <span>{new Date(record.created_at).toLocaleDateString("en-US", {
+                          month: "short",
+                          day: "numeric",
+                          year: "numeric"
+                        })}</span>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                  </div>
                 ))
               )}
             </div>

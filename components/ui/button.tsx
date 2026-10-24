@@ -18,7 +18,7 @@ import { cn } from "@/lib/utils";
 const buttonVariants = cva(
   [
     "inline-flex items-center justify-center gap-2 whitespace-nowrap",
-    "rounded-sm font-medium",
+    "rounded-full font-semibold",
     // `transform` SAIU da lista, e `translate` não entrou no lugar.
     //
     // O recuo do toque é `active:translate-y-px`, lá embaixo. No Tailwind 4 essa
@@ -31,7 +31,7 @@ const buttonVariants = cva(
     // em vez de clicado. A lei pede 80ms, que nem existe na tabela de durações
     // dela própria; transicionar em `duration-fast` (120ms) deixaria a descida
     // E a subida arrastadas, que é o oposto do que o recuo comunica.
-    "transition-[background-color,border-color,color,box-shadow]",
+    "transition-[background-color,border-color,color,box-shadow,transform]",
     "duration-fast ease-out",
     "focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-accent-500 focus-visible:ring-offset-2 focus-visible:ring-offset-bg",
     "disabled:pointer-events-none disabled:opacity-50",
@@ -41,15 +41,19 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        primary: "bg-accent text-accent-foreground hover:bg-accent-hover shadow-xs",
-        default: "bg-accent text-accent-foreground hover:bg-accent-hover shadow-xs",
+        primary:
+          "bg-[var(--pill)] text-[var(--on-pill)] hover:brightness-110 shadow-xs active:scale-[0.98]",
+        default:
+          "bg-[var(--pill)] text-[var(--on-pill)] hover:brightness-110 shadow-xs active:scale-[0.98]",
         secondary:
-          "bg-surface-elevated text-text border border-border hover:border-accent hover:text-accent",
+          "bg-[var(--plain)] text-[var(--text)] border border-[var(--line-2)] hover:bg-[var(--glass-2)] active:scale-[0.98]",
         outline:
-          "bg-transparent text-text border border-border hover:border-accent hover:text-accent",
-        ghost: "bg-transparent text-text hover:bg-accent-soft hover:text-accent",
-        destructive: "bg-error text-white hover:brightness-95 shadow-xs",
-        link: "bg-transparent text-accent underline underline-offset-4 decoration-1 hover:decoration-2 h-auto p-0",
+          "bg-transparent text-[var(--text)] border border-[var(--line-2)] hover:bg-[var(--glass)] active:scale-[0.98]",
+        ghost:
+          "bg-transparent text-[var(--text)] hover:bg-[var(--well)] active:scale-[0.98]",
+        destructive:
+          "bg-[var(--tomato)] text-[var(--on-tomato)] hover:brightness-95 shadow-xs active:scale-[0.98]",
+        link: "bg-transparent text-[var(--text)] underline underline-offset-4 decoration-1 hover:decoration-2 h-auto p-0",
       },
       // Alturas de toque: abaixo de `lg` (mesmo corte que o resto da casca
       // usa pra decidir "é celular/tablet, é mouse") toda variante bate os

@@ -9,8 +9,6 @@ import {
   DialogDescription,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import {
@@ -105,51 +103,52 @@ export function AddFieldModal({ isOpen, onClose, onAddField }: AddFieldModalProp
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <form onSubmit={handleSubmit}>
-          <DialogHeader className="pb-3 border-b">
-            <DialogTitle>Add Custom Field</DialogTitle>
-            <DialogDescription>
+          <DialogHeader className="pb-3 border-b border-[var(--line-2)]">
+            <DialogTitle className="text-base font-bold text-[var(--ink)]">Add Custom Field</DialogTitle>
+            <DialogDescription className="text-xs text-[var(--muted)]">
               Define a new attribute to track on this object.
             </DialogDescription>
           </DialogHeader>
 
           <div className="py-4 space-y-4">
             <div className="space-y-1.5">
-              <Label htmlFor="field_label">Field Label *</Label>
-              <Input
+              <Label htmlFor="field_label" className="text-xs font-semibold text-[var(--ink)]">Field Label *</Label>
+              <input
                 id="field_label"
                 required
                 value={label}
                 onChange={(e) => handleLabelChange(e.target.value)}
                 placeholder="e.g. Bed Count, Fee Status, Property Type"
+                className="w-full rounded-[var(--r-ctl)] border border-[var(--line-2)] bg-[var(--solid)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder-[var(--muted)] shadow-sm focus:outline-none focus:border-[var(--accent)]"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="field_slug">Field Key (API Identifier) *</Label>
-              <Input
+              <Label htmlFor="field_slug" className="text-xs font-semibold text-[var(--ink)]">Field Key (API Identifier) *</Label>
+              <input
                 id="field_slug"
                 required
                 value={slug}
                 onChange={(e) => setSlug(e.target.value)}
                 placeholder="e.g. bed_count, fee_status"
-                className="font-mono text-xs"
+                className="w-full rounded-[var(--r-ctl)] border border-[var(--line-2)] bg-[var(--solid)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder-[var(--muted)] shadow-sm focus:outline-none focus:border-[var(--accent)] font-mono"
               />
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="field_type">Field Type</Label>
+              <Label htmlFor="field_type" className="text-xs font-semibold text-[var(--ink)]">Field Type</Label>
               <Select
                 value={fieldType}
                 onValueChange={(val) => setFieldType(val as CustomFieldType)}
               >
-                <SelectTrigger id="field_type">
+                <SelectTrigger id="field_type" className="rounded-[var(--r-ctl)] border border-[var(--line-2)] bg-[var(--solid)] text-xs text-[var(--ink)]">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent className="max-h-60">
+                <SelectContent className="max-h-60 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--solid)] shadow-[var(--shadow-bento)]">
                   {FIELD_TYPES.map((ft) => (
-                    <SelectItem key={ft.type} value={ft.type}>
+                    <SelectItem key={ft.type} value={ft.type} className="text-xs text-[var(--ink)]">
                       <span className="font-medium">{ft.label}</span>
-                      <span className="text-xs text-muted-foreground ml-2">({ft.desc})</span>
+                      <span className="text-xs text-[var(--muted)] ml-2">({ft.desc})</span>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -158,32 +157,42 @@ export function AddFieldModal({ isOpen, onClose, onAddField }: AddFieldModalProp
 
             {(fieldType === "select" || fieldType === "multi_select") && (
               <div className="space-y-1.5">
-                <Label htmlFor="field_options">Dropdown Options (comma-separated)</Label>
-                <Input
+                <Label htmlFor="field_options" className="text-xs font-semibold text-[var(--ink)]">Dropdown Options (comma-separated)</Label>
+                <input
                   id="field_options"
                   value={optionsText}
                   onChange={(e) => setOptionsText(e.target.value)}
                   placeholder="Option 1, Option 2, Option 3"
+                  className="w-full rounded-[var(--r-ctl)] border border-[var(--line-2)] bg-[var(--solid)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder-[var(--muted)] shadow-sm focus:outline-none focus:border-[var(--accent)]"
                 />
               </div>
             )}
 
             <div className="flex items-center justify-between pt-2">
               <div className="space-y-0.5">
-                <Label htmlFor="field_required">Mandatory Field</Label>
-                <p className="text-xs text-muted-foreground">Require this field on record creation</p>
+                <Label htmlFor="field_required" className="text-xs font-semibold text-[var(--ink)]">Mandatory Field</Label>
+                <p className="text-xs text-[var(--muted)]">Require this field on record creation</p>
               </div>
               <Switch id="field_required" checked={isRequired} onCheckedChange={setIsRequired} />
             </div>
           </div>
 
-          <DialogFooter className="pt-3 border-t">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isSubmitting}>
+          <DialogFooter className="pt-3 border-t border-[var(--line-2)]">
+            <button
+              type="button"
+              onClick={onClose}
+              disabled={isSubmitting}
+              className="btn btn--ghost text-xs"
+            >
               Cancel
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
+            </button>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="btn btn--ink text-xs"
+            >
               {isSubmitting ? "Adding..." : "Add Field"}
-            </Button>
+            </button>
           </DialogFooter>
         </form>
       </DialogContent>

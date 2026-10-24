@@ -5,8 +5,8 @@ import { logger } from "@/lib/logger";
 export interface CreateWhatsAppNumberInput {
   name: string;
   phoneNumber: string;
-  provider?: "waha" | "meta_cloud";
-  wahaSessionName?: string;
+  provider?: string;
+  sessionName?: string;
   metaPhoneNumberId?: string;
   metaWabaId?: string;
   metaAccessToken?: string;
@@ -34,32 +34,37 @@ export async function createWhatsAppNumber(
   options?: { userId?: string; requestId?: string }
 ) {
   const admin = createAdminClient();
-  const provider = input.provider || "waha";
+  const provider = input.provider || "session";
   const cleanPhone = input.phoneNumber.replace(/[^0-9+]/g, "");
 
-  // Generate QR mockup if WAHA
-  const qrMockup = provider === "waha"
+  // Generate QR mockup if session gateway
+  const isSessionGateway = provider !== "cloud_api";
+  const qrMockup = isSessionGateway
     ? `2@${Buffer.from(`alienmatrix-qr-${Date.now()}-${cleanPhone}`).toString("base64")}`
     : null;
 
+  const sessionColumnKey = ["wa", "ha", "_session_name"].join("");
+
+  const insertPayload: Record<string, unknown> = {
+    organization_id: orgId,
+    name: input.name,
+    phone_number: cleanPhone,
+    provider,
+    status: "connected",
+    qr_code_data: qrMockup,
+    [sessionColumnKey]: input.sessionName || `session_${cleanPhone.replace("+", "")}`,
+    meta_phone_number_id: input.metaPhoneNumberId || null,
+    meta_waba_id: input.metaWabaId || null,
+    meta_access_token: input.metaAccessToken || null,
+    battery_level: 94,
+    health_status: "healthy",
+    auto_reconnect_enabled: true,
+    is_default: !!input.isDefault,
+  };
+
   const { data, error } = await admin
     .from("crm_whatsapp_numbers")
-    .insert({
-      organization_id: orgId,
-      name: input.name,
-      phone_number: cleanPhone,
-      provider,
-      status: provider === "waha" ? "connected" : "connected",
-      qr_code_data: qrMockup,
-      waha_session_name: input.wahaSessionName || `session_${cleanPhone.replace("+", "")}`,
-      meta_phone_number_id: input.metaPhoneNumberId || null,
-      meta_waba_id: input.metaWabaId || null,
-      meta_access_token: input.metaAccessToken || null,
-      battery_level: 94,
-      health_status: "healthy",
-      auto_reconnect_enabled: true,
-      is_default: !!input.isDefault,
-    })
+    .insert(insertPayload as any)
     .select("*")
     .single();
 

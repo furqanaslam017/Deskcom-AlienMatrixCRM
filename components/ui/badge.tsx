@@ -19,24 +19,24 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          "border-transparent bg-accent-soft text-accent",
+          "border-[var(--line)] bg-[var(--glass-2)] text-[var(--text)]",
         neutral:
-          "border-border bg-surface-elevated text-text-muted",
+          "border-[var(--line)] bg-[var(--glass-2)] text-[var(--muted)]",
         success:
-          "border-transparent bg-success-bg text-success-fg",
+          "border-transparent bg-[var(--pine)] text-[var(--on-pine)]",
         warning:
-          "border-transparent bg-warning-bg text-warning-fg",
+          "border-transparent bg-[var(--butter)] text-[var(--on-butter)]",
         error:
-          "border-transparent bg-error-bg text-error-fg",
+          "border-transparent bg-[var(--tomato)] text-[var(--on-tomato)]",
         info:
-          "border-transparent bg-info-bg text-info-fg",
+          "border-transparent bg-[var(--pine)]/20 text-[var(--pine)]",
         // shadcn aliases
         secondary:
-          "border-border bg-surface-elevated text-text-muted",
+          "border-[var(--line)] bg-[var(--glass-2)] text-[var(--muted)]",
         destructive:
-          "border-transparent bg-error-bg text-error-fg",
+          "border-transparent bg-[var(--tomato)] text-[var(--on-tomato)]",
         outline:
-          "border-border bg-transparent text-text",
+          "border-[var(--line-2)] bg-transparent text-[var(--text)]",
       },
     },
     defaultVariants: {

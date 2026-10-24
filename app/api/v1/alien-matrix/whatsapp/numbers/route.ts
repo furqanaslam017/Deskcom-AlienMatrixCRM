@@ -7,8 +7,8 @@ import { getWhatsAppNumbers, createWhatsAppNumber } from "@/lib/alien-matrix/wha
 const createNumberSchema = z.object({
   name: z.string().min(1).max(100),
   phoneNumber: z.string().min(5).max(30),
-  provider: z.enum(["waha", "meta_cloud"]).optional(),
-  wahaSessionName: z.string().optional(),
+  provider: z.string().optional(),
+  sessionName: z.string().optional(),
   metaPhoneNumberId: z.string().optional(),
   metaWabaId: z.string().optional(),
   metaAccessToken: z.string().optional(),

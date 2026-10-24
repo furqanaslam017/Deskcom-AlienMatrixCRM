@@ -17,7 +17,7 @@ import {
   Globe,
   Coins,
   ArrowCounterClockwise,
-} from "@phosphor-icons/react";
+} from "@/lib/ui/icons";
 import {
   SUPPORTED_LANGUAGES,
   SUPPORTED_CURRENCIES,
@@ -185,56 +185,65 @@ export function AlienMatrixAdminViewClient({
   }
 
   return (
-    <div className="space-y-6">
-      {/* Navigation Tabs */}
-      <div className="flex border-b border-zinc-200 dark:border-zinc-800 gap-1">
-        <button
-          onClick={() => setActiveTab("roles")}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
-            activeTab === "roles"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-          }`}
-        >
-          <UsersThree size={18} />
-          Papéis & Permissões
-        </button>
+    <div className="flex flex-col gap-6 max-w-[var(--app-max)] mx-auto p-4 md:p-6 animate-in fade-in duration-200">
+      {/* Header Banner */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--line-2)]">
+        <div>
+          <div className="flex items-center gap-3">
+            <span className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--well)] text-[var(--tomato)] border border-[var(--line-2)]">
+              <ShieldCheck size={22} weight="bold" />
+            </span>
+            <div>
+              <h1 className="text-xl md:text-2xl font-bold tracking-tight text-[var(--text)]">
+                Organization Governance &amp; Administration
+              </h1>
+              <p className="text-xs text-[var(--muted)] mt-1">
+                Granular RBAC roles, security &amp; corporate SSO, white-label branding, and data retention recycling.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
 
-        <button
-          onClick={() => setActiveTab("security")}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
-            activeTab === "security"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-          }`}
-        >
-          <LockKey size={18} />
-          Segurança & SSO
-        </button>
+      {/* Rapport Segmented Pill Tabs */}
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-1">
+        <div className="tabs__track p-1 flex items-center gap-1 overflow-x-auto">
+          <button
+            onClick={() => setActiveTab("roles")}
+            data-active={activeTab === "roles"}
+            className="tab"
+          >
+            <UsersThree size={15} />
+            Roles &amp; Permissions ({roles.length})
+          </button>
 
-        <button
-          onClick={() => setActiveTab("branding")}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
-            activeTab === "branding"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-          }`}
-        >
-          <Palette size={18} />
-          Marca & Idiomas
-        </button>
+          <button
+            onClick={() => setActiveTab("security")}
+            data-active={activeTab === "security"}
+            className="tab"
+          >
+            <LockKey size={15} />
+            Security &amp; SSO
+          </button>
 
-        <button
-          onClick={() => setActiveTab("trash")}
-          className={`flex items-center gap-2 px-4 py-3 text-xs font-semibold border-b-2 transition-all ${
-            activeTab === "trash"
-              ? "border-blue-600 text-blue-600 dark:text-blue-400"
-              : "border-transparent text-zinc-500 hover:text-zinc-900 dark:hover:text-zinc-100"
-          }`}
-        >
-          <Trash size={18} />
-          Lixeira & Backup
-        </button>
+          <button
+            onClick={() => setActiveTab("branding")}
+            data-active={activeTab === "branding"}
+            className="tab"
+          >
+            <Palette size={15} />
+            Branding &amp; Locale
+          </button>
+
+          <button
+            onClick={() => setActiveTab("trash")}
+            data-active={activeTab === "trash"}
+            className="tab"
+          >
+            <Trash size={15} />
+            Recycle Bin ({trash.length})
+          </button>
+        </div>
       </div>
 
       {/* TAB 1: ROLES & PERMISSIONS */}
@@ -242,19 +251,19 @@ export function AlienMatrixAdminViewClient({
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Papéis Granulares e Controle de Acesso
+              <h3 className="text-sm font-semibold text-[var(--text)]">
+                Granular RBAC &amp; Access Governance
               </h3>
-              <p className="text-xs text-zinc-500">
-                Defina papéis com permissões a nível de objeto e campo para a equipe.
+              <p className="text-xs text-[var(--muted)] mt-0.5">
+                Define role-based entity permissions across all standard CRM and dynamic custom objects.
               </p>
             </div>
             <button
               onClick={() => setIsRoleModalOpen(true)}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-3.5 py-2 text-xs font-semibold text-white shadow-sm transition-colors"
+              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
             >
-              <Plus size={15} weight="bold" />
-              Novo Papel Customizado
+              <Plus size={14} weight="bold" />
+              New Custom Role
             </button>
           </div>
 
@@ -262,38 +271,38 @@ export function AlienMatrixAdminViewClient({
             {roles.map((r) => (
               <div
                 key={r.id}
-                className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm space-y-3"
+                className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] p-5 backdrop-blur-md space-y-3"
               >
                 <div className="flex items-start justify-between">
                   <div>
-                    <h4 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">{r.name}</h4>
-                    <span className="font-mono text-[11px] text-zinc-400">slug: {r.slug}</span>
+                    <h4 className="text-sm font-bold text-[var(--text)]">{r.name}</h4>
+                    <span className="font-mono text-[11px] text-[var(--muted)]">slug: {r.slug}</span>
                   </div>
                   {r.is_system && (
-                    <span className="rounded-md bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 text-[10px] font-semibold text-zinc-500">
-                      Sistema
+                    <span className="badge badge--plain text-[10px] font-semibold">
+                      System Defined
                     </span>
                   )}
                 </div>
 
-                {r.description && <p className="text-xs text-zinc-500">{r.description}</p>}
+                {r.description && <p className="text-xs text-[var(--muted)]">{r.description}</p>}
 
-                <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
-                  <span className="text-[11px] font-semibold text-zinc-400 uppercase tracking-wider block mb-2">
-                    Permissões Ativas
+                <div className="pt-2 border-t border-[var(--line-2)]">
+                  <span className="text-[11px] font-semibold text-[var(--muted)] uppercase tracking-wider block mb-2">
+                    Active Entity Permissions
                   </span>
                   <div className="flex flex-wrap gap-1.5">
                     {r.permissions?.objects ? (
                       Object.entries(r.permissions.objects).map(([obj, perms]: [string, any]) => (
                         <span
                           key={obj}
-                          className="inline-flex items-center gap-1 rounded-md bg-blue-50 dark:bg-blue-950/40 border border-blue-200 dark:border-blue-900/50 px-2 py-0.5 text-[11px] text-blue-700 dark:text-blue-300"
+                          className="badge badge--plain text-[11px]"
                         >
                           <strong>{obj}:</strong> {Array.isArray(perms) ? perms.join(", ") : perms}
                         </span>
                       ))
                     ) : (
-                      <span className="text-xs text-zinc-400">Acesso Total</span>
+                      <span className="text-xs text-[var(--muted)]">Full Unrestricted Access</span>
                     )}
                   </div>
                 </div>
@@ -306,31 +315,31 @@ export function AlienMatrixAdminViewClient({
       {/* TAB 2: SECURITY & SSO */}
       {activeTab === "security" && (
         <form onSubmit={handleSaveSecurity} className="max-w-2xl space-y-6">
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-5">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <Key size={18} className="text-blue-500" /> Autenticação & 2FA
+          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] p-6 backdrop-blur-md space-y-5">
+            <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
+              <Key size={18} className="text-[var(--tomato)]" /> Authentication &amp; 2FA Policies
             </h3>
 
-            <div className="flex items-center justify-between p-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200 dark:border-zinc-800">
+            <div className="flex items-center justify-between p-4 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] shadow-sm">
               <div>
-                <div className="text-xs font-semibold text-zinc-900 dark:text-zinc-100">
-                  Exigir Autenticação em 2 Etapas (2FA / TOTP)
+                <div className="text-xs font-semibold text-[var(--text)]">
+                  Enforce Two-Factor Authentication (2FA / TOTP)
                 </div>
-                <div className="text-[11px] text-zinc-500">
-                  Obriga todos os membros desta organização a usarem um app autenticador ao entrar.
+                <div className="text-[11px] text-[var(--muted)] mt-0.5">
+                  Mandates an authenticator app code for all workspace members during sign-in.
                 </div>
               </div>
               <input
                 type="checkbox"
                 checked={security.enforce_2fa}
                 onChange={(e) => setSecurity({ ...security, enforce_2fa: e.target.checked })}
-                className="h-4 w-4 rounded text-blue-600 focus:ring-blue-500"
+                className="h-4 w-4 rounded accent-emerald-600 cursor-pointer"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Tempo Limite de Sessão (minutos)
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                Session Idle Timeout (minutes)
               </label>
               <input
                 type="number"
@@ -338,57 +347,57 @@ export function AlienMatrixAdminViewClient({
                 onChange={(e) =>
                   setSecurity({ ...security, session_timeout_minutes: parseInt(e.target.value, 10) || 1440 })
                 }
-                className="w-full sm:w-48 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full sm:w-48 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] font-numeric focus:outline-none focus:border-[var(--pill)]"
               />
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <Globe size={18} className="text-purple-500" /> Single Sign-On (SSO Corporativo)
+          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] p-6 backdrop-blur-md space-y-4">
+            <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
+              <Globe size={18} className="text-purple-600 dark:text-purple-400" /> Enterprise Single Sign-On (SSO)
             </h3>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Provedor de SSO
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                SSO Identity Provider
               </label>
               <select
                 value={security.sso_provider}
                 onChange={(e) => setSecurity({ ...security, sso_provider: e.target.value })}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
               >
-                <option value="none">Desativado (Apenas Email & Senha)</option>
+                <option value="none">Disabled (Email &amp; Secure Password)</option>
                 <option value="google">Google Workspace SSO</option>
                 <option value="microsoft">Microsoft Azure AD / Entra ID</option>
-                <option value="saml_oidc">SAML 2.0 / OpenID Connect Corporativo</option>
+                <option value="saml_oidc">SAML 2.0 / OpenID Connect Enterprise</option>
               </select>
             </div>
 
             {security.sso_provider !== "none" && (
-              <div className="space-y-3 pt-2 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="space-y-3 pt-3 border-t border-[var(--line-2)]">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Domínio Corporativo Restrito
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Restricted Corporate Domain
                   </label>
                   <input
                     type="text"
                     value={security.sso_domain || ""}
                     onChange={(e) => setSecurity({ ...security, sso_domain: e.target.value })}
                     placeholder="tenant.example.com"
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Client ID / App ID
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Client ID / Application ID
                   </label>
                   <input
                     type="text"
                     value={security.sso_client_id || ""}
                     onChange={(e) => setSecurity({ ...security, sso_client_id: e.target.value })}
                     placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] font-mono focus:outline-none focus:border-[var(--pill)]"
                   />
                 </div>
               </div>
@@ -399,13 +408,13 @@ export function AlienMatrixAdminViewClient({
             <button
               type="submit"
               disabled={isSavingSecurity}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-2 text-xs font-semibold text-white shadow-sm transition-colors disabled:opacity-50"
+              className="btn btn--ink text-xs font-semibold px-5 py-2 inline-flex items-center gap-1.5"
             >
               {isSavingSecurity ? <CircleNotch size={14} className="animate-spin" /> : <Check size={14} />}
-              Save Security Settings
+              Save Security Configuration
             </button>
             {securitySuccess && (
-              <span className="text-xs text-emerald-600 font-semibold">Saved successfully!</span>
+              <span className="badge badge--pine text-xs font-semibold">Security configuration saved!</span>
             )}
           </div>
         </form>
@@ -414,43 +423,43 @@ export function AlienMatrixAdminViewClient({
       {/* TAB 3: BRANDING & LOCALIZATION */}
       {activeTab === "branding" && (
         <form onSubmit={handleSaveSettings} className="max-w-2xl space-y-6">
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <Palette size={18} className="text-pink-500" /> Identidade Visual (White-Label)
+          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] p-6 backdrop-blur-md space-y-4">
+            <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
+              <Palette size={18} className="text-[var(--tomato)]" /> White-Label Brand Presentation
             </h3>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Nome da Marca / Empresa
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Brand / Workspace Display Name
                 </label>
                 <input
                   type="text"
                   value={tenantSettings.brand_name || ""}
                   onChange={(e) => setTenantSettings({ ...tenantSettings, brand_name: e.target.value })}
                   placeholder="AlienMatrix CRM"
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  URL do Logo
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Logo Asset URL
                 </label>
                 <input
                   type="url"
                   value={tenantSettings.logo_url || ""}
                   onChange={(e) => setTenantSettings({ ...tenantSettings, logo_url: e.target.value })}
                   placeholder="https://example.com/logo.png"
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-2">
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Cor Primária
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Primary Theme Color
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -467,14 +476,14 @@ export function AlienMatrixAdminViewClient({
                     onChange={(e) =>
                       setTenantSettings({ ...tenantSettings, primary_color_hex: e.target.value })
                     }
-                    className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs font-mono"
+                    className="flex-1 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3 py-1.5 text-xs font-mono"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Cor de Destaque (Accent)
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Accent Color
                 </label>
                 <div className="flex items-center gap-2">
                   <input
@@ -491,26 +500,26 @@ export function AlienMatrixAdminViewClient({
                     onChange={(e) =>
                       setTenantSettings({ ...tenantSettings, accent_color_hex: e.target.value })
                     }
-                    className="flex-1 rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-2 py-1.5 text-xs font-mono"
+                    className="flex-1 rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3 py-1.5 text-xs font-mono"
                   />
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-6 shadow-sm space-y-4">
-            <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100 flex items-center gap-2">
-              <Translate size={18} className="text-emerald-500" /> Idioma, Moeda & Fuso Horário
+          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] p-6 backdrop-blur-md space-y-4">
+            <h3 className="text-sm font-bold text-[var(--text)] flex items-center gap-2">
+              <Translate size={18} className="text-emerald-600 dark:text-emerald-400" /> Locale, Currency &amp; Timezone
             </h3>
 
             <div>
-              <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                Idioma Padrão do Sistema
+              <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                Default Workspace Language
               </label>
               <select
                 value={tenantSettings.language || "en"}
                 onChange={(e) => setTenantSettings({ ...tenantSettings, language: e.target.value as any })}
-                className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none font-medium"
+                className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)] font-medium"
               >
                 {SUPPORTED_LANGUAGES.map((lang) => (
                   <option key={lang.code} value={lang.code}>
@@ -522,13 +531,13 @@ export function AlienMatrixAdminViewClient({
 
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Moeda Padrão
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Default Currency
                 </label>
                 <select
                   value={tenantSettings.currency || "USD"}
                   onChange={(e) => setTenantSettings({ ...tenantSettings, currency: e.target.value })}
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 >
                   {SUPPORTED_CURRENCIES.map((cur) => (
                     <option key={cur.code} value={cur.code}>
@@ -539,13 +548,13 @@ export function AlienMatrixAdminViewClient({
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Fuso Horário
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Timezone
                 </label>
                 <select
                   value={tenantSettings.timezone || "UTC"}
                   onChange={(e) => setTenantSettings({ ...tenantSettings, timezone: e.target.value })}
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 >
                   {COMMON_TIMEZONES.map((tz) => (
                     <option key={tz} value={tz}>
@@ -561,13 +570,13 @@ export function AlienMatrixAdminViewClient({
             <button
               type="submit"
               disabled={isSavingSettings}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-5 py-2 text-xs font-semibold text-white shadow-sm transition-colors disabled:opacity-50"
+              className="btn btn--ink text-xs font-semibold px-5 py-2 inline-flex items-center gap-1.5"
             >
               {isSavingSettings ? <CircleNotch size={14} className="animate-spin" /> : <Check size={14} />}
-              Save Preferences
+              Save Brand Preferences
             </button>
             {settingsSuccess && (
-              <span className="text-xs text-emerald-600 font-semibold">Preferências atualizadas!</span>
+              <span className="badge badge--pine text-xs font-semibold">Preferences saved successfully!</span>
             )}
           </div>
         </form>
@@ -578,52 +587,52 @@ export function AlienMatrixAdminViewClient({
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-bold text-zinc-900 dark:text-zinc-100">
-                Recycle Bin & Deleted Record Recovery
+              <h3 className="text-sm font-semibold text-[var(--text)]">
+                Recycle Bin &amp; Soft-Deleted Records
               </h3>
-              <p className="text-xs text-zinc-500">
-                Deleted items can be restored or permanently purged.
+              <p className="text-xs text-[var(--muted)] mt-0.5">
+                Soft-deleted entities can be restored to active state or permanently expunged.
               </p>
             </div>
 
             <a
               href="/api/v1/alien-matrix/export-all"
               download
-              className="inline-flex items-center gap-1.5 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3.5 py-2 text-xs font-semibold text-zinc-700 dark:text-zinc-300 hover:bg-zinc-50 dark:hover:bg-zinc-800 shadow-sm transition-colors"
+              className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
             >
               <DownloadSimple size={15} />
-              Baixar Backup Completo da Empresa (JSON)
+              Export Organization Backup (JSON)
             </a>
           </div>
 
-          <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 overflow-hidden shadow-sm">
+          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden">
             <table className="w-full text-left text-xs">
-              <thead className="bg-zinc-50 dark:bg-zinc-800/50 border-b border-zinc-200 dark:border-zinc-800 uppercase font-semibold text-zinc-500 tracking-wider">
+              <thead className="bg-[var(--well)]/80 border-b border-[var(--line-2)] uppercase font-semibold text-[var(--muted)] tracking-wider">
                 <tr>
-                  <th className="py-3 px-4">Tipo</th>
-                  <th className="py-3 px-4">Nome do Registro</th>
-                  <th className="py-3 px-4">Data da Exclusão</th>
-                  <th className="py-3 px-4 text-right">Ação</th>
+                  <th className="py-3 px-4">Entity Type</th>
+                  <th className="py-3 px-4">Record Identifier</th>
+                  <th className="py-3 px-4">Deletion Timestamp</th>
+                  <th className="py-3 px-4 text-right">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-zinc-100 dark:divide-zinc-800">
+              <tbody className="divide-y divide-[var(--line-2)]">
                 {trash.map((item) => (
-                  <tr key={item.id} className="hover:bg-zinc-50/50 dark:hover:bg-zinc-800/30">
-                    <td className="py-3.5 px-4 uppercase font-bold text-[10px] text-zinc-500">
+                  <tr key={item.id} className="hover:bg-[var(--well)]/50 transition-colors">
+                    <td className="py-3.5 px-4 uppercase font-bold text-[10px] text-[var(--muted)]">
                       {item.entity_type}
                     </td>
-                    <td className="py-3.5 px-4 font-semibold text-zinc-900 dark:text-zinc-100">
+                    <td className="py-3.5 px-4 font-semibold text-[var(--text)]">
                       {item.entity_name}
                     </td>
-                    <td className="py-3.5 px-4 text-zinc-500">
+                    <td className="py-3.5 px-4 text-[var(--muted)]">
                       {new Date(item.deleted_at).toLocaleString()}
                     </td>
                     <td className="py-3.5 px-4 text-right">
                       <button
                         onClick={() => handleRestore(item.id)}
-                        className="inline-flex items-center gap-1 px-3 py-1 rounded-lg bg-blue-50 text-blue-600 dark:bg-blue-950/40 dark:text-blue-400 text-xs font-semibold hover:bg-blue-100 transition-colors"
+                        className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1 text-emerald-600 dark:text-emerald-400"
                       >
-                        <ArrowCounterClockwise size={13} /> Restaurar
+                        <ArrowCounterClockwise size={13} /> Restore
                       </button>
                     </td>
                   </tr>
@@ -631,8 +640,8 @@ export function AlienMatrixAdminViewClient({
 
                 {trash.length === 0 && (
                   <tr>
-                    <td colSpan={4} className="py-12 text-center text-zinc-400">
-                      The recycle bin is empty. No deleted items found.
+                    <td colSpan={4} className="py-12 text-center text-xs text-[var(--muted)]">
+                      The recycle bin is empty. No deleted records found.
                     </td>
                   </tr>
                 )}
@@ -645,23 +654,28 @@ export function AlienMatrixAdminViewClient({
       {/* New Role Modal */}
       {isRoleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="relative w-full max-w-md rounded-[var(--r-card)] bg-[var(--solid)] border border-[var(--rim)] shadow-[var(--shadow-pop)] p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[var(--line-2)]">
               <div className="flex items-center gap-2">
-                <UsersThree size={20} className="text-blue-500" />
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  Criar Papel Customizado
+                <span className="w-8 h-8 rounded-full bg-[var(--well)] border border-[var(--line-2)] flex items-center justify-center text-[var(--tomato)]">
+                  <UsersThree size={16} weight="bold" />
+                </span>
+                <h3 className="text-sm font-bold text-[var(--text)]">
+                  Create Custom RBAC Role
                 </h3>
               </div>
-              <button onClick={() => setIsRoleModalOpen(false)} className="text-zinc-400 hover:text-zinc-600">
-                <X size={18} />
+              <button
+                onClick={() => setIsRoleModalOpen(false)}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--well)]"
+              >
+                <X size={15} />
               </button>
             </div>
 
             <form onSubmit={handleCreateRole} className="mt-4 space-y-3.5">
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Nome do Papel *
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Role Name *
                 </label>
                 <input
                   type="text"
@@ -673,53 +687,53 @@ export function AlienMatrixAdminViewClient({
                       setNewRoleSlug(e.target.value.toLowerCase().replace(/\s+/g, "_"));
                     }
                   }}
-                  placeholder="Ex: Corretor Sênior"
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="e.g. Senior Commercial Broker"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Identificador (Slug) *
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Key Identifier (Slug) *
                 </label>
                 <input
                   type="text"
                   required
                   value={newRoleSlug}
                   onChange={(e) => setNewRoleSlug(e.target.value)}
-                  placeholder="corretor_senior"
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 font-mono focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="senior_commercial_broker"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] font-mono focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Descrição
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Description
                 </label>
                 <textarea
                   rows={2}
                   value={newRoleDesc}
                   onChange={(e) => setNewRoleDesc(e.target.value)}
-                  placeholder="Acesso a oportunidades e propostas, sem permissão de apagar..."
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Granted deals and proposal permissions without delete authority..."
+                  className="w-full rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--line-2)]">
                 <button
                   type="button"
                   onClick={() => setIsRoleModalOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"
+                  className="btn btn--ghost btn--sm text-xs font-medium"
                 >
-                  Cancelar
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSavingRole}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                  className="btn btn--ink btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
                 >
                   {isSavingRole ? <CircleNotch size={14} className="animate-spin" /> : <Check size={14} />}
-                  Criar Papel
+                  Create Role
                 </button>
               </div>
             </form>

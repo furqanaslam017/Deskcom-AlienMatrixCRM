@@ -1,8 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
-import { Handshake, Plus, Funnel, CurrencyDollar, CheckCircle, Clock, MagnifyingGlass, User, Buildings } from "@phosphor-icons/react";
+import {
+  Handshake,
+  Plus,
+  Funnel,
+  CurrencyDollar,
+  CheckCircle,
+  Clock,
+  MagnifyingGlass,
+  User,
+  Kanban,
+  Table as TableIcon,
+} from "@/lib/ui/icons";
 import { ConvertLeadModal } from "./ConvertLeadModal";
+import { cn } from "@/lib/utils";
 
 interface Deal {
   id: string;
@@ -28,6 +40,7 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
   const [selectedPipelineId, setSelectedPipelineId] = useState<string>(
     pipelines[0]?.id || ""
   );
+  const [viewMode, setViewMode] = useState<"kanban" | "table">("kanban");
   const [isConvertModalOpen, setIsConvertModalOpen] = useState(false);
   const [selectedLeadForConvert, setSelectedLeadForConvert] = useState<any>(null);
 
@@ -60,171 +73,289 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
 
   return (
     <div className="space-y-6">
-      {/* Top Bar with Metrics */}
+      {/* 1. Top KPI Bento Summary Row */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
-          <div className="flex items-center justify-between text-zinc-500 text-xs font-semibold uppercase tracking-wider">
+        {/* Total Pipeline Value */}
+        <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] p-5 shadow-[var(--shadow-bento)] backdrop-blur-md">
+          <div className="flex items-center justify-between text-[var(--muted)] text-xs font-semibold uppercase tracking-wider">
             <span>Pipeline Total</span>
-            <CurrencyDollar size={18} className="text-emerald-500" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--pine)]/15 text-[var(--pine)]">
+              <CurrencyDollar size={16} />
+            </span>
           </div>
-          <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+          <div className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text)]">
             {formatMoney(totalValueCents)}
           </div>
-          <div className="mt-1 text-xs text-zinc-500">{filteredDeals.length} negócios no total</div>
+          <div className="mt-1 text-xs text-[var(--muted)]">
+            {filteredDeals.length} active opportunities
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
-          <div className="flex items-center justify-between text-zinc-500 text-xs font-semibold uppercase tracking-wider">
+        {/* Win Rate */}
+        <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] p-5 shadow-[var(--shadow-bento)] backdrop-blur-md">
+          <div className="flex items-center justify-between text-[var(--muted)] text-xs font-semibold uppercase tracking-wider">
             <span>Win Rate</span>
-            <CheckCircle size={18} className="text-blue-500" />
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--butter)]/20 text-[var(--butter)]">
+              <CheckCircle size={16} />
+            </span>
           </div>
-          <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
-            {filteredDeals.length > 0 ? `${Math.round((wonDealsCount / filteredDeals.length) * 100)}%` : "0%"}
+          <div className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text)]">
+            {filteredDeals.length > 0
+              ? `${Math.round((wonDealsCount / filteredDeals.length) * 100)}%`
+              : "0%"}
           </div>
-          <div className="mt-1 text-xs text-zinc-500">{wonDealsCount} negócios ganhos</div>
+          <div className="mt-1 text-xs text-[var(--muted)]">
+            {wonDealsCount} deals closed won
+          </div>
         </div>
 
-        <div className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-5 shadow-sm">
-          <div className="flex items-center justify-between text-zinc-500 text-xs font-semibold uppercase tracking-wider">
-            <span>Ticket Médio</span>
-            <Funnel size={18} className="text-purple-500" />
+        {/* Average Deal Value */}
+        <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] p-5 shadow-[var(--shadow-bento)] backdrop-blur-md">
+          <div className="flex items-center justify-between text-[var(--muted)] text-xs font-semibold uppercase tracking-wider">
+            <span>Average Deal Size</span>
+            <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[var(--tomato)]/15 text-[var(--tomato)]">
+              <Funnel size={16} />
+            </span>
           </div>
-          <div className="mt-2 text-2xl font-bold text-zinc-900 dark:text-zinc-100">
+          <div className="mt-2 text-2xl sm:text-3xl font-bold tracking-tight text-[var(--text)]">
             {filteredDeals.length > 0
               ? formatMoney(Math.round(totalValueCents / filteredDeals.length))
               : "$0.00"}
           </div>
-          <div className="mt-1 text-xs text-zinc-500">Média por oportunidade</div>
+          <div className="mt-1 text-xs text-[var(--muted)]">
+            Average per deal
+          </div>
         </div>
       </div>
 
-      {/* Control Header */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        <div className="flex items-center gap-3">
+      {/* 2. Control Toolbar */}
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2.5">
+          {/* Pill Search */}
           <div className="relative">
-            <MagnifyingGlass size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400" />
+            <MagnifyingGlass
+              size={15}
+              className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]"
+            />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Buscar negócio ou contato..."
-              className="w-64 rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 pl-9 pr-4 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Search deals or contacts..."
+              className="w-64 rounded-full border border-[var(--line-2)] bg-[var(--solid)] pl-9 pr-4 py-2 text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--pill)] transition-all"
             />
           </div>
 
+          {/* Pipeline Selector Pill */}
           {pipelines.length > 1 && (
             <select
               value={selectedPipelineId}
               onChange={(e) => setSelectedPipelineId(e.target.value)}
-              className="rounded-xl border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-3 py-2 text-xs text-zinc-800 dark:text-zinc-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="rounded-full border border-[var(--line-2)] bg-[var(--solid)] px-3.5 py-2 text-xs font-medium text-[var(--text)] focus:outline-none focus:ring-2 focus:ring-[var(--pill)] transition-all cursor-pointer"
             >
               {pipelines.map((p) => (
                 <option key={p.id} value={p.id}>
-                  Funil: {p.name}
+                  Pipeline: {p.name}
                 </option>
               ))}
             </select>
           )}
+
+          {/* View Mode Toggle */}
+          <div className="flex items-center rounded-full border border-[var(--line-2)] bg-[var(--solid)] p-0.5">
+            <button
+              type="button"
+              onClick={() => setViewMode("kanban")}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all",
+                viewMode === "kanban"
+                  ? "bg-[var(--pill)] text-[var(--on-pill)] shadow-xs"
+                  : "text-[var(--muted)] hover:text-[var(--text)]"
+              )}
+            >
+              <Kanban size={14} />
+              <span>Kanban</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => setViewMode("table")}
+              className={cn(
+                "flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-semibold transition-all",
+                viewMode === "table"
+                  ? "bg-[var(--pill)] text-[var(--on-pill)] shadow-xs"
+                  : "text-[var(--muted)] hover:text-[var(--text)]"
+              )}
+            >
+              <TableIcon size={14} />
+              <span>Table</span>
+            </button>
+          </div>
         </div>
 
+        {/* Primary Action Button */}
         <button
+          type="button"
           onClick={() => {
             setSelectedLeadForConvert({
-              id: "demo-lead-" + Date.now(),
-              title: "Lead Qualificado WhatsApp",
+              id: "lead-" + Date.now(),
+              title: "Qualified Inbound WhatsApp Deal",
               value_cents: 350000,
               currency: "USD",
             });
             setIsConvertModalOpen(true);
           }}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--pill)] hover:brightness-110 active:scale-[0.98] px-5 py-2 text-xs font-semibold text-[var(--on-pill)] shadow-xs transition-all cursor-pointer"
         >
-          <Handshake size={16} weight="bold" />
-          Converter Lead em Negócio
+          <Handshake size={15} />
+          <span>Convert Lead to Deal</span>
         </button>
       </div>
 
-      {/* Kanban / Stage Columns */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {(activePipelineStages.length > 0 ? activePipelineStages : [{ id: "all", name: "Oportunidades", color: "#3b82f6", position: 1 }]).map((stage) => {
-          const stageDeals = filteredDeals.filter((d) => !d.stage?.id || d.stage.id === stage.id);
-          const stageTotal = stageDeals.reduce((sum, d) => sum + (d.value_cents || 0), 0);
+      {/* 3. Main View: Kanban Board or Table */}
+      {viewMode === "kanban" ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {(activePipelineStages.length > 0
+            ? activePipelineStages
+            : [{ id: "all", name: "Opportunities", color: "#2f5c50", position: 1 }]
+          ).map((stage) => {
+            const stageDeals = filteredDeals.filter(
+              (d) => !d.stage?.id || d.stage.id === stage.id
+            );
+            const stageTotal = stageDeals.reduce((sum, d) => sum + (d.value_cents || 0), 0);
 
-          return (
-            <div
-              key={stage.id}
-              className="rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-zinc-50/50 dark:bg-zinc-900/50 p-4 flex flex-col min-h-[400px]"
-            >
-              <div className="flex items-center justify-between pb-3 border-b border-zinc-200/80 dark:border-zinc-800">
-                <div className="flex items-center gap-2">
-                  <span
-                    className="h-2.5 w-2.5 rounded-full"
-                    style={{ backgroundColor: stage.color || "#3b82f6" }}
-                  />
-                  <h3 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100">
-                    {stage.name}
-                  </h3>
-                  <span className="rounded-full bg-zinc-200/80 dark:bg-zinc-800 px-2 py-0.5 text-[10px] font-bold text-zinc-600 dark:text-zinc-400">
-                    {stageDeals.length}
-                  </span>
+            return (
+              <div
+                key={stage.id}
+                className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)]/70 backdrop-blur-md p-4 flex flex-col min-h-[460px] shadow-[var(--shadow-bento)]"
+              >
+                {/* Stage Header */}
+                <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">
+                  <div className="flex items-center gap-2">
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
+                      style={{ backgroundColor: stage.color || "var(--pine)" }}
+                    />
+                    <h3 className="text-sm font-semibold tracking-tight text-[var(--text)]">
+                      {stage.name}
+                    </h3>
+                    <span className="rounded-full bg-[var(--well)] px-2 py-0.5 text-[10px] font-bold text-[var(--muted)]">
+                      {stageDeals.length}
+                    </span>
+                  </div>
+                  <div className="text-xs font-semibold text-[var(--muted)]">
+                    {formatMoney(stageTotal)}
+                  </div>
                 </div>
-                <div className="text-xs font-semibold text-zinc-600 dark:text-zinc-400">
-                  {formatMoney(stageTotal)}
+
+                {/* Cards Container */}
+                <div className="mt-3.5 space-y-3 flex-1 overflow-y-auto pr-1">
+                  {stageDeals.map((deal) => (
+                    <div
+                      key={deal.id}
+                      className="group rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] p-4 shadow-xs hover:shadow-[var(--shadow-pop)] hover:border-[var(--line)] transition-all cursor-pointer"
+                    >
+                      <div className="flex items-start justify-between gap-2">
+                        <h4 className="text-sm font-semibold text-[var(--text)] group-hover:text-[var(--pine)] transition-colors">
+                          {deal.title}
+                        </h4>
+                        <span className="text-xs font-bold text-[var(--pine)] shrink-0">
+                          {formatMoney(deal.value_cents, deal.currency)}
+                        </span>
+                      </div>
+
+                      {deal.contact && (
+                        <div className="mt-2.5 flex items-center gap-1.5 text-xs text-[var(--muted)]">
+                          <User size={13} />
+                          <span className="truncate">{deal.contact.name}</span>
+                        </div>
+                      )}
+
+                      <div className="mt-3 pt-2.5 border-t border-[var(--line)] flex items-center justify-between text-[11px] text-[var(--muted)]">
+                        <div className="flex items-center gap-1">
+                          <Clock size={12} />
+                          <span>{new Date(deal.created_at).toLocaleDateString()}</span>
+                        </div>
+                        <span className="rounded-full bg-[var(--well)] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[var(--text)]">
+                          {deal.status}
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+
+                  {stageDeals.length === 0 && (
+                    <div className="flex flex-col items-center justify-center h-36 rounded-[var(--r-tile)] border border-dashed border-[var(--line-2)] text-xs text-[var(--muted)]">
+                      No deals in this stage
+                    </div>
+                  )}
                 </div>
               </div>
-
-              {/* Cards */}
-              <div className="mt-3 space-y-3 flex-1 overflow-y-auto">
-                {stageDeals.map((deal) => (
-                  <div
+            );
+          })}
+        </div>
+      ) : (
+        /* Table View */
+        <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden p-2">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs border-collapse">
+              <thead className="border-b border-[var(--line)] uppercase font-semibold text-[var(--muted)] tracking-wider">
+                <tr>
+                  <th className="py-3 px-4">Deal Title</th>
+                  <th className="py-3 px-4">Contact</th>
+                  <th className="py-3 px-4">Stage</th>
+                  <th className="py-3 px-4">Created Date</th>
+                  <th className="py-3 px-4 text-right">Value</th>
+                  <th className="py-3 px-4 text-center">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-[var(--line)]">
+                {filteredDeals.map((deal) => (
+                  <tr
                     key={deal.id}
-                    className="group rounded-xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm hover:shadow-md hover:border-blue-400 dark:hover:border-blue-500 transition-all cursor-pointer"
+                    className="hover:bg-[var(--well)] transition-colors cursor-pointer"
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                        {deal.title}
-                      </h4>
-                      <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400 shrink-0">
-                        {formatMoney(deal.value_cents, deal.currency)}
+                    <td className="py-3.5 px-4 font-semibold text-[var(--text)]">
+                      {deal.title}
+                    </td>
+                    <td className="py-3.5 px-4 text-[var(--muted)]">
+                      {deal.contact?.name || "—"}
+                    </td>
+                    <td className="py-3.5 px-4">
+                      <span className="inline-block rounded-full bg-[var(--well)] px-2 py-0.5 text-[11px] font-medium text-[var(--text)]">
+                        {deal.stage?.name || "General"}
                       </span>
-                    </div>
-
-                    {deal.contact && (
-                      <div className="mt-2.5 flex items-center gap-1.5 text-xs text-zinc-500">
-                        <User size={13} />
-                        <span className="truncate">{deal.contact.name}</span>
-                      </div>
-                    )}
-
-                    <div className="mt-3 pt-2 border-t border-zinc-100 dark:border-zinc-800/80 flex items-center justify-between text-[11px] text-zinc-400">
-                      <div className="flex items-center gap-1">
-                        <Clock size={12} />
-                        <span>{new Date(deal.created_at).toLocaleDateString()}</span>
-                      </div>
-                      <span className="capitalize font-medium text-zinc-600 dark:text-zinc-300">
+                    </td>
+                    <td className="py-3.5 px-4 text-[var(--muted)]">
+                      {new Date(deal.created_at).toLocaleDateString()}
+                    </td>
+                    <td className="py-3.5 px-4 text-right font-bold text-[var(--pine)]">
+                      {formatMoney(deal.value_cents, deal.currency)}
+                    </td>
+                    <td className="py-3.5 px-4 text-center">
+                      <span className="inline-block uppercase text-[10px] font-bold rounded-full px-2 py-0.5 bg-[var(--well)] text-[var(--text)]">
                         {deal.status}
                       </span>
-                    </div>
-                  </div>
+                    </td>
+                  </tr>
                 ))}
-
-                {stageDeals.length === 0 && (
-                  <div className="flex flex-col items-center justify-center h-32 rounded-xl border border-dashed border-zinc-200 dark:border-zinc-800 text-xs text-zinc-400">
-                    No deals in this stage
-                  </div>
+                {filteredDeals.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-12 text-center text-xs text-[var(--muted)]">
+                      No deals match your search criteria.
+                    </td>
+                  </tr>
                 )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
 
+      {/* Convert Lead Modal */}
       <ConvertLeadModal
         isOpen={isConvertModalOpen}
         onClose={() => setIsConvertModalOpen(false)}
         lead={selectedLeadForConvert}
         onConverted={() => {
-          // Add newly converted deal to local list
           const newDeal: Deal = {
             id: "deal-" + Date.now(),
             title: selectedLeadForConvert.title,

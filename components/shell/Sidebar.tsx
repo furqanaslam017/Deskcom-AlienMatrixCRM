@@ -3,7 +3,8 @@ import Link from "next/link";
 import { useT } from "@/hooks/i18n/useT";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { ArrowRight, CaretDoubleLeft, CaretDoubleRight, CaretDown, Gear } from "@/lib/ui/icons";
+import { ArrowRight, CaretDoubleLeft, CaretDoubleRight, CaretDown, Gear, Moon, Sun } from "@/lib/ui/icons";
+import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { toggleSidebar } from "@/app/actions/shell/toggleSidebar";
 import { useAuth } from "@/hooks/auth/AuthProvider";
@@ -337,15 +338,18 @@ export function SidebarContent({
                           aria-current={isActive ? "page" : undefined}
                           onClick={onNavigate}
                           className={cn(
-                            "relative flex items-center gap-3 rounded-md px-3 py-1 text-sm transition-colors",
+                            "relative flex items-center gap-3 rounded-full px-3 py-1.5 text-sm font-medium transition-all",
                             isActive
-                              ? "bg-accent text-accent-foreground"
-                              : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-                            collapsed && "justify-center px-2",
+                              ? "bg-[var(--pill)] text-[var(--on-pill)] shadow-xs font-semibold"
+                              : "text-[var(--text)] hover:bg-[var(--well)]",
+                            collapsed && "justify-center px-0 w-10 h-10 mx-auto",
                           )}
                         >
                           <Icon size={18} weight={isActive ? "fill" : "regular"} aria-hidden />
                           {!collapsed && <span className="truncate">{t(item.label)}</span>}
+                          {collapsed && isActive && (
+                            <span className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[var(--butter)]" />
+                          )}
                           {item.healthDot && (
                             <ConnectionHealthDot
                               className={cn(collapsed ? "absolute top-1.5 right-1.5" : "ml-auto")}
@@ -365,11 +369,11 @@ export function SidebarContent({
                         aria-current={pathname === group.hub.href ? "page" : undefined}
                         onClick={onNavigate}
                         className={cn(
-                          "flex items-center gap-3 rounded-md px-3 py-1 text-sm transition-colors",
+                          "flex items-center gap-3 rounded-full px-3 py-1.5 text-sm font-medium transition-all",
                           pathname === group.hub.href
-                            ? "bg-accent text-accent-foreground"
-                            : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-                          collapsed && "justify-center px-2",
+                            ? "bg-[var(--pill)] text-[var(--on-pill)] shadow-xs font-semibold"
+                            : "text-[var(--text)] hover:bg-[var(--well)]",
+                          collapsed && "justify-center px-0 w-10 h-10 mx-auto",
                         )}
                       >
                         <ArrowRight size={18} aria-hidden />
@@ -383,7 +387,7 @@ export function SidebarContent({
           );
         })}
       </nav>
-      <div className="border-t p-2">
+      <div className="border-t border-[var(--line)] p-2 space-y-1">
         {rodape && (
           <Link
             href={rodape.href}
@@ -391,20 +395,42 @@ export function SidebarContent({
             aria-current={pathname.startsWith(rodape.href) ? "page" : undefined}
             onClick={onNavigate}
             className={cn(
-              "mb-1 flex items-center gap-3 rounded-md px-3 py-1 text-sm transition-colors",
+              "flex items-center gap-3 rounded-full px-3 py-1.5 text-sm font-medium transition-all",
               pathname.startsWith(rodape.href)
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground hover:bg-accent/50 hover:text-foreground",
-              collapsed && "justify-center px-2",
+                ? "bg-[var(--pill)] text-[var(--on-pill)] shadow-xs font-semibold"
+                : "text-[var(--text)] hover:bg-[var(--well)]",
+              collapsed && "justify-center px-0 w-10 h-10 mx-auto",
             )}
           >
             <Gear size={18} aria-hidden />
             {!collapsed && <span className="truncate">{t(rodape.label)}</span>}
           </Link>
         )}
+        <ThemeToggleButton collapsed={collapsed} />
         <VersionFooter collapsed={collapsed} onNavigate={onNavigate} />
       </div>
     </>
+  );
+}
+
+function ThemeToggleButton({ collapsed }: { collapsed: boolean }) {
+  const { resolvedTheme, toggle } = useTheme();
+  const t = useT();
+  const isDark = resolvedTheme === "dark";
+  return (
+    <button
+      type="button"
+      onClick={toggle}
+      className={cn(
+        "flex items-center gap-3 rounded-full px-3 py-1.5 text-sm font-medium transition-all w-full text-[var(--text)] hover:bg-[var(--well)]",
+        collapsed && "justify-center px-0 w-10 h-10 mx-auto",
+      )}
+      title={isDark ? t("Switch to light theme") : t("Switch to dark theme")}
+      aria-label={isDark ? t("Switch to light theme") : t("Switch to dark theme")}
+    >
+      {isDark ? <Sun size={18} aria-hidden /> : <Moon size={18} aria-hidden />}
+      {!collapsed && <span>{isDark ? t("Light mode") : t("Dark mode")}</span>}
+    </button>
   );
 }
 
@@ -493,7 +519,7 @@ export function Sidebar({ collapsed }: { collapsed: boolean }) {
         // `duration-base` em vez do `duration-200` literal: 200ms é o mesmo
         // número, mas vindo de `--duration-base`. A Lei de movimento fecha a
         // tabela de durações, e número solto é o que a faz apodrecer.
-        "sticky top-0 z-30 flex h-dvh shrink-0 flex-col border-r bg-card transition-[width] duration-base",
+        "sticky top-0 z-30 flex h-dvh shrink-0 flex-col border-r border-[var(--rim)] bg-[var(--glass)] backdrop-blur-md transition-[width] duration-base shadow-[var(--shadow-bento)]",
         collapsed ? "w-16" : "w-60",
       )}
     >

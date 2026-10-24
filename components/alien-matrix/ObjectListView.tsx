@@ -1,7 +1,5 @@
 "use client";
 
-import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import type { CustomField, CustomRecord, CustomObject } from "@/lib/alien-matrix/types";
 
 interface ObjectListViewProps {
@@ -17,7 +15,7 @@ export function ObjectListView({
 }: ObjectListViewProps) {
   if (records.length === 0) {
     return (
-      <div className="p-12 text-center text-muted-foreground bg-card border rounded-lg">
+      <div className="p-12 text-center text-xs text-[var(--muted)] rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)]">
         No {object.plural_name.toLowerCase()} found.
       </div>
     );
@@ -26,24 +24,24 @@ export function ObjectListView({
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
       {records.map((record) => (
-        <Card
+        <div
           key={record.id}
           onClick={() => onSelectRecord(record)}
-          className="p-4 cursor-pointer hover:border-primary/50 hover:shadow-md transition-all flex flex-col justify-between"
+          className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] p-5 shadow-[var(--shadow-bento)] backdrop-blur-md cursor-pointer hover:border-[var(--line)] hover:shadow-lg transition-all flex flex-col justify-between"
         >
           <div>
             <div className="flex items-start justify-between gap-2 mb-2">
-              <h3 className="font-semibold text-sm text-foreground line-clamp-1">
+              <h3 className="font-semibold text-sm text-[var(--ink)] line-clamp-1">
                 {record.title}
               </h3>
               {Boolean(record.values["status"]) && (
-                <Badge variant="secondary" className="text-[10px] uppercase">
+                <span className="inline-flex items-center rounded-[var(--r-ctl)] border border-[var(--line-2)] bg-[var(--surface-tint)] px-2.5 py-0.5 text-[10px] font-mono font-medium text-[var(--ink)] uppercase">
                   {String(record.values["status"])}
-                </Badge>
+                </span>
               )}
             </div>
 
-            <div className="space-y-1.5 text-xs text-muted-foreground my-3">
+            <div className="space-y-1.5 text-xs text-[var(--muted)] my-3">
               {object.fields
                 .filter(
                   (f) =>
@@ -55,26 +53,38 @@ export function ObjectListView({
                 )
                 .slice(0, 4)
                 .map((f) => (
-                  <div key={f.id} className="flex justify-between items-center">
-                    <span className="text-muted-foreground/80">{f.label}:</span>
-                    <span className="font-medium text-foreground truncate max-w-[160px]">
-                      {f.field_type === "currency"
-                        ? new Intl.NumberFormat(undefined, {
+                  <div key={f.id} className="flex justify-between items-center text-[11px]">
+                    <span className="text-[var(--muted)]">{f.label}:</span>
+                    <span className="font-medium text-[var(--ink)] truncate max-w-[160px]">
+                      {f.field_type === "currency" ? (
+                        <span className="font-numeric">
+                          {new Intl.NumberFormat(undefined, {
                             style: "currency",
                             currency: "USD",
-                          }).format(Number(record.values[f.slug]))
-                        : String(record.values[f.slug])}
+                          }).format(Number(record.values[f.slug]))}
+                        </span>
+                      ) : (
+                        String(record.values[f.slug])
+                      )}
                     </span>
                   </div>
                 ))}
             </div>
           </div>
 
-          <div className="pt-2 border-t text-[11px] text-muted-foreground flex justify-between items-center">
-            <span>Created: {new Date(record.created_at).toLocaleDateString()}</span>
-            <span className="text-primary hover:underline font-medium">View Details &rarr;</span>
+          <div className="pt-3 border-t border-[var(--line-2)] text-[11px] text-[var(--muted)] flex justify-between items-center font-mono">
+            <span>
+              {new Date(record.created_at).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })}
+            </span>
+            <span className="text-[var(--accent)] hover:underline font-sans font-medium text-xs">
+              View Details &rarr;
+            </span>
           </div>
-        </Card>
+        </div>
       ))}
     </div>
   );

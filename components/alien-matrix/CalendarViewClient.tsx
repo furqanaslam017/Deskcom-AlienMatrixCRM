@@ -1,7 +1,18 @@
 "use client";
 
 import React, { useState } from "react";
-import { CalendarCheck, PhoneCall, VideoCamera, Plus, Clock, Check, X, CircleNotch, User, ChatCircleText } from "@phosphor-icons/react";
+import {
+  CalendarCheck,
+  Phone,
+  VideoCamera,
+  Plus,
+  Clock,
+  Check,
+  X,
+  CircleNotch,
+  UserCircle,
+  ChatCircle,
+} from "@/lib/ui/icons";
 
 interface EventItem {
   id: string;
@@ -40,7 +51,7 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
   // Group events by date
   const eventsByDate: Record<string, EventItem[]> = {};
   for (const ev of events) {
-    const d = ev.date ? ev.date.split("T")[0] : "Sem data";
+    const d = ev.date ? ev.date.split("T")[0] : "Unscheduled";
     if (d) {
       if (!eventsByDate[d]) eventsByDate[d] = [];
       eventsByDate[d].push(ev);
@@ -72,7 +83,7 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
 
       const json = await res.json();
       if (!res.ok) {
-        throw new Error(json.error || json.message || "Erro ao registrar atividade");
+        throw new Error(json.error || json.message || "Failed to record activity");
       }
 
       const created = json.data || json;
@@ -101,18 +112,21 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="text-xs text-zinc-500 font-medium">
-          {events.length} atividades e tarefas programadas na linha do tempo
+    <div className="space-y-6 animate-in fade-in duration-200">
+      {/* Header and Controls */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-2 border-b border-[var(--line-2)]">
+        <div>
+          <span className="text-xs font-semibold text-[var(--muted)]">
+            {events.length} activities and scheduled appointments on timeline
+          </span>
         </div>
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-semibold text-white shadow-sm transition-colors"
+          className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
         >
-          <Plus size={16} weight="bold" />
-          Registrar Ligação / Reunião
+          <Plus size={15} weight="bold" />
+          Log Activity / Meeting
         </button>
       </div>
 
@@ -122,81 +136,81 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
           const dayEvents = eventsByDate[dateStr] || [];
           return (
             <div key={dateStr} className="space-y-3">
-              <div className="flex items-center gap-2">
-                <span className="text-xs font-bold uppercase tracking-wider text-zinc-500">
-                  {dateStr === "Sem data"
-                    ? "Sem Data Definida"
+              <div className="flex items-center gap-3">
+                <span className="badge badge--plain text-xs font-semibold tracking-wider">
+                  {dateStr === "Unscheduled"
+                    ? "Unscheduled"
                     : new Date(`${dateStr}T12:00:00`).toLocaleDateString("en-US", {
                         weekday: "short",
                         day: "numeric",
                         month: "long",
                       })}
                 </span>
-                <span className="h-px flex-1 bg-zinc-200 dark:bg-zinc-800" />
+                <span className="h-px flex-1 bg-[var(--line-2)]" />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
                 {dayEvents.map((ev) => (
                   <div
                     key={ev.id}
-                    className="flex items-start gap-3.5 rounded-2xl border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-900 p-4 shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-all"
+                    className="flex items-start gap-3.5 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] p-4 shadow-sm hover:shadow-[var(--shadow-pop)] transition-all"
                   >
                     <div
-                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${
+                      className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-[var(--line-2)] ${
                         ev.type === "meeting" || ev.type === "demo"
-                          ? "bg-purple-500/10 text-purple-600 dark:text-purple-400"
+                          ? "bg-[var(--well)] text-purple-600 dark:text-purple-400"
                           : ev.type === "whatsapp_call"
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+                          ? "bg-[var(--well)] text-emerald-600 dark:text-emerald-400"
                           : ev.type === "task"
-                          ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
-                          : "bg-blue-500/10 text-blue-600 dark:text-blue-400"
+                          ? "bg-[var(--well)] text-amber-600 dark:text-amber-400"
+                          : "bg-[var(--well)] text-[var(--tomato)]"
                       }`}
                     >
                       {ev.type === "meeting" || ev.type === "demo" ? (
-                        <VideoCamera size={20} weight="duotone" />
+                        <VideoCamera size={18} weight="bold" />
                       ) : ev.type === "whatsapp_call" ? (
-                        <ChatCircleText size={20} weight="duotone" />
+                        <ChatCircle size={18} weight="bold" />
                       ) : ev.type === "task" ? (
-                        <CalendarCheck size={20} weight="duotone" />
+                        <CalendarCheck size={18} weight="bold" />
                       ) : (
-                        <PhoneCall size={20} weight="duotone" />
+                        <Phone size={18} weight="bold" />
                       )}
                     </div>
 
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-2">
-                        <h4 className="text-sm font-semibold text-zinc-900 dark:text-zinc-100 truncate">
+                        <h4 className="text-xs font-semibold text-[var(--text)] truncate">
                           {ev.title}
                         </h4>
-                        <span className="shrink-0 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400">
+                        <span className="badge badge--plain text-[10px] uppercase font-bold shrink-0">
                           {ev.status}
                         </span>
                       </div>
 
                       {ev.contactName && (
-                        <div className="mt-1 flex items-center gap-1.5 text-xs text-zinc-500">
-                          <User size={13} />
+                        <div className="mt-1 flex items-center gap-1.5 text-xs text-[var(--muted)]">
+                          <UserCircle size={14} />
                           <span>{ev.contactName}</span>
                           {ev.leadTitle && (
-                            <span className="text-zinc-400 truncate">({ev.leadTitle})</span>
+                            <span className="opacity-75 truncate">({ev.leadTitle})</span>
                           )}
                         </div>
                       )}
 
                       {ev.notes && (
-                        <p className="mt-2 text-xs text-zinc-600 dark:text-zinc-400 bg-zinc-50 dark:bg-zinc-800/60 p-2 rounded-lg border border-zinc-100 dark:border-zinc-800">
+                        <p className="mt-2 text-xs text-[var(--text)] bg-[var(--well)] p-2.5 rounded-[var(--r-tile)] border border-[var(--line-2)] leading-relaxed">
                           {ev.notes}
                         </p>
                       )}
 
-                      <div className="mt-2.5 flex items-center gap-3 text-[11px] text-zinc-400">
+                      <div className="mt-2.5 flex items-center gap-3 text-[11px] text-[var(--muted)]">
                         {ev.durationMinutes !== undefined && ev.durationMinutes > 0 && (
                           <div className="flex items-center gap-1">
-                            <Clock size={12} />
+                            <Clock size={13} />
                             <span>{ev.durationMinutes} min</span>
                           </div>
                         )}
-                        <span className="uppercase font-medium text-zinc-400">
+                        <span className="uppercase font-semibold tracking-wider opacity-75">
                           {ev.type.replace("_", " ")}
                         </span>
                       </div>
@@ -209,81 +223,86 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
         })}
 
         {events.length === 0 && (
-          <div className="py-16 text-center text-xs text-zinc-400 border border-dashed border-zinc-200 dark:border-zinc-800 rounded-2xl">
+          <div className="py-16 text-center text-xs text-[var(--muted)] border-2 border-dashed border-[var(--line-2)] rounded-[var(--r-card)] bg-[var(--solid)]/50">
             No activities or scheduled appointments found.
           </div>
         )}
       </div>
 
-      {/* Log Call Modal */}
+      {/* Log Activity Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-zinc-100 dark:border-zinc-800">
+          <div className="relative w-full max-w-md rounded-[var(--r-card)] bg-[var(--solid)] border border-[var(--rim)] shadow-[var(--shadow-pop)] p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3.5 border-b border-[var(--line-2)]">
               <div className="flex items-center gap-2">
-                <PhoneCall size={20} className="text-blue-500" />
-                <h3 className="text-base font-semibold text-zinc-900 dark:text-zinc-100">
-                  Registrar Atividade Comercial
+                <span className="w-8 h-8 rounded-full bg-[var(--well)] border border-[var(--line-2)] flex items-center justify-center text-[var(--tomato)]">
+                  <Phone size={16} weight="bold" />
+                </span>
+                <h3 className="text-sm font-bold text-[var(--text)]">
+                  Log Commercial Activity
                 </h3>
               </div>
-              <button onClick={() => setIsModalOpen(false)} className="text-zinc-400 hover:text-zinc-600">
-                <X size={18} />
+              <button
+                onClick={() => setIsModalOpen(false)}
+                className="w-7 h-7 rounded-full flex items-center justify-center text-[var(--muted)] hover:text-[var(--text)] hover:bg-[var(--well)] transition-colors"
+              >
+                <X size={15} />
               </button>
             </div>
 
             <form onSubmit={handleCreateCall} className="mt-4 space-y-3.5">
               {error && (
-                <div className="p-3 text-xs text-red-600 rounded-lg bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900">
+                <div className="p-3 text-xs text-rose-600 dark:text-rose-400 rounded-[var(--r-tile)] bg-rose-500/10 border border-rose-500/20">
                   {error}
                 </div>
               )}
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Tipo de Atividade
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Activity Type
                   </label>
                   <select
                     value={activityType}
                     onChange={(e) => setActivityType(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   >
-                    <option value="call">Ligação Telefônica</option>
-                    <option value="whatsapp_call">Ligação de WhatsApp</option>
-                    <option value="meeting">Reunião Presencial</option>
-                    <option value="demo">Demonstração de Produto</option>
-                    <option value="video_call">Videoconferência</option>
+                    <option value="call">Phone Call</option>
+                    <option value="whatsapp_call">WhatsApp Call</option>
+                    <option value="meeting">In-Person Meeting</option>
+                    <option value="demo">Product Demo</option>
+                    <option value="video_call">Video Conference</option>
                   </select>
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Resultado / Desfecho
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Outcome
                   </label>
                   <select
                     value={outcome}
                     onChange={(e) => setOutcome(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   >
                     <option value="completed">Completed Successfully</option>
-                    <option value="connected">Falou com Decisor</option>
-                    <option value="busy">Ocupado</option>
-                    <option value="no_answer">Sem Resposta</option>
-                    <option value="rescheduled">Reagendada</option>
+                    <option value="connected">Connected with Decision Maker</option>
+                    <option value="busy">Busy / Line Busy</option>
+                    <option value="no_answer">No Answer</option>
+                    <option value="rescheduled">Rescheduled</option>
                   </select>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Contato Relacionado
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Related Contact
                 </label>
                 <select
                   value={contactId}
                   onChange={(e) => setContactId(e.target.value)}
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 >
-                  <option value="">Selecione um contato...</option>
+                  <option value="">Select a contact...</option>
                   {contacts.map((c) => (
                     <option key={c.id} value={c.id}>
                       {c.name}
@@ -293,72 +312,72 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Assunto / Resumo *
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Subject / Summary *
                 </label>
                 <input
                   type="text"
                   required
                   value={subject}
                   onChange={(e) => setSubject(e.target.value)}
-                  placeholder="Ex: Alinhamento de proposta comercial"
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="e.g. Commercial proposal review & roadmap alignment"
+                  className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Data
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Date
                   </label>
                   <input
                     type="date"
                     value={eventDate}
                     onChange={(e) => setEventDate(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                    Duração (minutos)
+                  <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                    Duration (minutes)
                   </label>
                   <input
                     type="number"
                     value={durationMinutes}
                     onChange={(e) => setDurationMinutes(e.target.value)}
-                    className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    className="w-full rounded-full border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-zinc-700 dark:text-zinc-300 mb-1">
-                  Notas e Próximos Passos
+                <label className="block text-xs font-semibold text-[var(--text)] mb-1">
+                  Notes & Next Steps
                 </label>
                 <textarea
                   rows={2}
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Principais pontos acordados..."
-                  className="w-full rounded-lg border border-zinc-300 dark:border-zinc-700 bg-white dark:bg-zinc-800 px-3 py-2 text-xs text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  placeholder="Key decisions and action items agreed upon..."
+                  className="w-full rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--well)] px-3.5 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                 />
               </div>
 
-              <div className="flex items-center justify-end gap-2 pt-4 border-t border-zinc-100 dark:border-zinc-800">
+              <div className="flex items-center justify-end gap-2 pt-4 border-t border-[var(--line-2)]">
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="px-4 py-2 text-xs font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg"
+                  className="btn btn--ghost btn--sm text-xs font-medium"
                 >
-                  Cancelar
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-blue-600 hover:bg-blue-700 px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+                  className="btn btn--ink btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
                 >
                   {isSubmitting ? <CircleNotch size={14} className="animate-spin" /> : <Check size={14} />}
-                  Registrar Atividade
+                  Save Activity
                 </button>
               </div>
             </form>
