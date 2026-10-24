@@ -198,3 +198,7 @@ __pycache__/
 # compose não tem de onde nascer).
 caddy-sites/*
 !caddy-sites/README.caddy
+
+# External reverse engineering / analysis tools
+tools/
+

@@ -1,0 +1,870 @@
+[
+  {
+    "pt": "O provedor de pagamento recusou o pedido. Confira a chave em Cobrança › Conexão e tente de novo; o motivo aparece no painel do provedor.",
+    "es": "El proveedor de pago rechazó la solicitud. Revisa la clave en Cobro › Conexión e inténtalo de nuevo; el motivo aparece en el panel del proveedor."
+  },
+  {
+    "pt": "Não foi possível ler os administradores da empresa.",
+    "es": "No se pudieron leer los administradores de la empresa."
+  },
+  {
+    "pt": "Não foi possível ler a assinatura.",
+    "es": "No se pudo leer la suscripción."
+  },
+  {
+    "pt": "Não foi possível reservar o pagamento.",
+    "es": "No se pudo reservar el pago."
+  },
+  {
+    "pt": "Não foi possível gerar o link de pagamento. Tente de novo em instantes.",
+    "es": "No se pudo generar el enlace de pago. Inténtalo de nuevo en unos instantes."
+  },
+  {
+    "pt": "Informe o CPF ou CNPJ de quem paga: o provedor de pagamento exige para emitir a cobrança.",
+    "es": "Indica el CPF o CNPJ de quien paga: el proveedor de pago lo exige para emitir el cobro."
+  },
+  {
+    "pt": "A Stripe só avisa pagamentos num endereço https público (ex.: https://crm.example.com). Configure o domínio do sistema com HTTPS e volte aqui.",
+    "es": "Stripe solo avisa pagos en una dirección https pública (ej.: https://crm.example.com). Configura el dominio del sistema con HTTPS y vuelve aquí."
+  },
+  {
+    "pt": "Modo de teste: suas empresas reais ainda não conseguem pagar. Quando a compra de teste der certo, troque para a chave de produção em Conexão.",
+    "es": "Modo de prueba: tus empresas reales todavía no pueden pagar. Cuando la compra de prueba funcione, cambia a la clave de producción en Conexión."
+  },
+  {
+    "pt": "{n} aviso de pagamento recusado nas últimas 24 h: a assinatura não confere. Conecte a chave de novo na aba Conexão.",
+    "es": "{n} aviso de pago rechazado en las últimas 24 h: la firma no coincide. Conecta la clave de nuevo en la pestaña Conexión."
+  },
+  {
+    "pt": "{n} avisos de pagamento recusados nas últimas 24 h: a assinatura não confere. Conecte a chave de novo na aba Conexão.",
+    "es": "{n} avisos de pago rechazados en las últimas 24 h: la firma no coincide. Conecta la clave de nuevo en la pestaña Conexión."
+  },
+  {
+    "pt": "1ª cobrança agendada",
+    "es": "1.er cobro programado"
+  },
+  {
+    "pt": "Cancelada, acesso até",
+    "es": "Cancelada, acceso hasta"
+  },
+  {
+    "pt": "Novo plano a partir de",
+    "es": "Nuevo plan a partir del"
+  },
+  {
+    "pt": "Modo de teste: nenhum pagamento aqui é real.",
+    "es": "Modo de prueba: ningún pago aquí es real."
+  },
+  {
+    "pt": "Assinar",
+    "es": "Suscribirse"
+  },
+  {
+    "pt": "Assinar de novo",
+    "es": "Suscribirse de nuevo"
+  },
+  {
+    "pt": "Já paguei",
+    "es": "Ya pagué"
+  },
+  {
+    "pt": "Gerenciar pagamento",
+    "es": "Gestionar pago"
+  },
+  {
+    "pt": "Trocar de plano",
+    "es": "Cambiar de plan"
+  },
+  {
+    "pt": "Confirmar troca",
+    "es": "Confirmar cambio"
+  },
+  {
+    "pt": "Cancelar assinatura",
+    "es": "Cancelar suscripción"
+  },
+  {
+    "pt": "Confirmar cancelamento",
+    "es": "Confirmar cancelación"
+  },
+  {
+    "pt": "Você mantém o acesso até o fim do período já pago. Não há reembolso proporcional.",
+    "es": "Mantienes el acceso hasta el fin del período ya pagado. No hay reembolso proporcional."
+  },
+  {
+    "pt": "Você mantém o acesso até {data}.",
+    "es": "Mantienes el acceso hasta el {data}."
+  },
+  {
+    "pt": "O novo plano vale a partir de {data}.",
+    "es": "El nuevo plan vale a partir del {data}."
+  },
+  {
+    "pt": "Pagamento confirmado. Obrigado!",
+    "es": "Pago confirmado. ¡Gracias!"
+  },
+  {
+    "pt": "Tudo certo: a primeira cobrança sai no fim do teste grátis.",
+    "es": "Todo listo: el primer cobro sale al final de la prueba gratis."
+  },
+  {
+    "pt": "Ainda não identificamos o pagamento. Se pagou por boleto, a compensação leva até 1 dia útil.",
+    "es": "Aún no identificamos el pago. Si pagaste con boleto, la compensación tarda hasta 1 día hábil."
+  },
+  {
+    "pt": "Não há cobrança aberta para pagar agora. Atualize o cartão em Gerenciar pagamento: a próxima tentativa sai sozinha.",
+    "es": "No hay cobro abierto para pagar ahora. Actualiza la tarjeta en Gestionar pago: el próximo intento sale solo."
+  },
+  {
+    "pt": "Confirmando seu pagamento…",
+    "es": "Confirmando tu pago…"
+  },
+  {
+    "pt": "Não identificamos o pagamento de {data}.",
+    "es": "No identificamos el pago del {data}."
+  },
+  {
+    "pt": "Há um pagamento em aberto.",
+    "es": "Hay un pago pendiente."
+  },
+  {
+    "pt": "Sua assinatura termina em {data}.",
+    "es": "Tu suscripción termina el {data}."
+  },
+  {
+    "pt": "Sua assinatura foi cancelada.",
+    "es": "Tu suscripción fue cancelada."
+  },
+  {
+    "pt": "Seu teste grátis acabou em {data}. Assine para continuar usando.",
+    "es": "Tu prueba gratis terminó el {data}. Suscríbete para seguir usando."
+  },
+  {
+    "pt": "Há um pagamento pendente desta empresa. Avise quem administra para evitar a suspensão.",
+    "es": "Hay un pago pendiente de esta empresa. Avisa a quien administra para evitar la suspensión."
+  },
+  {
+    "pt": "A conta foi suspensa por falta de pagamento. Assim que o pagamento for confirmado, tudo volta a funcionar na hora.",
+    "es": "La cuenta fue suspendida por falta de pago. En cuanto se confirme el pago, todo vuelve a funcionar al instante."
+  },
+  {
+    "pt": "Troca agendada: o novo plano vale a partir da próxima cobrança paga.",
+    "es": "Cambio programado: el nuevo plan vale a partir del próximo cobro pagado."
+  },
+  {
+    "pt": "Muitas tentativas seguidas. Aguarde um minuto e tente de novo.",
+    "es": "Demasiados intentos seguidos. Espera un minuto e inténtalo de nuevo."
+  },
+  {
+    "pt": "O provedor de pagamento não respondeu. Nada mudou; tente de novo em alguns minutos.",
+    "es": "El proveedor de pago no respondió. Nada cambió; inténtalo de nuevo en unos minutos."
+  },
+  {
+    "pt": "O provedor de pagamento recusou o pedido. Fale com quem administra o sistema.",
+    "es": "El proveedor de pago rechazó la solicitud. Habla con quien administra el sistema."
+  },
+  {
+    "pt": "Já estamos gerando o seu link de pagamento. Aguarde alguns segundos.",
+    "es": "Ya estamos generando tu enlace de pago. Espera unos segundos."
+  },
+  {
+    "pt": "Há um link de pagamento em aberto com o plano atual. Conclua o pagamento ou aguarde o link expirar para trocar de plano.",
+    "es": "Hay un enlace de pago abierto con el plan actual. Completa el pago o espera a que el enlace expire para cambiar de plan."
+  },
+  {
+    "pt": "Você já tem um pagamento em andamento. Use o link para concluir.",
+    "es": "Ya tienes un pago en curso. Usa el enlace para completarlo."
+  },
+  {
+    "pt": "O administrador do sistema ainda não conectou a cobrança.",
+    "es": "El administrador del sistema aún no conectó el cobro."
+  },
+  {
+    "pt": "Sua empresa não tem plano de cobrança.",
+    "es": "Tu empresa no tiene plan de cobro."
+  },
+  {
+    "pt": "Login do Codex por assinatura",
+    "es": "Inicio de sesión de Codex por suscripción"
+  },
+  {
+    "pt": "Conecta a assinatura do ChatGPT (o mesmo login do Codex): cada empresa conecta a própria conta, em Credenciais, com a chave de API da mesma empresa como reserva. Desligado por padrão.",
+    "es": "Conecta la suscripción de ChatGPT (el mismo inicio de sesión de Codex): cada empresa conecta su propia cuenta, en Credenciales, con la clave de API de la misma organización como reserva. Desactivado por defecto."
+  },
+  {
+    "pt": "Ligado, cada empresa vê em Credenciais o painel para conectar a própria conta do Codex. Desligado por padrão: sem este interruptor nada aparece para as empresas, e a reserva de chamada continua sendo a chave de API da organização.",
+    "es": "Activado, cada empresa ve en Credenciales el panel para conectar su propia cuenta de Codex. Desactivado por defecto: sin este interruptor nada aparece para las empresas, y la reserva de llamadas sigue siendo la clave de API de la organización."
+  },
+  {
+    "pt": "Conectar a assinatura do Codex",
+    "es": "Conectar la suscripción de Codex"
+  },
+  {
+    "pt": "Cada empresa conecta a própria conta do ChatGPT. Abra o link e entre com a conta que tem a assinatura. No fim, o navegador vai para um endereço em localhost:1455 que não abre — é esperado. Copie esse endereço inteiro, da barra do navegador, e cole aqui.",
+    "es": "Cada empresa conecta su propia cuenta de ChatGPT. Abre el enlace y entra con la cuenta que tiene la suscripción. Al final, el navegador va a una dirección en localhost:1455 que no abre, es lo esperado. Copia esa dirección completa, de la barra del navegador, y pégala aquí."
+  },
+  {
+    "pt": "Link de acesso",
+    "es": "Enlace de acceso"
+  },
+  {
+    "pt": "Endereço em que o navegador parou",
+    "es": "Dirección en la que se detuvo el navegador"
+  },
+  {
+    "pt": "Cole o endereço inteiro da barra do navegador (começa com http://localhost:1455/auth/callback), não só o código.",
+    "es": "Pega la dirección completa de la barra del navegador (empieza con http://localhost:1455/auth/callback), no solo el código."
+  },
+  {
+    "pt": "Este endereço não veio do link desta tela, aberto por você nesta empresa — ou o link venceu (vale 10 minutos e uma vez só). Recarregue a página, abra o link de novo e cole o endereço novo.",
+    "es": "Esta dirección no proviene del enlace de esta pantalla, abierto por ti en esta empresa, o el enlace venció (es válido por 10 minutos y una sola vez). Recarga la página, abre el enlace de nuevo y pega la dirección nueva."
+  },
+  {
+    "pt": "Antes de ligar",
+    "es": "Antes de activar"
+  },
+  {
+    "pt": "O client_id e o redirect_uri (http://localhost:1455/auth/callback) são os do Codex, não os nossos, e nada disso é contrato público da OpenAI: os dois podem mudar sem aviso.",
+    "es": "El client_id y el redirect_uri (http://localhost:1455/auth/callback) son los de Codex, no los nuestros, y nada de esto es un contrato público de OpenAI: ambos pueden cambiar sin aviso."
+  },
+  {
+    "pt": "Este recurso vem desligado por padrão; só quem administra a instalação pode ligá-lo, em Recursos opcionais. Ligado, cada empresa conecta a própria conta aqui.",
+    "es": "Este recurso viene desactivado por defecto; solo quien administra la instalación puede activarlo, en Recursos opcionales. Activado, cada empresa conecta su propia cuenta aquí."
+  },
+  {
+    "pt": "Se a assinatura falhar, a chamada cai na reserva: a chave de API da organização, como sempre.",
+    "es": "Si la suscripción falla, la llamada cae a la reserva: la clave de API de la organización, como siempre."
+  },
+  {
+    "pt": "O código colado não tem cara de código. Cole o endereço inteiro que o navegador mostrou.",
+    "es": "El código pegado no parece un código. Pega la dirección completa que mostró el navegador."
+  },
+  {
+    "pt": "A OpenAI recusou o código. Ele é de uso único: gere o link de novo e cole o código novo.",
+    "es": "OpenAI rechazó el código. Es de un solo uso: genera el enlace de nuevo y pega el código nuevo."
+  },
+  {
+    "pt": "Este servidor não tem a chave de cifra (AI_CRED_AES_KEY) configurada, então o login não pode ser guardado.",
+    "es": "Este servidor no tiene la clave de cifrado (AI_CRED_AES_KEY) configurada, así que el inicio de sesión no se puede guardar."
+  },
+  {
+    "pt": "O banco recusou a gravação. Tente de novo em instantes.",
+    "es": "La base de datos rechazó el registro. Intenta de nuevo en unos momentos."
+  },
+  {
+    "pt": "Não deu para conectar. Tente de novo em instantes.",
+    "es": "No se pudo conectar. Intenta de nuevo en unos momentos."
+  },
+  {
+    "pt": "Login guardado com cifra nesta empresa. A partir de agora o agente fala por esta assinatura; se ela não estiver disponível ou falhar, a chamada cai na chave da empresa.",
+    "es": "Inicio de sesión guardado con cifrado en esta empresa. A partir de ahora el agente habla por esta suscripción; si no está disponible o falla, la llamada cae a la clave de la empresa."
+  },
+  {
+    "pt": "Para quem já paga o ChatGPT: a conversa sai pela mesma conta do Codex, sem chave de API nenhuma — e, se a assinatura não estiver disponível ou falhar, a chamada cai sozinha na chave da empresa.",
+    "es": "Para quien ya paga ChatGPT: la conversación sale por la misma cuenta de Codex, sin clave de API alguna; si la suscripción no está disponible o falla, la llamada pasa de forma automática a la clave de la empresa."
+  },
+  {
+    "pt": "Nenhuma conta conectada nesta empresa ainda.",
+    "es": "Ninguna cuenta conectada en esta empresa todavía."
+  },
+  {
+    "pt": "Conta conectada nesta empresa, guardada com cifra. O sistema renova o token antes de vencer — na janela de 8 dias, e também na hora em que o sistema acordar.",
+    "es": "Cuenta conectada en esta empresa, guardada con cifrado. El sistema renueva el token antes de vencer — en la ventana de 8 días, y también cuando el sistema despierta."
+  },
+  {
+    "pt": "Ainda sem validação registrada: gere o link de novo e conecte de novo.",
+    "es": "Aún sin validación registrada: genera el enlace de nuevo y conecta otra vez."
+  },
+  {
+    "pt": "Não deu para desconectar. Tente de novo em instantes.",
+    "es": "No se pudo desconectar. Intenta de nuevo en unos momentos."
+  },
+  {
+    "pt": "O recurso está desligado nesta instalação. Só quem administra a instalação pode ligá-lo, em Recursos opcionais.",
+    "es": "El recurso está desactivado en esta instalación. Solo quien administra la instalación puede activarlo, en Recursos opcionales."
+  },
+  {
+    "pt": "Somente o administrador desta empresa pode conectar a conta.",
+    "es": "Solo el administrador de esta empresa puede conectar la cuenta."
+  },
+  {
+    "pt": "Você não tem uma empresa ativa para gravar esta conta.",
+    "es": "No tienes una empresa activa donde guardar esta cuenta."
+  },
+  {
+    "pt": "Sessão expirada. Entre de novo.",
+    "es": "Sesión expirada. Entra de nuevo."
+  },
+  {
+    "pt": "Outra renovação desta conta está em curso (ou o recurso está desligado). Aguarde alguns segundos e tente de novo.",
+    "es": "Otra renovación de esta cuenta está en curso (o el recurso está desactivado). Espera unos segundos e intenta de nuevo."
+  },
+  {
+    "pt": "A OpenAI recusou a renovação do login. Gere o link de novo e conecte a conta outra vez.",
+    "es": "OpenAI rechazó la renovación del inicio de sesión. Genera el enlace de nuevo y conecta la cuenta otra vez."
+  },
+  {
+    "pt": "Esta credencial guarda o login por assinatura da empresa, não uma chave de API. Use Conectar ou Desconectar na tela de Credenciais.",
+    "es": "Esta credencial guarda el inicio de sesión por suscripción de la empresa, no una clave de API. Usa Conectar o Desconectar en la pantalla de Credenciales."
+  },
+  {
+    "pt": "A chave que deixa o sistema criar assinaturas e ler pagamentos na sua conta Asaas. Comece pela do sandbox, que começa com $aact_hmlg_.",
+    "es": "La clave que permite al sistema crear suscripciones y leer pagos en tu cuenta de Asaas. Empieza con la del sandbox, que empieza con $aact_hmlg_."
+  },
+  {
+    "pt": "Token dos avisos de pagamento do Asaas",
+    "es": "Token de los avisos de pago de Asaas"
+  },
+  {
+    "pt": "Confere que um aviso de pagamento veio mesmo do Asaas. É criado quando você conecta a chave; se o Asaas pedir o cadastro manual do aviso, a tela mostra o token uma única vez.",
+    "es": "Comprueba que un aviso de pago vino realmente de Asaas. Se crea cuando conectas la clave; si Asaas pide registrar el aviso a mano, la pantalla muestra el token una sola vez."
+  },
+  {
+    "pt": "CPF ou CNPJ de quem paga",
+    "es": "CPF o CNPJ de quien paga"
+  },
+  {
+    "pt": "Vai direto para o Asaas, que emite a cobrança neste documento; não fica guardado neste sistema. Confira antes de assinar: para trocar depois, fale com quem administra o sistema.",
+    "es": "Va directo a Asaas, que emite el cobro con este documento; no queda guardado en este sistema. Revísalo antes de suscribirte: para cambiarlo después, habla con quien administra el sistema."
+  },
+  {
+    "pt": "Confira o CPF ou CNPJ: os dígitos não batem.",
+    "es": "Revisa el CPF o CNPJ: los dígitos no coinciden."
+  },
+  {
+    "pt": "Informe o CPF ou CNPJ de quem paga.",
+    "es": "Informa el CPF o CNPJ de quien paga."
+  },
+  {
+    "pt": "O provedor de pagamento não aceitou este CPF ou CNPJ. Confira o número ou informe outro documento.",
+    "es": "El proveedor de pago no aceptó este CPF o CNPJ. Revisa el número o informa otro documento."
+  },
+  {
+    "pt": "Regularize o pagamento antes de trocar de plano.",
+    "es": "Regulariza el pago antes de cambiar de plan."
+  },
+  {
+    "pt": "A mensalidade de agora ainda não foi paga. Pague em \"Pagar agora\" e troque de plano depois que o pagamento for confirmado (Pix: minutos; boleto: até 1 dia útil).",
+    "es": "La mensualidad actual aún no está pagada. Paga en \"Pagar ahora\" y cambia de plan después de que se confirme el pago (Pix: minutos; boleto: hasta 1 día hábil)."
+  },
+  {
+    "pt": "Sua fatura está pronta. Pague por Pix, boleto ou cartão.",
+    "es": "Tu factura está lista. Paga con Pix, boleto o tarjeta."
+  },
+  {
+    "pt": "Abrir a fatura",
+    "es": "Abrir la factura"
+  },
+  {
+    "pt": "A fatura abre no Asaas, numa nova aba. Depois de pagar, volte aqui e clique em Já paguei: Pix confirma em minutos; boleto, em até 1 dia útil.",
+    "es": "La factura se abre en Asaas, en una pestaña nueva. Después de pagar, vuelve aquí y haz clic en Ya pagué: Pix se confirma en minutos; boleto, en hasta 1 día hábil."
+  },
+  {
+    "pt": "Adiantar a próxima mensalidade",
+    "es": "Adelantar la próxima mensualidad"
+  },
+  {
+    "pt": "cobra o cartão sozinho todo mês e aceita boleto, mas não tem Pix.",
+    "es": "cobra la tarjeta sola cada mes y acepta boleto, pero no tiene Pix."
+  },
+  {
+    "pt": "todo mês o cliente recebe a cobrança e paga por Pix, boleto ou cartão: o jeito que o brasileiro paga. Pede o CPF ou CNPJ. Recomendado se seus clientes estão no Brasil.",
+    "es": "cada mes el cliente recibe el cobro y paga con Pix, boleto o tarjeta: como paga el brasileño. Pide el CPF o CNPJ. Recomendado si tus clientes están en Brasil."
+  },
+  {
+    "pt": "Conectado. Falta um passo: cadastre o aviso no Asaas (veja abaixo).",
+    "es": "Conectado. Falta un paso: registra el aviso en Asaas (mira abajo)."
+  },
+  {
+    "pt": "No Asaas: menu Integrações › Chaves de API. Comece pela conta de sandbox do Asaas; troque pela chave de produção quando a compra de teste der certo.",
+    "es": "En Asaas: menú Integraciones › Claves de API. Empieza con la cuenta de sandbox de Asaas; cámbiala por la clave de producción cuando la compra de prueba funcione."
+  },
+  {
+    "pt": "O Asaas só avisa pagamentos num endereço https público (ex.: https://crm.example.com). Configure o domínio do sistema com HTTPS e volte aqui.",
+    "es": "Asaas solo avisa pagos en una dirección https pública (ej.: https://crm.example.com). Configura el dominio del sistema con HTTPS y vuelve aquí."
+  },
+  {
+    "pt": "Falta um passo: cadastre o aviso de pagamento no Asaas",
+    "es": "Falta un paso: registra el aviso de pago en Asaas"
+  },
+  {
+    "pt": "O Asaas não deixou o sistema cadastrar o aviso sozinho. No Asaas, abra Integrações › Webhooks. Se já existir um aviso com o endereço abaixo, edite-o e troque só o token; se não, clique em Adicionar e preencha assim:",
+    "es": "Asaas no dejó que el sistema registrara el aviso solo. En Asaas, abre Integraciones › Webhooks. Si ya existe un aviso con la dirección de abajo, edítalo y cambia solo el token; si no, haz clic en Agregar y complétalo así:"
+  },
+  {
+    "pt": "Nome: Cobrança do sistema",
+    "es": "Nombre: Cobrança do sistema"
+  },
+  {
+    "pt": "E-mail: o seu (o Asaas avisa por ele se os avisos pararem)",
+    "es": "Correo: el tuyo (Asaas te avisa por él si los avisos se detienen)"
+  },
+  {
+    "pt": "Versão da API: v3",
+    "es": "Versión de la API: v3"
+  },
+  {
+    "pt": "Webhook ativado: Sim",
+    "es": "Webhook activado: Sí"
+  },
+  {
+    "pt": "Fila de sincronização ativada: Sim",
+    "es": "Cola de sincronización activada: Sí"
+  },
+  {
+    "pt": "Tipo de envio: Sequencial",
+    "es": "Tipo de envío: Secuencial"
+  },
+  {
+    "pt": "URL do aviso",
+    "es": "URL del aviso"
+  },
+  {
+    "pt": "Token de autenticação",
+    "es": "Token de autenticación"
+  },
+  {
+    "pt": "Eventos: marque estes, um por um",
+    "es": "Eventos: marca estos, uno por uno"
+  },
+  {
+    "pt": "Copiar URL",
+    "es": "Copiar URL"
+  },
+  {
+    "pt": "Copiar token",
+    "es": "Copiar token"
+  },
+  {
+    "pt": "O token aparece só agora: se sair desta tela sem copiá-lo, conecte de novo para gerar outro.",
+    "es": "El token aparece solo ahora: si sales de esta pantalla sin copiarlo, conecta de nuevo para generar otro."
+  },
+  {
+    "pt": "Quando o primeiro aviso chegar, o passo fica marcado na Visão geral.",
+    "es": "Cuando llegue el primer aviso, el paso queda marcado en la Visión general."
+  },
+  {
+    "pt": "Pronto, já cadastrei",
+    "es": "Listo, ya lo registré"
+  },
+  {
+    "pt": "Não consegui copiar. Selecione o texto e copie à mão.",
+    "es": "No pude copiar. Selecciona el texto y cópialo a mano."
+  },
+  {
+    "pt": "Ele chega sozinho quando alguém assina ou paga. Se, ao conectar, o sistema pediu para cadastrar o aviso à mão no Asaas, confira lá a URL e o token (perdeu o token? Conecte de novo para gerar outro). A compra de teste do passo seguinte dispara o primeiro aviso.",
+    "es": "Llega solo cuando alguien se suscribe o paga. Si, al conectar, el sistema pidió registrar el aviso a mano en Asaas, revisa allí la URL y el token (¿perdiste el token? Conecta de nuevo para generar otro). La compra de prueba del paso siguiente dispara el primer aviso."
+  },
+  {
+    "pt": "Crie uma empresa de teste com outro e-mail seu (ex.: voce+teste@example.com), abra o convite numa janela anônima, clique em Assinar em Plano e cobrança informando um CPF válido e, no painel do sandbox do Asaas, confirme o recebimento da cobrança.",
+    "es": "Crea una empresa de prueba con otro correo tuyo (ej.: voce+teste@example.com), abre la invitación en una ventana de incógnito, haz clic en Suscribirse en Plan y facturación informando un CPF válido y, en el panel del sandbox de Asaas, confirma la recepción del cobro."
+  },
+  {
+    "pt": "Quando a compra de teste der certo, cole em Conexão a chave de produção do Asaas (começa com $aact_prod_). Até lá, clientes reais NÃO conseguem pagar.",
+    "es": "Cuando la compra de prueba funcione, pega en Conexión la clave de producción de Asaas (empieza con $aact_prod_). Hasta entonces, los clientes reales NO pueden pagar."
+  },
+  {
+    "pt": "Se você usa esta conta do Asaas para outras vendas, estes avisos são delas e podem ser ignorados.",
+    "es": "Si usas esta cuenta de Asaas para otras ventas, estos avisos son de ellas y puedes ignorarlos."
+  },
+  {
+    "pt": "{n} aviso do Asaas recusado nas últimas 24 h: o token do aviso cadastrado no Asaas não é o do sistema. Conecte de novo na aba Conexão; se o aviso foi cadastrado à mão, troque nele o token pelo novo.",
+    "es": "{n} aviso de Asaas rechazado en las últimas 24 h: el token del aviso registrado en Asaas no es el del sistema. Conecta de nuevo en la pestaña Conexión; si el aviso se registró a mano, cambia en él el token por el nuevo."
+  },
+  {
+    "pt": "{n} avisos do Asaas recusados nas últimas 24 h: o token do aviso cadastrado no Asaas não é o do sistema. Conecte de novo na aba Conexão; se o aviso foi cadastrado à mão, troque nele o token pelo novo.",
+    "es": "{n} avisos de Asaas rechazados en las últimas 24 h: el token del aviso registrado en Asaas no es el del sistema. Conecta de nuevo en la pestaña Conexión; si el aviso se registró a mano, cambia en él el token por el nuevo."
+  },
+  {
+    "pt": "A conta do ChatGPT não se cadastra colando uma chave: ela se conecta pelo botão de login em IA › Credenciais.",
+    "es": "La cuenta de ChatGPT no se registra pegando una clave: se conecta con el botón de inicio de sesión en IA › Credenciales."
+  },
+  {
+    "pt": "Pausar todas",
+    "es": "Pausar todas"
+  },
+  {
+    "pt": "Retomar todas",
+    "es": "Reanudar todas"
+  },
+  {
+    "pt": "Não foi possível mudar o estado dos canais.",
+    "es": "No se pudo cambiar el estado de los canales."
+  },
+  {
+    "pt": "Não foi possível pausar",
+    "es": "No se pudo pausar"
+  },
+  {
+    "pt": "Não foi possível retomar",
+    "es": "No se pudo reanudar"
+  },
+  {
+    "pt": "Feito:",
+    "es": "Hecho:"
+  },
+  {
+    "pt": "Nada mudou:",
+    "es": "Nada cambió:"
+  },
+  {
+    "pt": "canal pausado agora",
+    "es": "canal pausado ahora"
+  },
+  {
+    "pt": "canais pausados agora",
+    "es": "canales pausados ahora"
+  },
+  {
+    "pt": "canal reativado agora",
+    "es": "canal reactivado ahora"
+  },
+  {
+    "pt": "canais reativados agora",
+    "es": "canales reactivados ahora"
+  },
+  {
+    "pt": "canal já estava pausado",
+    "es": "canal ya estaba pausado"
+  },
+  {
+    "pt": "canais já estavam pausados",
+    "es": "canales ya estaban pausados"
+  },
+  {
+    "pt": "canal já estava reativado",
+    "es": "canal ya estaba reactivado"
+  },
+  {
+    "pt": "canais já estavam reativados",
+    "es": "canales ya estaban reactivados"
+  },
+  {
+    "pt": "canal arquivado fica de fora",
+    "es": "canal archivado queda fuera"
+  },
+  {
+    "pt": "canais arquivados ficam de fora",
+    "es": "canales archivados quedan fuera"
+  },
+  {
+    "pt": "Sala de videochamada",
+    "es": "Sala de videollamada"
+  },
+  {
+    "pt": "A sala abre em uma aba nova: é lá que o navegador pede câmera e microfone.",
+    "es": "La sala se abre en una pestaña nueva: ahí el navegador pide cámara y micrófono."
+  },
+  {
+    "pt": "Envie o link pelo chat e o contato entra pelo celular, sem instalar nada. A sala vale só para esta chamada.",
+    "es": "Envía el enlace por el chat y el contacto entra desde el celular, sin instalar nada. La sala sirve solo para esta llamada."
+  },
+  {
+    "pt": "Abrir sala em nova aba",
+    "es": "Abrir sala en pestaña nueva"
+  },
+  {
+    "pt": "Videochamada (Jitsi Meet)",
+    "es": "Videollamada (Jitsi Meet)"
+  },
+  {
+    "pt": "Abrir sala de vídeo no header da conversa: o contato entra pelo link no chat, sem instalar nada.",
+    "es": "Abrir sala de video en el encabezado de la conversación: el contacto entra por el enlace en el chat, sin instalar nada."
+  },
+  {
+    "pt": "No arquivo de ambiente, JITSI_SERVER_URL apontando para a origem da sala (ex.: https://meet.jit.si). Vazio = o botão Vídeo não aparece.",
+    "es": "En el archivo de entorno (.env), JITSI_SERVER_URL apunta al origen de la sala (p. ej. https://meet.jit.si). Vacío = el botón Video no aparece."
+  },
+  {
+    "pt": "Link da videochamada copiado.",
+    "es": "Enlace de la videollamada copiado."
+  },
+  {
+    "pt": "Link da videochamada enviado na conversa.",
+    "es": "Enlace de la videollamada enviado en la conversación."
+  },
+  {
+    "pt": "Não consegui copiar o link. Selecione e copie da barra de endereço.",
+    "es": "No pude copiar el enlace. Selecciona y copia desde la barra de direcciones."
+  },
+  {
+    "pt": "Não consegui enviar o link. Copie e cole na conversa.",
+    "es": "No pude enviar el enlace. Cópialo y pégalo en la conversación."
+  },
+  {
+    "pt": "Enviar link na conversa",
+    "es": "Enviar enlace a la conversación"
+  },
+  {
+    "pt": "Alíneas do art. 15.º do RGPD",
+    "es": "Alíneas del art. 15.º del RGPD"
+  },
+  {
+    "pt": "O relatório de acesso imprime estes três textos em nome da organização. Deixar em branco faz o documento mostrar «{naoInformado}» — nada é inventado no lugar do que falta.",
+    "es": "El informe de acceso imprime estos tres textos en nombre de la organización. Dejarlos en blanco hace que el documento muestre «{naoInformado}»: no se inventa nada en lugar de lo que falta."
+  },
+  {
+    "pt": "Finalidades do tratamento (alínea a))",
+    "es": "Finalidades del tratamiento (letra a))"
+  },
+  {
+    "pt": "Para que fins os dados pessoais são tratados: atendimento, faturação, marketing.",
+    "es": "Para qué fines se tratan los datos personales: atención, facturación, marketing."
+  },
+  {
+    "pt": "Destinatários dos dados (alínea c))",
+    "es": "Destinatarios de los datos (letra c))"
+  },
+  {
+    "pt": "Com quem esses dados são compartilhados: prestadores, autoridades, parceiros.",
+    "es": "Con quién se comparten estos datos: proveedores, autoridades, socios."
+  },
+  {
+    "pt": "Prazo de conservação dos dados (alínea d))",
+    "es": "Plazo de conservación de los datos (letra d))"
+  },
+  {
+    "pt": "Por quanto tempo os dados são guardados depois do último contato.",
+    "es": "Cuánto tiempo se conservan los datos después del último contacto."
+  },
+  {
+    "pt": "Máximo de {n} caracteres.",
+    "es": "Máximo de {n} caracteres."
+  },
+  {
+    "pt": "Salvar alíneas",
+    "es": "Guardar las letras"
+  },
+  {
+    "pt": "Alíneas do art. 15.º salvas.",
+    "es": "Las letras del art. 15.º quedaron guardadas."
+  },
+  {
+    "pt": "Contato sem nome no CRM: {{nome}}/{{primeiro_nome}} ficaram literais no texto. Edite antes de enviar.",
+    "es": "Contacto sin nombre en el CRM: {{nome}}/{{primeiro_nome}} quedaron como texto literal en el mensaje. Edítalo antes de enviar."
+  },
+  {
+    "pt": "[Pedido de titular]",
+    "es": "[Solicitud del interesado]"
+  },
+  {
+    "pt": "[Apagamento da loja]",
+    "es": "[Eliminación de la tienda]"
+  },
+  {
+    "pt": "Solicitação {id} próxima do vencimento",
+    "es": "Solicitud {id} próxima al vencimiento"
+  },
+  {
+    "pt": "Alerta de SLA — Solicitação {id}",
+    "es": "Alerta de SLA — Solicitud {id}"
+  },
+  {
+    "pt": "Olá,",
+    "es": "Hola,"
+  },
+  {
+    "pt": "A solicitação {id} de {org} atingiu o limiar {limiar}.",
+    "es": "La solicitud {id} de {org} alcanzó el umbral {limiar}."
+  },
+  {
+    "pt": "D+5 (acesso a dados)",
+    "es": "D+5 (acceso a datos)"
+  },
+  {
+    "pt": "D+10 (anonimização/exclusão)",
+    "es": "D+10 (anonimización/supresión)"
+  },
+  {
+    "pt": "Esta solicitação está {n} dia(s) em atraso.",
+    "es": "Esta solicitud lleva {n} día(s) de retraso."
+  },
+  {
+    "pt": "O prazo vence em {data}.",
+    "es": "El plazo vence el {data}."
+  },
+  {
+    "pt": "Prazo: {data}.",
+    "es": "Plazo: {data}."
+  },
+  {
+    "pt": "Status atual:",
+    "es": "Estado actual:"
+  },
+  {
+    "pt": "Ver solicitação no painel",
+    "es": "Ver solicitud en el panel"
+  },
+  {
+    "pt": "Acesse:",
+    "es": "Acceda:"
+  },
+  {
+    "pt": "Prazo interno do sistema.",
+    "es": "Plazo interno del sistema."
+  },
+  {
+    "pt": "Prazo interno do sistema, mais curto que o prazo legal (RGPD: um mês, art. 12.º, n.º 3).",
+    "es": "Plazo interno del sistema, más corto que el plazo legal (RGPD: un mes, art. 12.º, n.º 3)."
+  },
+  {
+    "pt": "Prazo interno do sistema, mais curto que o prazo legal.",
+    "es": "Plazo interno del sistema, más corto que el plazo legal."
+  },
+  {
+    "pt": "O prazo do art. 12.º, n.º 3 do RGPD (um mês) venceu.",
+    "es": "El plazo del art. 12.º, n.º 3 del RGPD (un mes) venció."
+  },
+  {
+    "pt": "Digite para buscar…",
+    "es": "Escriba para buscar…"
+  },
+  {
+    "pt": "Este campo aceita um valor novo, fora da lista.",
+    "es": "Este campo acepta un valor nuevo, fuera de la lista."
+  },
+  {
+    "pt": "Permitir valor novo",
+    "es": "Permitir valor nuevo"
+  },
+  {
+    "pt": "Permitir valor novo (fora da lista)",
+    "es": "Permitir valor nuevo (fuera de la lista)"
+  },
+  {
+    "pt": "Importar opções (CSV)",
+    "es": "Importar opciones (CSV)"
+  },
+  {
+    "pt": "value,label,apelidos — uma opção por linha",
+    "es": "value,label,alias — una opción por línea"
+  },
+  {
+    "pt": "Importar opções do campo",
+    "es": "Importar opciones del campo"
+  },
+  {
+    "pt": "opções importadas.",
+    "es": "opciones importadas."
+  },
+  {
+    "pt": "já existiam.",
+    "es": "ya existían."
+  },
+  {
+    "pt": "Nenhuma opção nova para importar.",
+    "es": "Ninguna opción nueva para importar."
+  },
+  {
+    "pt": "Esse valor não está na lista. Escolha uma das opções.",
+    "es": "Ese valor no está en la lista. Elija una de las opciones."
+  },
+  {
+    "pt": "9. Dados do Google (Agenda e Google Ads)",
+    "es": "9. Datos de Google (Agenda y Google Ads)"
+  },
+  {
+    "pt": "Abrir tarefa",
+    "es": "Abrir tarea"
+  },
+  {
+    "pt": "Uma tarefa está perto do vencimento",
+    "es": "Una tarea está cerca del vencimiento"
+  },
+  {
+    "pt": "Uma tarefa venceu sem conclusão",
+    "es": "Una tarea venció sin terminarse"
+  },
+  {
+    "pt": "Abra a tarefa e conclua antes do prazo — ou reagende agora, se já dá para ver que não vai caber.",
+    "es": "Abre la tarea y cúmplela antes del plazo — o reprograma ahora, si ya ves que no va a caber."
+  },
+  {
+    "pt": "A tarefa venceu sem conclusão. Abra e conclua, ou reagende o prazo se ele não for mais possível.",
+    "es": "La tarea venció sin terminarse. Ábrela y cúmplela, o reprograma el plazo si ya no es posible."
+  },
+  {
+    "pt": "contatos por chamada.",
+    "es": "contactos por llamada."
+  },
+  {
+    "pt": "1 contato selecionado",
+    "es": "1 contacto seleccionado"
+  },
+  {
+    "pt": "contatos selecionados",
+    "es": "contactos seleccionados"
+  },
+  {
+    "pt": "Adicionar etiqueta",
+    "es": "Agregar etiqueta"
+  },
+  {
+    "pt": "Remover etiqueta",
+    "es": "Quitar etiqueta"
+  },
+  {
+    "pt": "Mudar responsável",
+    "es": "Cambiar responsable"
+  },
+  {
+    "pt": "Preencher campo personalizado",
+    "es": "Rellenar campo personalizado"
+  },
+  {
+    "pt": "A etiqueta entra nos contatos selecionados pelo mesmo caminho da edição individual, com auditoria por contato.",
+    "es": "La etiqueta entra en los contactos seleccionados por el mismo camino de la edición individual, con auditoría por contacto."
+  },
+  {
+    "pt": "A etiqueta sai dos contatos selecionados pelo mesmo caminho da edição individual, com auditoria por contato.",
+    "es": "La etiqueta sale de los contactos seleccionados por el mismo camino de la edición individual, con auditoría por contacto."
+  },
+  {
+    "pt": "Cada contato é posto na carteira pelo mesmo caminho da ficha, e o dono é validado um a um.",
+    "es": "Cada contacto se pone en la cartera por el mismo camino de la ficha, y el dueño se valida uno a uno."
+  },
+  {
+    "pt": "Nenhum atendente disponível.",
+    "es": "Ningún agente disponible."
+  },
+  {
+    "pt": "O campo é gravado no mesmo caminho da edição individual; os outros campos do contato permanecem.",
+    "es": "El campo se graba por el mismo camino de la edición individual; los demás campos del contacto permanecen."
+  },
+  {
+    "pt": "Selecionar contato",
+    "es": "Seleccionar contacto"
+  },
+  {
+    "pt": "Selecionar todos os contatos visíveis",
+    "es": "Seleccionar todos los contactos visibles"
+  },
+  {
+    "pt": "1 contato atualizado.",
+    "es": "1 contacto actualizado."
+  },
+  {
+    "pt": "contatos atualizados",
+    "es": "contactos actualizados"
+  },
+  {
+    "pt": "recusados",
+    "es": "rechazados"
+  },
+  {
+    "pt": "atualizado",
+    "es": "actualizado"
+  },
+  {
+    "pt": "recusado",
+    "es": "rechazado"
+  },
+  {
+    "pt": "Recusado.",
+    "es": "Rechazado."
+  },
+  {
+    "pt": "O agente terminou sem propor uma resposta. Pode ter sido uma decisão (por exemplo, diante de uma mensagem automática) ou a geração ter parado antes da resposta. Se esperava uma, gere de novo; senão, não há nada a enviar.",
+    "es": "El agente terminó sin proponer una respuesta. Pudo ser una decisión (por ejemplo, ante un mensaje automático) o que la generación se detuviera antes de la respuesta. Si esperabas una, genera de nuevo; si no, no hay nada que enviar."
+  }
+]

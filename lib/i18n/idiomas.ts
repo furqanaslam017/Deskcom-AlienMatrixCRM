@@ -55,74 +55,23 @@ import { IDIOMAS_VISIVEIS, type IdiomaVisivel } from "./registro";
 export type Idioma = IdiomaVisivel["codigo"];
 export const IDIOMAS: readonly Idioma[] = IDIOMAS_VISIVEIS.map((idioma) => idioma.codigo);
 
-export const IDIOMA_PADRAO: Idioma = "pt-BR";
+export const IDIOMA_PADRAO: Idioma = "en";
 
 /**
- * O que veio do perfil é um idioma que sabemos servir?
- *
- * Fecha para o padrão em vez de confiar: o campo aceita qualquer string desde
- * antes desta feature (o seletor já ofereceu `en-US`, que nunca teve tradução),
- * e um valor desconhecido chegando ao dicionário devolveria a CHAVE na tela.
+ * Normaliza o idioma da interface — AlienMatrix é 100% em Inglês.
  */
-export function normalizarIdioma(bruto: string | null | undefined): Idioma {
-  return (IDIOMAS as readonly string[]).includes(bruto ?? "")
-    ? (bruto as Idioma)
-    : IDIOMA_PADRAO;
+export function normalizarIdioma(_bruto?: string | null | undefined): Idioma {
+  return IDIOMA_PADRAO;
 }
 
-/**
- * Sinal de idioma de quem ainda não tem preferência salva: o cabeçalho
- * `Accept-Language` que o navegador manda em toda requisição.
- *
- * Não é o `normalizarIdioma` de um valor solto — aqui há uma LISTA ordenada
- * por preferência (`es-MX,es;q=0.9,en;q=0.8`), e o primeiro idioma que este
- * produto sabe servir na ordem do visitante vence, mesmo que não seja o de
- * maior `q`. Pura por design: sem `next/headers` aqui, porque este arquivo é
- * importado por componente cliente (`SeletorDeIdioma.tsx`) — quem lê o
- * cabeçalho é `idiomaDoVisitante` em `lib/i18n/idiomaAnonimo.ts`, server-only.
- */
-export function parseAcceptLanguage(header: string | null | undefined): Idioma | null {
-  if (!header) return null;
-  const candidatos = header
-    .split(",")
-    .map((parte) => {
-      const [tagBruta, qBruto] = parte.trim().split(";q=");
-      const q = qBruto ? Number.parseFloat(qBruto) : 1;
-      return { tag: tagBruta?.trim().toLowerCase() ?? "", q: Number.isFinite(q) ? q : 1 };
-    })
-    .filter((candidato) => candidato.tag.length > 0)
-    .sort((a, b) => b.q - a.q);
-
-  for (const { tag } of candidatos) {
-    const primario = tag.split("-")[0] ?? "";
-    const servido = IDIOMAS_VISIVEIS.find((idioma) =>
-      idioma.subtagsDoNavegador.some((subtag) => subtag === primario),
-    );
-    if (servido) return servido.codigo;
-  }
-  return null;
+export function parseAcceptLanguage(_header?: string | null | undefined): Idioma {
+  return IDIOMA_PADRAO;
 }
 
-/**
- * A lista de idiomas do navegador (`["es-MX", "es", "en"]`) para um idioma servido.
- * Reusa `parseAcceptLanguage` para que `es-MX` ou `es-419` caiam em `es` e não
- * no padrão, que é o que `normalizarIdioma` faria com o código regional.
- */
-export function idiomaDelNavegador(languages: readonly string[]): Idioma {
-  return parseAcceptLanguage(languages.join(",")) ?? IDIOMA_PADRAO;
+export function idiomaDelNavegador(_languages?: readonly string[]): Idioma {
+  return IDIOMA_PADRAO;
 }
 
-/**
- * O idioma do DICIONÁRIO para a etiqueta BCP-47 de um DESTINATÁRIO — o `pt-PT`
- * do país de Portugal, o `es` de um país que fale espanhol.
- *
- * Não é `normalizarIdioma`: aqui a etiqueta não é uma preferência de interface
- * (que só pode ser um dos códigos servidos) e sim a LÍNGUA de um país, que pode
- * ser uma variante regional que o seletor de idioma não oferece (`pt-PT`,
- * `es-419`). A degradação é a mesma de `idiomaDelNavegador`, pela mesma razão:
- * o primário casa o idioma servido, e uma língua que o produto ainda não traduz
- * cai no padrão em vez de devolver a chave crua na tela (issue #2347, item 2).
- */
-export function idiomaDoTexto(tag: string | null | undefined): Idioma {
-  return parseAcceptLanguage(tag) ?? IDIOMA_PADRAO;
+export function idiomaDoTexto(_tag?: string | null | undefined): Idioma {
+  return IDIOMA_PADRAO;
 }

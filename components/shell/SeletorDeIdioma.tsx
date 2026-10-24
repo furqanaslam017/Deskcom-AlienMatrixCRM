@@ -79,6 +79,10 @@ export function SeletorDeIdioma() {
     });
   };
 
+  if (IDIOMAS_VISIVEIS.length <= 1) {
+    return null;
+  }
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

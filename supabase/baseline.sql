@@ -58595,3 +58595,1326 @@ on conflict (model) do update set
   completion_cents_per_million_tokens = excluded.completion_cents_per_million_tokens,
   notes = excluded.notes,
   superseded_at = null;
+-- manifest: **AlienMatrix Phase 1 — Motor genérico de Custom Objects, Custom Fields, Relações, Views e Templates de Indústria.** Permite que qualquer organização modele o CRM para seu segmento de mercado (imobiliária: Imóveis/Lotes; escola: Alunos/Cursos; clínica: Pacientes/Prontuários; agência: Projetos/Contratos; varejo: Pedidos/Produtos). Tabelas tenant-aware com RLS estrita por `fn_user_org_ids()` e `fn_is_platform_admin()`. Aditiva e idempotente; apêndice no `baseline.sql`.
+-- ============================================================================
+-- 0704 — ALIENMATRIX PHASE 1: GENERIC CUSTOM OBJECTS ENGINE
+-- ============================================================================
+
+-- 1. TABELA DE OBJETOS CUSTOMIZADOS (CUSTOM OBJECTS)
+create table if not exists public.custom_objects (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  slug text not null,
+  name text not null,
+  singular_name text not null,
+  plural_name text not null,
+  description text,
+  icon text not null default 'Cube',
+  is_system boolean not null default false,
+  primary_field_slug text not null default 'name',
+  settings jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_custom_objects_org_slug unique (organization_id, slug)
+);
+
+create index if not exists idx_custom_objects_org on public.custom_objects (organization_id);
+
+-- 2. TABELA DE CAMPOS CUSTOMIZADOS (CUSTOM FIELDS)
+create table if not exists public.custom_fields (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  object_id uuid not null references public.custom_objects (id) on delete cascade,
+  slug text not null,
+  label text not null,
+  field_type text not null check (
+    field_type in (
+      'text', 'long_text', 'number', 'currency', 'date', 'datetime',
+      'boolean', 'select', 'multi_select', 'email', 'phone', 'url',
+      'file', 'relation', 'user'
+    )
+  ),
+  description text,
+  is_required boolean not null default false,
+  is_unique boolean not null default false,
+  default_value jsonb,
+  options jsonb not null default '[]'::jsonb,
+  relation_target_object_id uuid references public.custom_objects (id) on delete set null,
+  validation_rules jsonb not null default '{}'::jsonb,
+  position numeric not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_custom_fields_object_slug unique (object_id, slug)
+);
+
+create index if not exists idx_custom_fields_org_obj on public.custom_fields (organization_id, object_id);
+
+-- 3. TABELA DE REGISTROS CUSTOMIZADOS (CUSTOM RECORDS)
+create table if not exists public.custom_records (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  object_id uuid not null references public.custom_objects (id) on delete cascade,
+  title text not null,
+  values jsonb not null default '{}'::jsonb,
+  created_by_user_id uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_custom_records_org_obj on public.custom_records (organization_id, object_id);
+create index if not exists idx_custom_records_values on public.custom_records using gin (values);
+
+-- 4. TABELA DE RELAÇÕES ENTRE OBJETOS (CUSTOM OBJECT RELATIONS)
+create table if not exists public.custom_object_relations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  source_object_id uuid not null references public.custom_objects (id) on delete cascade,
+  target_object_id uuid not null references public.custom_objects (id) on delete cascade,
+  relation_type text not null check (relation_type in ('one_to_many', 'many_to_many', 'many_to_one')),
+  slug text not null,
+  label text not null,
+  reverse_label text,
+  description text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_custom_obj_rel_source_slug unique (source_object_id, slug)
+);
+
+create index if not exists idx_custom_obj_rel_org on public.custom_object_relations (organization_id);
+
+-- 5. TABELA DE VÍNCULOS ENTRE REGISTROS (CUSTOM RECORD RELATIONS)
+create table if not exists public.custom_record_relations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  relation_id uuid not null references public.custom_object_relations (id) on delete cascade,
+  source_record_id uuid not null references public.custom_records (id) on delete cascade,
+  target_record_id uuid not null references public.custom_records (id) on delete cascade,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  constraint uq_custom_rec_rel unique (relation_id, source_record_id, target_record_id)
+);
+
+create index if not exists idx_custom_rec_rel_source on public.custom_record_relations (source_record_id);
+create index if not exists idx_custom_rec_rel_target on public.custom_record_relations (target_record_id);
+
+-- 6. TABELA DE VISÕES SALVAS (CUSTOM VIEWS — TABLE, KANBAN, LIST)
+create table if not exists public.custom_views (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  object_id uuid not null references public.custom_objects (id) on delete cascade,
+  user_id uuid,
+  name text not null,
+  view_type text not null check (view_type in ('table', 'kanban', 'list')),
+  config jsonb not null default '{}'::jsonb,
+  is_default boolean not null default false,
+  position numeric not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_custom_views_org_obj on public.custom_views (organization_id, object_id);
+
+-- 7. ATIVAÇÃO DE ROW LEVEL SECURITY (RLS)
+alter table public.custom_objects enable row level security;
+alter table public.custom_fields enable row level security;
+alter table public.custom_records enable row level security;
+alter table public.custom_object_relations enable row level security;
+alter table public.custom_record_relations enable row level security;
+alter table public.custom_views enable row level security;
+
+-- 8. POLÍTICAS DE RLS (SELECT)
+drop policy if exists "custom_objects_select" on public.custom_objects;
+create policy "custom_objects_select" on public.custom_objects
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "custom_fields_select" on public.custom_fields;
+create policy "custom_fields_select" on public.custom_fields
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "custom_records_select" on public.custom_records;
+create policy "custom_records_select" on public.custom_records
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "custom_object_relations_select" on public.custom_object_relations;
+create policy "custom_object_relations_select" on public.custom_object_relations
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "custom_record_relations_select" on public.custom_record_relations;
+create policy "custom_record_relations_select" on public.custom_record_relations
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "custom_views_select" on public.custom_views;
+create policy "custom_views_select" on public.custom_views
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+-- 9. POLÍTICAS DE RLS (WRITE: INSERT, UPDATE, DELETE)
+drop policy if exists "custom_objects_write" on public.custom_objects;
+create policy "custom_objects_write" on public.custom_objects
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "custom_fields_write" on public.custom_fields;
+create policy "custom_fields_write" on public.custom_fields
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "custom_records_write" on public.custom_records;
+create policy "custom_records_write" on public.custom_records
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "custom_object_relations_write" on public.custom_object_relations;
+create policy "custom_object_relations_write" on public.custom_object_relations
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "custom_record_relations_write" on public.custom_record_relations;
+create policy "custom_record_relations_write" on public.custom_record_relations
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "custom_views_write" on public.custom_views;
+create policy "custom_views_write" on public.custom_views
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+-- manifest: **AlienMatrix Phase 2 — Core CRM Modules.** Adiciona catálogo de produtos nativo (crm_products, crm_price_lists), itens de negócio (crm_deal_products), faturas e orçamentos comerciais (crm_invoices, crm_invoice_items), registro de ligações e reuniões (crm_call_logs), anexos universais (crm_attachments) e trilha de conversão de leads (crm_lead_conversions). RLS estrita por `fn_user_org_ids()` e `fn_is_platform_admin()`. Aditiva e idempotente; apêndice no `baseline.sql`.
+-- ============================================================================
+-- 0705 — ALIENMATRIX PHASE 2: CORE CRM MODULES
+-- ============================================================================
+
+-- 1. CATÁLOGO DE PRODUTOS E SERVIÇOS (CRM PRODUCTS)
+create table if not exists public.crm_products (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  sku text,
+  name text not null,
+  description text,
+  category text,
+  unit_price_cents bigint not null default 0,
+  currency text not null default 'USD',
+  cost_price_cents bigint,
+  tax_rate_percent numeric(5, 2) default 0.00,
+  stock_quantity integer default 0,
+  is_active boolean not null default true,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_crm_products_sku unique (organization_id, sku)
+);
+
+create index if not exists idx_crm_products_org on public.crm_products (organization_id);
+
+-- 2. TABELAS DE PREÇO (PRICE LISTS)
+create table if not exists public.crm_price_lists (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  name text not null,
+  description text,
+  currency text not null default 'USD',
+  is_default boolean not null default false,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_price_lists_org on public.crm_price_lists (organization_id);
+
+create table if not exists public.crm_price_list_items (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  price_list_id uuid not null references public.crm_price_lists (id) on delete cascade,
+  product_id uuid not null references public.crm_products (id) on delete cascade,
+  unit_price_cents bigint not null,
+  created_at timestamptz not null default now(),
+  constraint uq_crm_price_list_item unique (price_list_id, product_id)
+);
+
+create index if not exists idx_crm_price_list_items_org on public.crm_price_list_items (organization_id);
+
+-- 3. PRODUTOS ASSOCIADOS A NEGÓCIOS/LEADS (DEAL PRODUCTS)
+create table if not exists public.crm_deal_products (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  product_id uuid references public.crm_products (id) on delete set null,
+  product_name text not null,
+  quantity numeric(10, 2) not null default 1.00,
+  unit_price_cents bigint not null,
+  currency text not null default 'USD',
+  discount_cents bigint default 0,
+  tax_rate_percent numeric(5, 2) default 0.00,
+  total_cents bigint not null,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_deal_products_lead on public.crm_deal_products (organization_id, lead_id);
+
+-- 4. FATURAS E COBRANÇAS (CRM INVOICES & PROPOSALS)
+create table if not exists public.crm_invoices (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  invoice_number text not null,
+  kind text not null default 'invoice' check (kind in ('invoice', 'quote', 'proforma')),
+  status text not null default 'draft' check (status in ('draft', 'sent', 'paid', 'overdue', 'cancelled')),
+  lead_id uuid references public.crm_leads (id) on delete set null,
+  contact_id uuid references public.contacts (id) on delete set null,
+  company_id uuid references public.companies (id) on delete set null,
+  title text not null,
+  subtotal_cents bigint not null default 0,
+  discount_cents bigint not null default 0,
+  tax_cents bigint not null default 0,
+  total_cents bigint not null default 0,
+  currency text not null default 'USD',
+  issue_date date not null default current_date,
+  due_date date,
+  paid_at timestamptz,
+  notes text,
+  payment_instructions text,
+  payment_url text,
+  pdf_storage_path text,
+  created_by_user_id uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_crm_invoices_number unique (organization_id, invoice_number)
+);
+
+create index if not exists idx_crm_invoices_org on public.crm_invoices (organization_id);
+create index if not exists idx_crm_invoices_lead on public.crm_invoices (lead_id);
+create index if not exists idx_crm_invoices_contact on public.crm_invoices (contact_id);
+
+-- 5. ITENS DA FATURA (INVOICE ITEMS)
+create table if not exists public.crm_invoice_items (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  invoice_id uuid not null references public.crm_invoices (id) on delete cascade,
+  product_id uuid references public.crm_products (id) on delete set null,
+  description text not null,
+  quantity numeric(10, 2) not null default 1.00,
+  unit_price_cents bigint not null default 0,
+  discount_cents bigint default 0,
+  tax_rate_percent numeric(5, 2) default 0.00,
+  total_cents bigint not null default 0,
+  position integer not null default 0,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_invoice_items_invoice on public.crm_invoice_items (invoice_id);
+
+-- 6. REGISTRO DE LIGAÇÕES, REUNIÕES E ATIVIDADES (CALL & MEETING LOGS)
+create table if not exists public.crm_call_logs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  lead_id uuid references public.crm_leads (id) on delete set null,
+  contact_id uuid references public.contacts (id) on delete set null,
+  activity_type text not null default 'call' check (activity_type in ('call', 'meeting', 'demo', 'video_call', 'whatsapp_call')),
+  direction text not null default 'outbound' check (direction in ('inbound', 'outbound')),
+  outcome text not null default 'completed' check (outcome in ('connected', 'busy', 'no_answer', 'left_voicemail', 'completed', 'rescheduled', 'cancelled')),
+  subject text not null,
+  notes text,
+  duration_seconds integer default 0,
+  scheduled_at timestamptz,
+  performed_at timestamptz not null default now(),
+  performed_by_user_id uuid,
+  recording_url text,
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_call_logs_org on public.crm_call_logs (organization_id);
+create index if not exists idx_crm_call_logs_lead on public.crm_call_logs (lead_id);
+create index if not exists idx_crm_call_logs_contact on public.crm_call_logs (contact_id);
+
+-- 7. ANEXOS UNIVERSAIS (DOCUMENTS & ATTACHMENTS)
+create table if not exists public.crm_attachments (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  entity_type text not null, -- 'lead', 'contact', 'company', 'custom_record', 'invoice'
+  entity_id uuid not null,
+  file_name text not null,
+  file_size_bytes bigint not null,
+  mime_type text not null,
+  storage_path text not null,
+  uploaded_by_user_id uuid,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_attachments_entity on public.crm_attachments (organization_id, entity_type, entity_id);
+
+-- 8. TRILHA DE CONVERSÃO DE LEADS (LEAD CONVERSIONS)
+create table if not exists public.crm_lead_conversions (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  source_lead_id uuid not null references public.crm_leads (id) on delete cascade,
+  target_contact_id uuid references public.contacts (id) on delete set null,
+  target_company_id uuid references public.companies (id) on delete set null,
+  target_deal_id uuid references public.crm_leads (id) on delete set null,
+  converted_by_user_id uuid,
+  notes text,
+  converted_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_lead_conversions_org on public.crm_lead_conversions (organization_id);
+
+-- 9. ATIVAÇÃO DE ROW LEVEL SECURITY (RLS)
+alter table public.crm_products enable row level security;
+alter table public.crm_price_lists enable row level security;
+alter table public.crm_price_list_items enable row level security;
+alter table public.crm_deal_products enable row level security;
+alter table public.crm_invoices enable row level security;
+alter table public.crm_invoice_items enable row level security;
+alter table public.crm_call_logs enable row level security;
+alter table public.crm_attachments enable row level security;
+alter table public.crm_lead_conversions enable row level security;
+
+-- 10. POLÍTICAS DE RLS (SELECT)
+drop policy if exists "crm_products_select" on public.crm_products;
+create policy "crm_products_select" on public.crm_products
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_price_lists_select" on public.crm_price_lists;
+create policy "crm_price_lists_select" on public.crm_price_lists
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_price_list_items_select" on public.crm_price_list_items;
+create policy "crm_price_list_items_select" on public.crm_price_list_items
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_deal_products_select" on public.crm_deal_products;
+create policy "crm_deal_products_select" on public.crm_deal_products
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_invoices_select" on public.crm_invoices;
+create policy "crm_invoices_select" on public.crm_invoices
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_invoice_items_select" on public.crm_invoice_items;
+create policy "crm_invoice_items_select" on public.crm_invoice_items
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_call_logs_select" on public.crm_call_logs;
+create policy "crm_call_logs_select" on public.crm_call_logs
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_attachments_select" on public.crm_attachments;
+create policy "crm_attachments_select" on public.crm_attachments
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_lead_conversions_select" on public.crm_lead_conversions;
+create policy "crm_lead_conversions_select" on public.crm_lead_conversions
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+-- 11. POLÍTICAS DE RLS (WRITE)
+drop policy if exists "crm_products_write" on public.crm_products;
+create policy "crm_products_write" on public.crm_products
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_price_lists_write" on public.crm_price_lists;
+create policy "crm_price_lists_write" on public.crm_price_lists
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_price_list_items_write" on public.crm_price_list_items;
+create policy "crm_price_list_items_write" on public.crm_price_list_items
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_deal_products_write" on public.crm_deal_products;
+create policy "crm_deal_products_write" on public.crm_deal_products
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_invoices_write" on public.crm_invoices;
+create policy "crm_invoices_write" on public.crm_invoices
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_invoice_items_write" on public.crm_invoice_items;
+create policy "crm_invoice_items_write" on public.crm_invoice_items
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_call_logs_write" on public.crm_call_logs;
+create policy "crm_call_logs_write" on public.crm_call_logs
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_attachments_write" on public.crm_attachments;
+create policy "crm_attachments_write" on public.crm_attachments
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_lead_conversions_write" on public.crm_lead_conversions;
+create policy "crm_lead_conversions_write" on public.crm_lead_conversions
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+-- manifest: **AlienMatrix Phase 3 — Roles, Security, Admin & Localization.** Adiciona papéis e permissões customizadas granulares (crm_custom_roles, crm_role_assignments), configurações de segurança e SSO corporativo (crm_security_settings), lixeira e recuperação de dados excluídos (crm_soft_deletes), e preferências avançadas de tenant com marca e suporte multilíngue inglês/urdu/árabe/português (crm_tenant_settings). RLS estrita por `fn_user_org_ids()`. Aditiva e idempotente; apêndice no `baseline.sql`.
+-- ============================================================================
+-- 0706 — ALIENMATRIX PHASE 3: ROLES, SECURITY, ADMIN & LOCALIZATION
+-- ============================================================================
+
+-- 1. PAPÉIS E PERMISSÕES CUSTOMIZADAS (CUSTOM ROLES & PERMISSIONS)
+create table if not exists public.crm_custom_roles (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  name text not null,
+  slug text not null,
+  description text,
+  permissions jsonb not null default '{}'::jsonb,
+  is_system boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_crm_custom_roles_slug unique (organization_id, slug)
+);
+
+create index if not exists idx_crm_custom_roles_org on public.crm_custom_roles (organization_id);
+
+-- 2. ATRIBUIÇÃO DE PAPÉIS A USUÁRIOS
+create table if not exists public.crm_role_assignments (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  user_id uuid not null,
+  custom_role_id uuid not null references public.crm_custom_roles (id) on delete cascade,
+  created_at timestamptz not null default now(),
+  constraint uq_crm_role_assignments unique (organization_id, user_id, custom_role_id)
+);
+
+create index if not exists idx_crm_role_assignments_org_user on public.crm_role_assignments (organization_id, user_id);
+
+-- 3. SEGURANÇA E SSO CORPORATIVO (SECURITY & SSO)
+create table if not exists public.crm_security_settings (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  enforce_2fa boolean not null default false,
+  sso_provider text not null default 'none' check (sso_provider in ('none', 'google', 'microsoft', 'saml_oidc')),
+  sso_domain text,
+  sso_client_id text,
+  sso_metadata_url text,
+  session_timeout_minutes integer not null default 1440,
+  allowed_ip_ranges text[] not null default '{}',
+  updated_at timestamptz not null default now(),
+  constraint uq_crm_security_settings_org unique (organization_id)
+);
+
+create index if not exists idx_crm_security_settings_org on public.crm_security_settings (organization_id);
+
+-- 4. LIXEIRA E SOFT DELETE / RESTORE
+create table if not exists public.crm_soft_deletes (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  entity_type text not null, -- 'lead', 'contact', 'product', 'invoice', 'custom_record'
+  entity_id uuid not null,
+  entity_name text not null,
+  entity_data jsonb not null default '{}'::jsonb,
+  deleted_by_user_id uuid,
+  deleted_at timestamptz not null default now(),
+  restored_at timestamptz
+);
+
+create index if not exists idx_crm_soft_deletes_org on public.crm_soft_deletes (organization_id, entity_type);
+create index if not exists idx_crm_soft_deletes_restored on public.crm_soft_deletes (organization_id, restored_at);
+
+-- 5. PREFERÊNCIAS DE TENANT, MARCA E LOCALIZAÇÃO (TENANT SETTINGS & LOCALIZATION)
+create table if not exists public.crm_tenant_settings (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  brand_name text,
+  logo_url text,
+  primary_color_hex text not null default '#2563eb',
+  accent_color_hex text not null default '#3b82f6',
+  custom_domain text,
+  timezone text not null default 'UTC',
+  currency text not null default 'USD',
+  language text not null default 'en' check (language in ('en', 'ur', 'ar', 'pt-BR')),
+  metadata jsonb not null default '{}'::jsonb,
+  updated_at timestamptz not null default now(),
+  constraint uq_crm_tenant_settings_org unique (organization_id)
+);
+
+create index if not exists idx_crm_tenant_settings_org on public.crm_tenant_settings (organization_id);
+
+-- 6. ATIVAÇÃO DE ROW LEVEL SECURITY (RLS)
+alter table public.crm_custom_roles enable row level security;
+alter table public.crm_role_assignments enable row level security;
+alter table public.crm_security_settings enable row level security;
+alter table public.crm_soft_deletes enable row level security;
+alter table public.crm_tenant_settings enable row level security;
+
+-- 7. POLÍTICAS DE RLS (SELECT)
+drop policy if exists "crm_custom_roles_select" on public.crm_custom_roles;
+create policy "crm_custom_roles_select" on public.crm_custom_roles
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_role_assignments_select" on public.crm_role_assignments;
+create policy "crm_role_assignments_select" on public.crm_role_assignments
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_security_settings_select" on public.crm_security_settings;
+create policy "crm_security_settings_select" on public.crm_security_settings
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_soft_deletes_select" on public.crm_soft_deletes;
+create policy "crm_soft_deletes_select" on public.crm_soft_deletes
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_tenant_settings_select" on public.crm_tenant_settings;
+create policy "crm_tenant_settings_select" on public.crm_tenant_settings
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+-- 8. POLÍTICAS DE RLS (WRITE)
+drop policy if exists "crm_custom_roles_write" on public.crm_custom_roles;
+create policy "crm_custom_roles_write" on public.crm_custom_roles
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_role_assignments_write" on public.crm_role_assignments;
+create policy "crm_role_assignments_write" on public.crm_role_assignments
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_security_settings_write" on public.crm_security_settings;
+create policy "crm_security_settings_write" on public.crm_security_settings
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_soft_deletes_write" on public.crm_soft_deletes;
+create policy "crm_soft_deletes_write" on public.crm_soft_deletes
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_tenant_settings_write" on public.crm_tenant_settings;
+create policy "crm_tenant_settings_write" on public.crm_tenant_settings
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+-- manifest: **AlienMatrix Phase 4 — Automation & Workflows.** Adiciona motor visual de automações (crm_workflows, crm_workflow_executions), formulários públicos incorporáveis de captura de leads (crm_lead_forms) e endpoints dedicados de webhooks para Zapier/Make/n8n (crm_inbound_webhooks). RLS estrita por `fn_user_org_ids()`. Aditiva e idempotente; apêndice no `baseline.sql`.
+-- ============================================================================
+-- 0707 — ALIENMATRIX PHASE 4: AUTOMATION & WORKFLOWS
+-- ============================================================================
+
+-- 1. MOTOR DE WORKFLOWS E AUTOMAÇÕES (CRM WORKFLOWS)
+create table if not exists public.crm_workflows (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  name text not null,
+  description text,
+  is_active boolean not null default true,
+  trigger_type text not null check (trigger_type in ('record_created', 'stage_changed', 'message_received', 'time_based', 'webhook')),
+  trigger_config jsonb not null default '{}'::jsonb,
+  conditions jsonb not null default '[]'::jsonb,
+  actions jsonb not null default '[]'::jsonb,
+  created_by_user_id uuid,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_workflows_org on public.crm_workflows (organization_id);
+create index if not exists idx_crm_workflows_trigger on public.crm_workflows (organization_id, trigger_type);
+
+-- 2. HISTÓRICO DE EXECUÇÕES DE WORKFLOWS (EXECUTION LOGS)
+create table if not exists public.crm_workflow_executions (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  workflow_id uuid not null references public.crm_workflows (id) on delete cascade,
+  status text not null default 'success' check (status in ('success', 'failed', 'running', 'skipped')),
+  entity_type text,
+  entity_id text,
+  trigger_payload jsonb not null default '{}'::jsonb,
+  action_results jsonb not null default '[]'::jsonb,
+  error_message text,
+  duration_ms integer not null default 0,
+  executed_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_workflow_executions_wf on public.crm_workflow_executions (organization_id, workflow_id);
+create index if not exists idx_crm_workflow_executions_date on public.crm_workflow_executions (organization_id, executed_at desc);
+
+-- 3. FORMULÁRIOS PÚBLICOS DE CAPTURA DE LEADS (EMBEDDABLE LEAD FORMS)
+create table if not exists public.crm_lead_forms (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  title text not null,
+  slug text not null,
+  description text,
+  target_pipeline_id uuid references public.crm_pipelines (id) on delete set null,
+  target_stage_id uuid references public.crm_stages (id) on delete set null,
+  fields_config jsonb not null default '[]'::jsonb,
+  primary_color_hex text not null default '#2563eb',
+  success_message text not null default 'Obrigado! Entraremos em contato em breve.',
+  redirect_url text,
+  is_active boolean not null default true,
+  submissions_count integer not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  constraint uq_crm_lead_forms_slug unique (organization_id, slug)
+);
+
+create index if not exists idx_crm_lead_forms_org on public.crm_lead_forms (organization_id);
+
+-- 4. WEBHOOKS DE ENTRADA (INBOUND WEBHOOKS / ZAPIER / MAKE / N8N)
+create table if not exists public.crm_inbound_webhooks (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  name text not null,
+  token text not null unique,
+  target_entity text not null default 'lead' check (target_entity in ('lead', 'contact', 'custom_record')),
+  field_mapping jsonb not null default '{}'::jsonb,
+  is_active boolean not null default true,
+  calls_count integer not null default 0,
+  last_called_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_inbound_webhooks_org on public.crm_inbound_webhooks (organization_id);
+create index if not exists idx_crm_inbound_webhooks_token on public.crm_inbound_webhooks (token);
+
+-- 5. ATIVAÇÃO DE ROW LEVEL SECURITY (RLS)
+alter table public.crm_workflows enable row level security;
+alter table public.crm_workflow_executions enable row level security;
+alter table public.crm_lead_forms enable row level security;
+alter table public.crm_inbound_webhooks enable row level security;
+
+-- 6. POLÍTICAS DE RLS (SELECT)
+drop policy if exists "crm_workflows_select" on public.crm_workflows;
+create policy "crm_workflows_select" on public.crm_workflows
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_workflow_executions_select" on public.crm_workflow_executions;
+create policy "crm_workflow_executions_select" on public.crm_workflow_executions
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_lead_forms_select" on public.crm_lead_forms;
+create policy "crm_lead_forms_select" on public.crm_lead_forms
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists "crm_inbound_webhooks_select" on public.crm_inbound_webhooks;
+create policy "crm_inbound_webhooks_select" on public.crm_inbound_webhooks
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+-- 7. POLÍTICAS DE RLS (WRITE)
+drop policy if exists "crm_workflows_write" on public.crm_workflows;
+create policy "crm_workflows_write" on public.crm_workflows
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_workflow_executions_write" on public.crm_workflow_executions;
+create policy "crm_workflow_executions_write" on public.crm_workflow_executions
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_lead_forms_write" on public.crm_lead_forms;
+create policy "crm_lead_forms_write" on public.crm_lead_forms
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+drop policy if exists "crm_inbound_webhooks_write" on public.crm_inbound_webhooks;
+create policy "crm_inbound_webhooks_write" on public.crm_inbound_webhooks
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full())
+  with check ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin_full());
+
+
+
+-- ============================================================================
+-- 0708 — ALIENMATRIX PHASE 5: WHATSAPP FLAGSHIP
+-- ============================================================================
+-- manifest: **AlienMatrix Phase 5 — WhatsApp Flagship.** Multi-número por tenant (WAHA + Meta Cloud API), monitoramento de saúde da sessão, caixa de entrada compartilhada (atribuição, notas internas, @menções, labels, SLA, quick replies), mídias ricas, campanhas de broadcast com throttling anti-ban, rastreio Click-to-WhatsApp com atribuição a negócios, chatbots de palavras-chave e configuração dos 7 guardrails por organização. RLS estrita por `fn_user_org_ids()`. Aditiva e idempotente; apêndice no `baseline.sql`.
+-- ============================================================================
+-- 0708 — ALIENMATRIX PHASE 5: WHATSAPP FLAGSHIP
+-- ============================================================================
+
+-- 1. WHATSAPP MULTI-NÚMEROS & GESTÃO DE SESSÕES
+create table if not exists public.crm_whatsapp_numbers (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  name text not null,
+  phone_number text not null,
+  provider text not null default 'waha' check (provider in ('waha', 'meta_cloud')),
+  status text not null default 'connected' check (status in ('connected', 'qr_ready', 'disconnected', 'starting', 'failed', 'archived')),
+  qr_code_data text,
+  waha_session_name text,
+  meta_phone_number_id text,
+  meta_waba_id text,
+  meta_access_token text,
+  battery_level integer default 100,
+  health_status text not null default 'healthy' check (health_status in ('healthy', 'degraded', 'reconnecting')),
+  auto_reconnect_enabled boolean not null default true,
+  is_default boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_whatsapp_numbers_org on public.crm_whatsapp_numbers (organization_id);
+create index if not exists idx_crm_whatsapp_numbers_phone on public.crm_whatsapp_numbers (organization_id, phone_number);
+
+-- 2. CAIXA DE ENTRADA COMPARTILHADA (SHARED TEAM INBOX CONVERSATIONS)
+create table if not exists public.crm_whatsapp_conversations (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  whatsapp_number_id uuid references public.crm_whatsapp_numbers (id) on delete set null,
+  contact_id uuid references public.contacts (id) on delete set null,
+  deal_id uuid references public.crm_leads (id) on delete set null,
+  assigned_user_id uuid references auth.users (id) on delete set null,
+  status text not null default 'open' check (status in ('open', 'pending', 'snoozed', 'closed')),
+  priority text not null default 'normal' check (priority in ('urgent', 'high', 'normal', 'low')),
+  sla_due_at timestamptz,
+  sla_status text not null default 'ok' check (sla_status in ('ok', 'warning', 'breached')),
+  snoozed_until timestamptz,
+  labels jsonb not null default '[]'::jsonb,
+  unread_count integer not null default 0,
+  last_message_text text,
+  last_message_at timestamptz not null default now(),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_whatsapp_conv_org on public.crm_whatsapp_conversations (organization_id);
+create index if not exists idx_crm_whatsapp_conv_contact on public.crm_whatsapp_conversations (organization_id, contact_id);
+create index if not exists idx_crm_whatsapp_conv_deal on public.crm_whatsapp_conversations (organization_id, deal_id);
+create index if not exists idx_crm_whatsapp_conv_assigned on public.crm_whatsapp_conversations (organization_id, assigned_user_id);
+
+-- 3. MENSAGENS, MÍDIAS, REAÇÕES & COMPROVANTES DE ENTREGA
+create table if not exists public.crm_whatsapp_messages (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  conversation_id uuid not null references public.crm_whatsapp_conversations (id) on delete cascade,
+  sender_type text not null default 'contact' check (sender_type in ('contact', 'agent', 'ai', 'system')),
+  sender_id uuid,
+  direction text not null default 'inbound' check (direction in ('inbound', 'outbound')),
+  message_type text not null default 'text' check (message_type in ('text', 'image', 'video', 'audio', 'document', 'location', 'contact', 'sticker', 'invoice', 'quote')),
+  content text not null default '',
+  media_url text,
+  media_metadata jsonb not null default '{}'::jsonb,
+  quoted_message_id uuid,
+  reactions jsonb not null default '[]'::jsonb,
+  delivery_status text not null default 'sent' check (delivery_status in ('pending', 'sent', 'delivered', 'read', 'failed')),
+  error_message text,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_whatsapp_msgs_conv on public.crm_whatsapp_messages (organization_id, conversation_id, created_at asc);
+
+-- 4. NOTAS INTERNAS & MENÇÕES (@mentions)
+create table if not exists public.crm_whatsapp_internal_notes (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  conversation_id uuid not null references public.crm_whatsapp_conversations (id) on delete cascade,
+  author_user_id uuid references auth.users (id) on delete set null,
+  content text not null,
+  mentioned_user_ids jsonb not null default '[]'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_whatsapp_notes_conv on public.crm_whatsapp_internal_notes (organization_id, conversation_id);
+
+-- 5. RESPOSTAS RÁPIDAS & CANNED RESPONSES
+create table if not exists public.crm_whatsapp_canned_responses (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  shortcut text not null,
+  title text not null,
+  content text not null,
+  category text not null default 'geral',
+  created_at timestamptz not null default now(),
+  constraint uq_crm_canned_shortcut unique (organization_id, shortcut)
+);
+
+create index if not exists idx_crm_whatsapp_canned_org on public.crm_whatsapp_canned_responses (organization_id);
+
+-- 6. CAMPANHAS DE TRANSMISSÃO (BROADCASTS & ANTI-BAN THROTTLING)
+create table if not exists public.crm_whatsapp_broadcasts (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  whatsapp_number_id uuid references public.crm_whatsapp_numbers (id) on delete set null,
+  name text not null,
+  template_name text,
+  message_body text not null,
+  target_segment jsonb not null default '{}'::jsonb,
+  status text not null default 'draft' check (status in ('draft', 'scheduled', 'running', 'completed', 'paused', 'cancelled')),
+  total_recipients integer not null default 0,
+  sent_count integer not null default 0,
+  delivered_count integer not null default 0,
+  read_count integer not null default 0,
+  failed_count integer not null default 0,
+  throttle_delay_seconds integer not null default 5,
+  scheduled_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_whatsapp_broadcasts_org on public.crm_whatsapp_broadcasts (organization_id);
+
+-- 7. CHATBOTS & ROTEAMENTO POR PALAVRAS-CHAVE
+create table if not exists public.crm_whatsapp_chatbots (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  whatsapp_number_id uuid references public.crm_whatsapp_numbers (id) on delete set null,
+  name text not null,
+  keywords jsonb not null default '[]'::jsonb,
+  flow_type text not null default 'keyword' check (flow_type in ('keyword', 'menu', 'business_hours')),
+  menu_options jsonb not null default '[]'::jsonb,
+  response_text text not null,
+  fallback_mode text not null default 'ai_agent' check (fallback_mode in ('ai_agent', 'human_handoff', 'end')),
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+create index if not exists idx_crm_whatsapp_chatbots_org on public.crm_whatsapp_chatbots (organization_id);
+
+-- 8. CLICK-TO-WHATSAPP LINKS & RASTREIO DE ORIGEM
+create table if not exists public.crm_whatsapp_links (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations (id) on delete cascade,
+  whatsapp_number_id uuid references public.crm_whatsapp_numbers (id) on delete set null,
+  title text not null,
+  slug text not null,
+  prefilled_text text,
+  utm_source text,
+  utm_medium text,
+  utm_campaign text,
+  target_pipeline_id uuid references public.crm_pipelines (id) on delete set null,
+  target_stage_id uuid references public.crm_stages (id) on delete set null,
+  clicks_count integer not null default 0,
+  leads_generated_count integer not null default 0,
+  created_at timestamptz not null default now(),
+  constraint uq_crm_whatsapp_links_slug unique (organization_id, slug)
+);
+
+create index if not exists idx_crm_whatsapp_links_org on public.crm_whatsapp_links (organization_id);
+
+-- 9. CONFIGURAÇÃO DOS 7 GUARDRAILS POR TENANT
+create table if not exists public.crm_tenant_guardrails (
+  organization_id uuid primary key references public.organizations (id) on delete cascade,
+  stop_optout_enabled boolean not null default true,
+  lgpd_enabled boolean not null default true,
+  anti_ban_pacing_enabled boolean not null default true,
+  messaging_window_enabled boolean not null default true,
+  spinning_enabled boolean not null default true,
+  promise_semantic_enabled boolean not null default true,
+  disclosure_enabled boolean not null default true,
+  max_hourly_sends integer not null default 60,
+  emergency_killswitch boolean not null default false,
+  custom_blocked_words jsonb not null default '[]'::jsonb,
+  updated_at timestamptz not null default now()
+);
+
+-- HABILITAR RLS NAS TABELAS
+alter table public.crm_whatsapp_numbers enable row level security;
+alter table public.crm_whatsapp_conversations enable row level security;
+alter table public.crm_whatsapp_messages enable row level security;
+alter table public.crm_whatsapp_internal_notes enable row level security;
+alter table public.crm_whatsapp_canned_responses enable row level security;
+alter table public.crm_whatsapp_broadcasts enable row level security;
+alter table public.crm_whatsapp_chatbots enable row level security;
+alter table public.crm_whatsapp_links enable row level security;
+alter table public.crm_tenant_guardrails enable row level security;
+
+-- POLÍTICAS RLS IDEMPOTENTES (fn_user_org_ids e platform admin)
+drop policy if exists crm_wa_numbers_select on public.crm_whatsapp_numbers;
+create policy crm_wa_numbers_select on public.crm_whatsapp_numbers
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_numbers_write on public.crm_whatsapp_numbers;
+create policy crm_wa_numbers_write on public.crm_whatsapp_numbers
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_conv_select on public.crm_whatsapp_conversations;
+create policy crm_wa_conv_select on public.crm_whatsapp_conversations
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_conv_write on public.crm_whatsapp_conversations;
+create policy crm_wa_conv_write on public.crm_whatsapp_conversations
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_msgs_select on public.crm_whatsapp_messages;
+create policy crm_wa_msgs_select on public.crm_whatsapp_messages
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_msgs_write on public.crm_whatsapp_messages;
+create policy crm_wa_msgs_write on public.crm_whatsapp_messages
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_notes_select on public.crm_whatsapp_internal_notes;
+create policy crm_wa_notes_select on public.crm_whatsapp_internal_notes
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_notes_write on public.crm_whatsapp_internal_notes;
+create policy crm_wa_notes_write on public.crm_whatsapp_internal_notes
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_canned_select on public.crm_whatsapp_canned_responses;
+create policy crm_wa_canned_select on public.crm_whatsapp_canned_responses
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_canned_write on public.crm_whatsapp_canned_responses;
+create policy crm_wa_canned_write on public.crm_whatsapp_canned_responses
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_broadcasts_select on public.crm_whatsapp_broadcasts;
+create policy crm_wa_broadcasts_select on public.crm_whatsapp_broadcasts
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_broadcasts_write on public.crm_whatsapp_broadcasts;
+create policy crm_wa_broadcasts_write on public.crm_whatsapp_broadcasts
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_chatbots_select on public.crm_whatsapp_chatbots;
+create policy crm_wa_chatbots_select on public.crm_whatsapp_chatbots
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_chatbots_write on public.crm_whatsapp_chatbots;
+create policy crm_wa_chatbots_write on public.crm_whatsapp_chatbots
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_links_select on public.crm_whatsapp_links;
+create policy crm_wa_links_select on public.crm_whatsapp_links
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_wa_links_write on public.crm_whatsapp_links;
+create policy crm_wa_links_write on public.crm_whatsapp_links
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_guardrails_select on public.crm_tenant_guardrails;
+create policy crm_guardrails_select on public.crm_tenant_guardrails
+  for select to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+drop policy if exists crm_guardrails_write on public.crm_tenant_guardrails;
+create policy crm_guardrails_write on public.crm_tenant_guardrails
+  for all to authenticated
+  using ((organization_id in (select public.fn_user_org_ids())) or public.fn_is_platform_admin());
+
+
+-- ============================================================================
+-- AlienMatrix Phase 6: AI Layer Upgrade
+-- ============================================================================
+
+-- 1. Tenant AI Settings & Multi-Provider Keys
+create table if not exists public.crm_tenant_ai_settings (
+  organization_id uuid not null references public.organizations(id) on delete cascade primary key,
+  active_provider text not null default 'anthropic',
+  primary_model text not null default 'claude-3-5-sonnet-20241022',
+  fast_model text not null default 'claude-3-5-haiku-20241022',
+  embedding_provider text not null default 'openai',
+  api_keys jsonb not null default '{}'::jsonb,
+  monthly_token_budget bigint not null default 1000000,
+  monthly_cost_limit_cents integer not null default 5000,
+  budget_alert_threshold_percent integer not null default 80,
+  hard_stop_on_budget boolean not null default true,
+  lead_scoring_enabled boolean not null default true,
+  sentiment_analysis_enabled boolean not null default true,
+  auto_fill_fields_enabled boolean not null default true,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 2. Agent Personas
+create table if not exists public.crm_agent_personas (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  name text not null,
+  role_title text not null default 'Consultor Comercial',
+  tone text not null default 'professional_friendly',
+  language text not null default 'pt-BR',
+  system_prompt text not null,
+  first_message_greeting text,
+  fallback_behavior text not null default 'handoff',
+  is_active boolean not null default true,
+  is_default boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 3. RAG Knowledge Items (Docs, FAQs, URLs, Policies)
+create table if not exists public.crm_knowledge_items (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  type text not null default 'doc',
+  source_url text,
+  content text not null,
+  tags text[] not null default '{}'::text[],
+  status text not null default 'ready',
+  token_count integer not null default 0,
+  chunk_count integer not null default 1,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 4. AI Insights, Scoring & Conversation Summaries
+create table if not exists public.crm_ai_insights (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  target_type text not null default 'conversation',
+  target_id uuid not null,
+  lead_score integer not null default 50,
+  score_reasons jsonb not null default '[]'::jsonb,
+  sentiment text not null default 'neutral',
+  sentiment_score numeric(4,2) not null default 0.00,
+  summary text,
+  next_best_actions jsonb not null default '[]'::jsonb,
+  extracted_fields jsonb not null default '{}'::jsonb,
+  fields_applied boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 5. AI Usage Tracking & Budget Logs
+create table if not exists public.crm_ai_usage_logs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  model text not null,
+  provider text not null,
+  prompt_tokens integer not null default 0,
+  completion_tokens integer not null default 0,
+  total_tokens integer not null default 0,
+  cost_cents integer not null default 0,
+  operation_type text not null default 'inbound_turn',
+  metadata jsonb not null default '{}'::jsonb,
+  created_at timestamptz not null default now()
+);
+
+-- 6. Intelligent Human Handoff Logs with AI Summary
+create table if not exists public.crm_ai_handoff_logs (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  conversation_id uuid references public.crm_whatsapp_conversations(id) on delete set null,
+  contact_id uuid references public.contacts(id) on delete set null,
+  lead_id uuid references public.crm_leads(id) on delete set null,
+  trigger_reason text not null default 'sentiment_frustrated',
+  ai_summary text not null,
+  lead_sentiment text not null default 'neutral',
+  urgency text not null default 'medium',
+  suggested_action text,
+  assigned_to_user_id uuid references auth.users(id) on delete set null,
+  resolved_at timestamptz,
+  status text not null default 'pending',
+  created_at timestamptz not null default now()
+);
+
+-- Indexes for performance
+create index if not exists idx_crm_agent_personas_org on public.crm_agent_personas(organization_id);
+create index if not exists idx_crm_knowledge_items_org on public.crm_knowledge_items(organization_id);
+create index if not exists idx_crm_ai_insights_org_target on public.crm_ai_insights(organization_id, target_type, target_id);
+create index if not exists idx_crm_ai_usage_logs_org_created on public.crm_ai_usage_logs(organization_id, created_at desc);
+create index if not exists idx_crm_ai_handoff_logs_org_status on public.crm_ai_handoff_logs(organization_id, status);
+
+-- Enable RLS
+alter table public.crm_tenant_ai_settings enable row level security;
+alter table public.crm_agent_personas enable row level security;
+alter table public.crm_knowledge_items enable row level security;
+alter table public.crm_ai_insights enable row level security;
+alter table public.crm_ai_usage_logs enable row level security;
+alter table public.crm_ai_handoff_logs enable row level security;
+
+-- Policies for crm_tenant_ai_settings
+drop policy if exists "tenant_ai_settings_isolation" on public.crm_tenant_ai_settings;
+create policy "tenant_ai_settings_isolation" on public.crm_tenant_ai_settings
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_agent_personas
+drop policy if exists "agent_personas_isolation" on public.crm_agent_personas;
+create policy "agent_personas_isolation" on public.crm_agent_personas
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_knowledge_items
+drop policy if exists "knowledge_items_isolation" on public.crm_knowledge_items;
+create policy "knowledge_items_isolation" on public.crm_knowledge_items
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_ai_insights
+drop policy if exists "ai_insights_isolation" on public.crm_ai_insights;
+create policy "ai_insights_isolation" on public.crm_ai_insights
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_ai_usage_logs
+drop policy if exists "ai_usage_logs_isolation" on public.crm_ai_usage_logs;
+create policy "ai_usage_logs_isolation" on public.crm_ai_usage_logs
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_ai_handoff_logs
+drop policy if exists "ai_handoff_logs_isolation" on public.crm_ai_handoff_logs;
+create policy "ai_handoff_logs_isolation" on public.crm_ai_handoff_logs
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+
+-- ============================================================================
+-- AlienMatrix Phase 7: Analytics, Dashboards and Billing
+-- ============================================================================
+
+-- 1. Analytics Reports
+create table if not exists public.crm_analytics_reports (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  title text not null,
+  report_type text not null default 'sales_funnel',
+  parameters jsonb not null default '{}'::jsonb,
+  is_favorite boolean not null default false,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- 2. Scheduled Reports
+create table if not exists public.crm_scheduled_reports (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade,
+  report_id uuid references public.crm_analytics_reports(id) on delete cascade,
+  frequency text not null default 'weekly',
+  recipient_emails text[] not null default '{}'::text[],
+  format text not null default 'pdf',
+  is_active boolean not null default true,
+  last_sent_at timestamptz,
+  created_at timestamptz not null default now()
+);
+
+-- 3. Billing Plans (Catalog)
+create table if not exists public.crm_billing_plans (
+  id uuid primary key default gen_random_uuid(),
+  slug text not null unique,
+  name text not null,
+  description text,
+  price_monthly_cents integer not null default 0,
+  price_yearly_cents integer not null default 0,
+  currency text not null default 'BRL',
+  max_seats integer not null default 5,
+  max_whatsapp_numbers integer not null default 2,
+  monthly_ai_tokens bigint not null default 2000000,
+  max_custom_objects integer not null default 10,
+  features jsonb not null default '[]'::jsonb,
+  is_active boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+-- 4. Tenant Subscriptions
+create table if not exists public.crm_tenant_subscriptions (
+  id uuid primary key default gen_random_uuid(),
+  organization_id uuid not null references public.organizations(id) on delete cascade unique,
+  plan_id uuid references public.crm_billing_plans(id) on delete restrict,
+  status text not null default 'trialing',
+  payment_provider text not null default 'stripe',
+  billing_cycle text not null default 'monthly',
+  trial_ends_at timestamptz,
+  current_period_start timestamptz not null default now(),
+  current_period_end timestamptz not null default (now() + interval '30 days'),
+  stripe_customer_id text,
+  stripe_subscription_id text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+-- Indexes for fast query performance
+create index if not exists idx_crm_analytics_reports_org on public.crm_analytics_reports(organization_id);
+create index if not exists idx_crm_scheduled_reports_org on public.crm_scheduled_reports(organization_id);
+create index if not exists idx_crm_tenant_subscriptions_org on public.crm_tenant_subscriptions(organization_id);
+
+-- Enable RLS
+alter table public.crm_analytics_reports enable row level security;
+alter table public.crm_scheduled_reports enable row level security;
+alter table public.crm_billing_plans enable row level security;
+alter table public.crm_tenant_subscriptions enable row level security;
+
+-- Policies for crm_analytics_reports
+drop policy if exists "analytics_reports_isolation" on public.crm_analytics_reports;
+create policy "analytics_reports_isolation" on public.crm_analytics_reports
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_scheduled_reports
+drop policy if exists "scheduled_reports_isolation" on public.crm_scheduled_reports;
+create policy "scheduled_reports_isolation" on public.crm_scheduled_reports
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );
+
+-- Policies for crm_billing_plans (viewable by all authenticated users, editable by platform admin)
+drop policy if exists "billing_plans_select" on public.crm_billing_plans;
+create policy "billing_plans_select" on public.crm_billing_plans
+  for select using (auth.role() = 'authenticated');
+
+drop policy if exists "billing_plans_platform_admin" on public.crm_billing_plans;
+create policy "billing_plans_platform_admin" on public.crm_billing_plans
+  for all using (public.fn_is_platform_admin());
+
+-- Policies for crm_tenant_subscriptions
+drop policy if exists "tenant_subscriptions_isolation" on public.crm_tenant_subscriptions;
+create policy "tenant_subscriptions_isolation" on public.crm_tenant_subscriptions
+  for all using (
+    organization_id in (select public.fn_user_org_ids()) or public.fn_is_platform_admin()
+  );

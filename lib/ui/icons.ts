@@ -153,4 +153,16 @@ export {
   ArrowsOutSimple,
   // /admin/modulos: módulo opcional com tabela própria (ADR-0002)
   Stack,
+  // AlienMatrix automation & workflows
+  XCircle,
+  Sliders,
+  Lightning,
+  Article,
+  ListDashes,
+  Code,
+  CreditCard,
+  DownloadSimple as Download,
+  CalendarBlank as Calendar,
+  ChartLineUp as TrendUp,
+  Warning as WarningCircle,
 } from "@phosphor-icons/react/dist/ssr";

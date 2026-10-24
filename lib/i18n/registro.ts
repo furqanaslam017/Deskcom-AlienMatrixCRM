@@ -54,48 +54,13 @@ export interface IdiomaRegistrado {
 
 export const REGISTRO_DE_IDIOMAS = [
   {
-    codigo: "pt-BR",
-    nomeNativo: "Português (BR)",
-    rotuloCurto: "PT",
-    tagBcp47: "pt-BR",
-    subtagsDoNavegador: ["pt"],
-    nivel: "completo",
-    mantenedor: "mantenedores do projeto",
-  },
-  {
-    codigo: "es",
-    nomeNativo: "Español",
-    rotuloCurto: "ES",
-    // `es` e não `es-ES`: o público é a América Latina, e com `es` puro o
-    // navegador resolve pela região de quem lê.
-    tagBcp47: "es",
-    subtagsDoNavegador: ["es"],
-    nivel: "completo",
-    mantenedor: "mantenedores do projeto",
-  },
-  {
-    codigo: "zh-CN",
-    nomeNativo: "简体中文",
-    rotuloCurto: "中",
-    tagBcp47: "zh-CN",
-    subtagsDoNavegador: ["zh"],
-    // A tradução chega pelo PR #773, de @xxjjjj. Registrar o idioma antes do
-    // catálogo é o que deixa o catálogo entrar sem aparecer para ninguém.
-    nivel: "em_construcao",
-    mantenedor: null,
-  },
-  {
     codigo: "en",
     nomeNativo: "English",
     rotuloCurto: "EN",
-    // `en` e não `en-US`, pela mesma razão do `es`: com a tag pura o navegador
-    // resolve pela região de quem lê (data, número), em vez de impor os EUA.
     tagBcp47: "en",
-    subtagsDoNavegador: ["en"],
-    // Catálogo em `lib/i18n/traducoes/en.json`. Aparece quando o leitor do
-    // catálogo (fatia 4 do PROG-022) existir e o nível for promovido.
-    nivel: "em_construcao",
-    mantenedor: null,
+    subtagsDoNavegador: ["en", "pt", "es", "zh"],
+    nivel: "completo",
+    mantenedor: "AlienMatrix Project Maintainers",
   },
 ] as const satisfies readonly IdiomaRegistrado[];
 

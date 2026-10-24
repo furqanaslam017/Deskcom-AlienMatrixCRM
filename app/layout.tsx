@@ -28,6 +28,17 @@ import { Providers } from "./providers";
 import { PublicEnvScript } from "./public-env-script";
 import "./globals.css";
 
+const urbanist = localFont({
+  src: [
+    { path: "./fonts/urbanist-400-latin.woff2", weight: "400", style: "normal" },
+    { path: "./fonts/urbanist-500-latin.woff2", weight: "500", style: "normal" },
+    { path: "./fonts/urbanist-600-latin.woff2", weight: "600", style: "normal" },
+    { path: "./fonts/urbanist-700-latin.woff2", weight: "700", style: "normal" },
+  ],
+  display: "swap",
+  variable: "--font-urbanist",
+});
+
 // Fontes versionadas em app/fonts/ (origem e licença no README de lá): o
 // next/font/google as baixava durante o build, e o build caía quando o Google
 // não respondia. A família passa a se chamar como a variável JS ("atkinson"),
@@ -324,10 +335,10 @@ async function MarcaDosClientComponents({ children }: { children: React.ReactNod
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
-      lang="pt-BR"
+      lang="en"
       data-theme="light"
       suppressHydrationWarning
-      className={`${atkinson.variable} ${plexMono.variable}`}
+      className={`${urbanist.variable} ${atkinson.variable} ${plexMono.variable}`}
     >
       <head>
         {/* Primeiro de tudo: a cor da instalação, antes do CSS e do script de tema. */}

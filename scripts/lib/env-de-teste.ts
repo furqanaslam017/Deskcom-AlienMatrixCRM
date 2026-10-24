@@ -58,7 +58,7 @@ function lerArquivo(arquivo: string): Record<string, string> {
   const caminho = path.join(process.cwd(), arquivo);
   if (!fs.existsSync(caminho)) return {};
   const env: Record<string, string> = {};
-  for (const linha of fs.readFileSync(caminho, "utf8").split("\n")) {
+  for (const linha of fs.readFileSync(caminho, "utf8").split(/\r?\n/)) {
     const m = /^\s*([A-Z0-9_]+)\s*=\s*(.*)$/.exec(linha);
     if (m) env[m[1]!] = (m[2] ?? "").replace(/^"(.*)"$/, "$1").trim();
   }

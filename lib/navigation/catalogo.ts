@@ -260,6 +260,60 @@ export const NAV_CATALOG = [
     sidebar: true,
   },
   {
+    href: "/app/objects",
+    label: "Custom Objects",
+    description: "Modelo genérico de dados: crie objetos, campos customizados e templates de indústria.",
+    icon: "PuzzlePiece",
+    group: "crm",
+    section: "O dia a dia da venda",
+    sidebar: true,
+  },
+  {
+    href: "/app/crm/deals",
+    label: "Negócios",
+    description: "Pipelines, estágios e conversão de leads em oportunidades.",
+    icon: "Handshake",
+    group: "crm",
+    section: "O dia a dia da venda",
+    minRole: "viewer",
+  },
+  {
+    href: "/app/crm/invoices",
+    label: "Faturas & Orçamentos",
+    description: "Propostas comerciais, cotações, faturas e exportação em PDF.",
+    icon: "Receipt",
+    group: "crm",
+    section: "O dia a dia da venda",
+    minRole: "viewer",
+  },
+  {
+    href: "/app/crm/products",
+    label: "Produtos & Preços",
+    description: "Catálogo de produtos, serviços, tabelas de preço e estoque.",
+    icon: "Package",
+    group: "crm",
+    section: "O que você define uma vez",
+    minRole: "viewer",
+  },
+  {
+    href: "/app/crm/calendar",
+    label: "Calendário & Atividades",
+    description: "Linha do tempo de tarefas, reuniões agendadas e registro de ligações.",
+    icon: "CalendarCheck",
+    group: "crm",
+    section: "O dia a dia da venda",
+    minRole: "viewer",
+  },
+  {
+    href: "/app/crm/workflows",
+    label: "Automações & Workflows",
+    description: "Gatilhos visuais, formulários públicos de captura e webhooks para Zapier/Make.",
+    icon: "FlowArrow",
+    group: "crm",
+    section: "O dia a dia da venda",
+    minRole: "agent",
+  },
+  {
     href: "/app/companies",
     label: "Empresas",
     description: "Cadastro B2B — razão social, CNPJ e decisores.",
@@ -520,6 +574,15 @@ export const NAV_CATALOG = [
 
   // ---- Agente de IA — montar, ensinar, acompanhar ----
   {
+    href: "/app/ai/alien-matrix",
+    label: "AlienMatrix AI",
+    description: "Configuração multi-provedor, personas do agente, base de conhecimento RAG, lead scoring e handoffs.",
+    icon: "Robot",
+    group: "ia",
+    section: "Montar o agente",
+    minRole: "viewer",
+  },
+  {
     href: "/app/ai/agents",
     label: "Agentes",
     description: "Quem atende por você: instruções, modelo, ferramentas e publicação.",
@@ -722,6 +785,15 @@ export const NAV_CATALOG = [
     healthDot: true,
   },
   {
+    href: "/app/channels/whatsapp",
+    label: "WhatsApp Flagship",
+    description: "Multi-números, caixa de entrada compartilhada, broadcasts anti-ban, chatbots e 7 guardrails.",
+    icon: "WhatsappLogo",
+    group: "canais",
+    minRole: "agent",
+    sidebar: true,
+  },
+  {
     // Não tinha link nenhum no app inteiro: só se chegava digitando a URL.
     href: "/app/integrations/nuvemshop",
     label: "Nuvemshop",
@@ -804,6 +876,15 @@ export const NAV_CATALOG = [
     section: "Dinheiro",
     minRole: "viewer",
     modulo: "honorarios",
+  },
+  {
+    href: "/app/analise/alien-matrix",
+    label: "AlienMatrix Analytics",
+    description: "Dashboards de receita, forecast ponderado, conversão por etapa, relatórios customizados e faturamento de planos.",
+    icon: "ChartBar",
+    group: "analise",
+    section: "Os números do período",
+    minRole: "viewer",
   },
   {
     href: "/app/metrics",
@@ -958,6 +1039,15 @@ export const NAV_CATALOG = [
     // `manager`: o gerente decide metade das chaves da lista. Atendente e
     // leitor não ajustam nenhuma, e a tela redireciona os dois para /403.
     minRole: "manager",
+  },
+  {
+    href: "/app/settings/alien-matrix",
+    label: "AlienMatrix Admin",
+    description: "Papéis granulares, segurança, SSO, idiomas (EN/UR/AR/PT), moeda, marca e lixeira.",
+    icon: "ShieldCheck",
+    group: "organizacao",
+    section: "Sua empresa",
+    minRole: "admin",
   },
   {
     href: "/app/settings/tenant",

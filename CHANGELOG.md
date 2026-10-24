@@ -6,7 +6,67 @@ O formato segue [Keep a Changelog](https://keepachangelog.com/pt-BR/1.1.0/) e o 
 
 Se você roda o DeskcommCRM numa VPS, **leia a seção da versão para a qual está atualizando antes de rodar `bash update.sh`**. Mudanças que exigem ação manual aparecem sob **⚠️ Requer atenção**.
 
-## [Não lançado]
+## [Unreleased]
+
+### AlienMatrix CRM Upgrade (Phases 1 — 8)
+
+- **Phase 1: Generic Custom Objects & Industry Packs**
+  - Implemented the Custom Objects Engine (`crm_custom_objects`, `crm_custom_fields`, `crm_custom_records` with JSONB attributes, and `crm_object_relations`), enabling any business niche to model custom entities.
+  - Interactive views: dynamic Table view with spreadsheet-style inline editing, drag-and-drop Kanban board, Form creation modal, and customizable List views with saved filters.
+  - One-click industry packs for Real Estate (Properties/Plots), Clinics (Patients/Appointments), Schools (Students/Courses), Agencies (Clients/Projects), and Retail.
+  - UI Route: `/app/custom-objects`.
+
+- **Phase 2: Core CRM Modules, Invoicing & Product Catalog**
+  - End-to-end Lead conversion flow: convert Leads into Contacts, Companies, and Deals with stage tracking and probability.
+  - Proposals & Quotes / Invoices generation with multi-line items, taxes, discounts, payment status tracking, and instant client-ready PDF/SVG rendering.
+  - Product Catalog and Price Lists with inventory stock tracking and SKU codes.
+  - Tasks, Reminders, Calendar view, and bulk CSV import/export capabilities.
+  - UI Route: `/app/crm/alien-matrix`.
+
+- **Phase 3: Governance, Granular RBAC & Security**
+  - Granular object-level and field-level permission enforcement across canonical roles (owner, admin, manager, agent, viewer).
+  - Super-Admin Platform Console for managing tenants, workspace metrics, plan allocations, and system audit logs.
+  - Soft-delete recovery mechanism (Recycle Bin) and immutable audit log trails.
+  - UI Routes: `/admin/alien-matrix` and `/app/settings/alien-matrix`.
+
+- **Phase 4: Visual Automation Builder & Webhooks**
+  - Visual node-based Workflow Builder with triggers (`record_created`, `record_updated`, `stage_changed`, `message_received`, `webhook_received`, `cron_scheduled`), conditions, and automated actions (WhatsApp message, email, task creation, webhook call, and AI agent execution).
+  - Inbound and outbound webhooks with cryptographic HMAC signatures, retry policies, and out-of-the-box Zapier, Make, and n8n compatibility.
+  - Embeddable public lead capture forms with shareable direct links.
+  - UI Route: `/app/workflows`.
+
+- **Phase 5: WhatsApp Flagship Multi-Number Platform**
+  - Multi-number WhatsApp architecture with automated session health checks, QR-code connections, and auto-reconnect.
+  - Dual-engine switch: support for WAHA NOWEB and Meta Official WhatsApp Cloud API.
+  - Shared Team Inbox with agent assignments, internal notes, @mentions, SLA timers, and conversation tags.
+  - Rich multimedia messaging (images, video, voice notes, documents, location, quick replies).
+  - Anti-ban broadcast campaigns with intelligent jitter delays (5-15s) and opt-out compliance.
+  - Independent tenant configuration of all 7 pre-send safety guardrails.
+  - UI Route: `/app/canais/alien-matrix`.
+
+- **Phase 6: Advanced AI Intelligence Layer**
+  - Multi-provider AI catalog supporting OpenAI (GPT-4o), Anthropic (Claude 3.5 Sonnet), Google (Gemini 2.5), and Groq with tenant-isolated API credentials.
+  - Configurable AI personas with tone of voice (consultative, friendly, executive, direct) and customized system prompts.
+  - RAG Knowledge Base with document ingestion, website URL indexing, and FAQ vector search.
+  - Autonomous lead scoring (0-100), buying intent detection, and real-time sentiment analysis.
+  - Monthly token quotas, budget enforcement, and intelligent human escalation cards.
+  - UI Route: `/app/ai/alien-matrix`.
+
+- **Phase 7: Analytics, Dashboards & Tiered Billing**
+  - Executive Revenue Dashboard with total pipeline valuation, weighted revenue forecast, stage conversion funnel, and sales rep leaderboards.
+  - Operational metrics tracking WhatsApp volume, first response time, and AI vs. human resolution percentages.
+  - Custom report builder with instant downloadable CSV dataset exports.
+  - Automated recurring report dispatches via email (daily, weekly, monthly).
+  - Multi-tier billing subscriptions (Starter, Professional, Enterprise) with Stripe integration and local payment support.
+  - UI Route: `/app/analise/alien-matrix`.
+
+- **Phase 8: Global English Localization & UI/UX Polish**
+  - 100% English language enforcement across all user-facing interfaces, dialogs, forms, formatters, and reports.
+  - Comprehensive translation catalog `lib/i18n/traducoes/en.json` expanded to 10,392 entries covering every single interface string in the codebase.
+  - Single-language clean mode (`lib/i18n/registro.ts`), defaulting strictly to `en-US` without Portuguese fallback leakage.
+  - All AlienMatrix UI components refined with native English typography, formatters ($ USD), and notifications.
+  - Docker-optional execution: Native Node.js & pnpm runtime support with zero container dependency requirements.
+
 
 ## [1.86.0] — 2026-10-19
 

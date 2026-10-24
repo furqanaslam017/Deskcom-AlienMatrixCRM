@@ -168,6 +168,11 @@ export const PUBLIC_PATHS: RegExp[] = [
   /^\/api\/v1\/ai\/routers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i,
   /^\/api\/v1\/ai\/routers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/members$/i,
   /^\/api\/v1\/ai\/routers\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\/test$/i,
+  // AlienMatrix Phase 4: Public forms, inbound webhooks, and dual-auth integrations
+  /^\/api\/v1\/alien-matrix\/forms\/[^/]+\/submit$/,
+  /^\/api\/v1\/alien-matrix\/webhooks\/inbound\/[^/]+$/,
+  /^\/api\/v1\/alien-matrix\/integrations\/triggers\/leads$/,
+  /^\/api\/v1\/alien-matrix\/integrations\/actions\/create-lead$/,
   /^\/_next\//,
   /^\/favicon\.ico$/,
   // O ícone da aba (`app/icon.tsx`), que o `<head>` de TODA página pede —
