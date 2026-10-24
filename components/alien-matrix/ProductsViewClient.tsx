@@ -127,15 +127,15 @@ export function ProductsViewClient({ initialProducts }: ProductsViewClientProps)
     <div className="space-y-6 animate-in fade-in duration-200">
       {/* Action Header: Search, Category Filter, and Action Buttons */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="relative">
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <div className="relative flex-1 sm:flex-none">
             <MagnifyingGlass size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search by product name or SKU..."
-              className="w-64 rounded-full border border-[var(--line-2)] bg-[var(--well)] pl-9 pr-4 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
+              className="w-full sm:w-64 rounded-full border border-[var(--line-2)] bg-[var(--well)] pl-9 pr-4 py-2 text-xs text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
             />
           </div>
 
@@ -155,10 +155,10 @@ export function ProductsViewClient({ initialProducts }: ProductsViewClientProps)
           )}
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           <button
             onClick={handleExportCsv}
-            className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1.5 px-3.5 py-2"
+            className="flex-1 sm:flex-none btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center justify-center gap-1.5 px-3.5 py-2"
           >
             <Download size={14} />
             Export CSV
@@ -166,7 +166,7 @@ export function ProductsViewClient({ initialProducts }: ProductsViewClientProps)
 
           <button
             onClick={() => setIsModalOpen(true)}
-            className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+            className="flex-1 sm:flex-none btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2"
           >
             <Plus size={15} weight="bold" />
             New Product

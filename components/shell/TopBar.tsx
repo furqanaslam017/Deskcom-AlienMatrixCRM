@@ -26,7 +26,7 @@ export function TopBar() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-20 mb-6 flex h-16 w-full items-center justify-between gap-3 border-b border-[var(--rim)] bg-[var(--glass)]/80 px-4 backdrop-blur-md transition-all sm:px-6">
+    <header className="sticky top-0 z-20 mb-2 sm:mb-4 flex h-16 w-full items-center justify-between gap-3 border-b border-[var(--rim)] bg-[var(--glass)]/90 px-3 backdrop-blur-sm sm:px-6">
       <div className="flex min-w-0 items-center gap-3">
         <MobileSidebar />
         <TenantSwitcher />

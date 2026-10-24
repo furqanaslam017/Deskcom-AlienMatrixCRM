@@ -78,14 +78,14 @@ export function ObjectKanbanView({
   }
 
   return (
-    <div className="flex gap-4 overflow-x-auto pb-4 items-start min-h-[500px]">
+    <div className="flex gap-4 overflow-x-auto pb-4 items-start min-h-[500px] snap-x snap-mandatory">
       {columns.map((col) => {
         const colRecords = groupedRecords[col.value] || [];
 
         return (
           <div
             key={col.value}
-            className="flex-shrink-0 w-80 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col max-h-[80vh] overflow-hidden"
+            className="flex-shrink-0 w-[85vw] sm:w-80 snap-center rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md flex flex-col max-h-[80vh] overflow-hidden"
           >
             {/* Column Header */}
             <div className="p-3.5 border-b border-[var(--line-2)] flex items-center justify-between bg-[var(--surface-tint)]">

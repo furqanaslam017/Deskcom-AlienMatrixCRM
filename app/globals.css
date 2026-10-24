@@ -1651,18 +1651,29 @@
   position: fixed;
   inset: 0px;
   overflow: hidden;
+  contain: strict;
+  transform: translate3d(0, 0, 0);
+  backface-visibility: hidden;
 }
 
 .mesh i {
-  filter: blur(60px);
-  opacity: 0.95;
-  will-change: transform;
+  filter: blur(20px);
+  opacity: 0.85;
   border-radius: 50%;
   position: absolute;
+  pointer-events: none;
+  transform: translate3d(0, 0, 0);
+}
+
+@media (max-width: 768px) {
+  .mesh i {
+    filter: none;
+    opacity: 0.55;
+  }
 }
 
 .mesh__a {
-  background: radial-gradient(closest-side, var(--mesh-a), transparent);
+  background: radial-gradient(circle closest-side, var(--mesh-a) 0%, rgba(240, 208, 168, 0.4) 40%, transparent 80%);
   width: 62vmax;
   height: 62vmax;
   top: -24vmax;
@@ -1670,7 +1681,7 @@
 }
 
 .mesh__b {
-  background: radial-gradient(closest-side, var(--mesh-b), transparent);
+  background: radial-gradient(circle closest-side, var(--mesh-b) 0%, rgba(197, 230, 216, 0.4) 40%, transparent 80%);
   width: 70vmax;
   height: 70vmax;
   bottom: -30vmax;
@@ -1678,7 +1689,7 @@
 }
 
 .mesh__c {
-  background: radial-gradient(closest-side, var(--mesh-c), transparent);
+  background: radial-gradient(circle closest-side, var(--mesh-c) 0%, rgba(200, 218, 240, 0.4) 40%, transparent 80%);
   width: 46vmax;
   height: 46vmax;
   top: -16vmax;
@@ -1691,9 +1702,17 @@
   border: 1px solid var(--rim);
   border-radius: var(--r-card);
   box-shadow: var(--shadow-bento);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: box-shadow var(--duration-base) var(--ease), border-color var(--duration-base) var(--ease);
+}
+
+@media (max-width: 768px) {
+  .card-bento {
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    background-color: var(--plain);
+  }
 }
 
 .card-bento:hover {

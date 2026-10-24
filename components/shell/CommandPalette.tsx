@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useAuth } from "@/hooks/auth/AuthProvider";
 import { useT } from "@/hooks/i18n/useT";
-import { MagnifyingGlass } from "@/lib/ui/icons";
+import { MagnifyingGlass, Sparkle } from "@/lib/ui/icons";
 import {
   NAV_GROUPS,
   searchable,
@@ -263,7 +263,7 @@ function Resultados({ aoEscolher }: { aoEscolher: () => void }) {
                 </div>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                   {itens.map((d) => {
-                    const Icon = d.icon;
+                    const Icon = d.icon || Sparkle;
                     const idxGlobal = resultados.findIndex((r) => r.href === d.href);
                     const ativo = idxGlobal === destacado;
                     // Mesmo par do modo lista: cinza sobre o destaque dava 1,2:1.
@@ -290,7 +290,7 @@ function Resultados({ aoEscolher }: { aoEscolher: () => void }) {
                             ativo && "bg-primary text-primary-foreground",
                           )}
                         >
-                          <Icon size={16} aria-hidden />
+                          {Icon ? <Icon size={16} aria-hidden /> : null}
                         </div>
                         <div className="min-w-0 flex-1">
                           <p className="truncate text-xs leading-tight font-semibold">
@@ -322,7 +322,7 @@ function Resultados({ aoEscolher }: { aoEscolher: () => void }) {
           className="max-h-[60vh] overflow-y-auto p-2"
         >
           {resultados.map((d, i) => {
-            const Icon = d.icon;
+            const Icon = d.icon || Sparkle;
             const ativo = i === destacado;
             // No item destacado o fundo é a cor de destaque: o cinza de apoio
             // ficava 1,2:1 sobre o verde (medido), ilegível. A cor de frente do
@@ -350,7 +350,7 @@ function Resultados({ aoEscolher }: { aoEscolher: () => void }) {
                     ativo && "bg-primary text-primary-foreground",
                   )}
                 >
-                  <Icon size={16} aria-hidden />
+                  {Icon ? <Icon size={16} aria-hidden /> : null}
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex items-baseline gap-2">

@@ -9,6 +9,7 @@ import { GavetaDeNavegacao } from "@/components/shell/MobileSidebar";
 import { useAuth } from "@/hooks/auth/AuthProvider";
 import { useT } from "@/hooks/i18n/useT";
 import { sidebarGroups, type NavDestination } from "@/lib/navigation/registry";
+import { Sparkle } from "@/lib/ui/icons";
 import { usePecaDoRodape, type PecaDoRodape } from "@/lib/ui/rodape-ocupado";
 import { cn } from "@/lib/utils";
 
@@ -150,7 +151,7 @@ export function BarraInferior() {
     >
       <ul className="flex items-stretch justify-around py-1">
         {abas.map((aba) => {
-          const Icone = aba.icon;
+          const Icone = aba.icon || Sparkle;
           // `startsWith` e não igualdade: em `/app/inbox/[id]` a aba Inbox
           // continua sendo onde a pessoa está. A igualdade deixaria a barra
           // inteira apagada justamente na tela de conversa, que é onde se passa
@@ -167,7 +168,7 @@ export function BarraInferior() {
                   aqui ? "text-accent" : "text-muted-foreground",
                 )}
               >
-                <Icone size={22} weight={aqui ? "fill" : "regular"} aria-hidden />
+                {Icone ? <Icone size={22} weight={aqui ? "fill" : "regular"} aria-hidden /> : null}
                 <span className="w-full truncate text-center text-[10px] leading-tight">
                   {t(aba.label)}
                 </span>

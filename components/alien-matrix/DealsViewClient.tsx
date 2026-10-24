@@ -130,9 +130,9 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
 
       {/* 2. Control Toolbar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-        <div className="flex flex-wrap items-center gap-2.5">
+        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
           {/* Pill Search */}
-          <div className="relative">
+          <div className="relative flex-1 sm:flex-none">
             <MagnifyingGlass
               size={15}
               className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[var(--muted)]"
@@ -142,7 +142,7 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search deals or contacts..."
-              className="w-64 rounded-full border border-[var(--line-2)] bg-[var(--solid)] pl-9 pr-4 py-2 text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--pill)] transition-all"
+              className="w-full sm:w-64 rounded-full border border-[var(--line-2)] bg-[var(--solid)] pl-9 pr-4 py-2 text-xs text-[var(--text)] placeholder-[var(--muted)] focus:outline-none focus:ring-2 focus:ring-[var(--pill)] transition-all"
             />
           </div>
 
@@ -204,7 +204,7 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
             });
             setIsConvertModalOpen(true);
           }}
-          className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--pill)] hover:brightness-110 active:scale-[0.98] px-5 py-2 text-xs font-semibold text-[var(--on-pill)] shadow-xs transition-all cursor-pointer"
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-[var(--pill)] hover:brightness-110 active:scale-[0.98] px-5 py-2 text-xs font-semibold text-[var(--on-pill)] shadow-xs transition-all cursor-pointer w-full sm:w-auto"
         >
           <Handshake size={15} />
           <span>Convert Lead to Deal</span>
@@ -213,7 +213,7 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
 
       {/* 3. Main View: Kanban Board or Table */}
       {viewMode === "kanban" ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="flex md:grid overflow-x-auto pb-4 snap-x snap-mandatory md:grid-cols-2 lg:grid-cols-4 gap-4">
           {(activePipelineStages.length > 0
             ? activePipelineStages
             : [{ id: "all", name: "Opportunities", color: "#2f5c50", position: 1 }]
@@ -226,7 +226,7 @@ export function DealsViewClient({ initialDeals, pipelines, stages }: DealsViewCl
             return (
               <div
                 key={stage.id}
-                className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)]/70 backdrop-blur-md p-4 flex flex-col min-h-[460px] shadow-[var(--shadow-bento)]"
+                className="w-[85vw] sm:w-[320px] md:w-auto shrink-0 snap-center rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)]/70 backdrop-blur-md p-4 flex flex-col min-h-[460px] shadow-[var(--shadow-bento)]"
               >
                 {/* Stage Header */}
                 <div className="flex items-center justify-between pb-3 border-b border-[var(--line)]">

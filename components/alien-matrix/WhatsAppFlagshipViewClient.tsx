@@ -25,7 +25,10 @@ import {
   Sliders,
   Article,
   Handshake,
+  ArrowLeft,
+  Info,
 } from "@/lib/ui/icons";
+import { cn } from "@/lib/utils";
 
 interface WhatsAppNumber {
   id: string;
@@ -146,6 +149,7 @@ export function WhatsAppFlagshipViewClient({
   const [activeTab, setActiveTab] = useState<
     "inbox" | "numbers" | "broadcasts" | "chatbots" | "links" | "guardrails"
   >("inbox");
+  const [mobileTab, setMobileTab] = useState<"list" | "chat" | "details">("list");
 
   const [numbers, setNumbers] = useState<WhatsAppNumber[]>(initialNumbers);
   const [conversations, setConversations] = useState<Conversation[]>(initialConversations);
@@ -303,7 +307,7 @@ export function WhatsAppFlagshipViewClient({
   }
 
   return (
-    <div className="flex flex-col gap-6 max-w-[var(--app-max)] mx-auto p-4 md:p-6 animate-in fade-in duration-200">
+    <div className="flex flex-col gap-6 w-full animate-in fade-in duration-200">
       {/* Top Banner / Header in Bento Style */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[var(--line-2)]">
         <div>
@@ -432,9 +436,14 @@ export function WhatsAppFlagshipViewClient({
 
       {/* TAB 1: SHARED TEAM INBOX */}
       {activeTab === "inbox" && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden min-h-[720px]">
+        <div className="grid grid-cols-1 lg:grid-cols-12 rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden min-h-[640px] lg:min-h-[720px]">
           {/* Left Column: Conversations List */}
-          <div className="lg:col-span-4 border-r border-[var(--line-2)] flex flex-col h-full bg-[var(--well)]">
+          <div
+            className={cn(
+              "lg:col-span-4 border-r border-[var(--line-2)] flex flex-col h-full bg-[var(--well)]",
+              mobileTab !== "list" && "hidden lg:flex"
+            )}
+          >
             <div className="p-3.5 border-b border-[var(--line-2)] flex items-center justify-between">
               <span className="text-xs font-semibold text-[var(--text)]">Active Conversations</span>
               <span className="badge badge--pine text-[10px]">
@@ -446,7 +455,10 @@ export function WhatsAppFlagshipViewClient({
               {conversations.map((c) => (
                 <div
                   key={c.id}
-                  onClick={() => setSelectedConv(c)}
+                  onClick={() => {
+                    setSelectedConv(c);
+                    setMobileTab("chat");
+                  }}
                   className={`p-3.5 cursor-pointer transition flex flex-col gap-1.5 ${
                     selectedConv?.id === c.id
                       ? "bg-[var(--solid)] border-l-4 border-[var(--tomato)]"
@@ -487,28 +499,51 @@ export function WhatsAppFlagshipViewClient({
           </div>
 
           {/* Center Column: Active Conversation Messages & Composer */}
-          <div className="lg:col-span-5 flex flex-col h-full bg-[var(--solid)] border-r border-[var(--line-2)]">
+          <div
+            className={cn(
+              "lg:col-span-5 flex flex-col h-full bg-[var(--solid)] border-r border-[var(--line-2)] min-h-[500px]",
+              mobileTab !== "chat" && "hidden lg:flex"
+            )}
+          >
             {selectedConv ? (
               <>
                 {/* Thread Header */}
                 <div className="p-3.5 border-b border-[var(--line-2)] flex items-center justify-between bg-[var(--solid)]">
-                  <div>
-                    <h3 className="font-semibold text-xs text-[var(--text)]">
-                      {selectedConv.contact?.name || "Contact"}
-                    </h3>
-                    <p className="text-[11px] font-mono text-[var(--muted)]">
-                      {selectedConv.contact?.phone_number}
-                    </p>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setMobileTab("list")}
+                      className="lg:hidden p-1.5 -ml-1 text-[var(--muted)] hover:text-[var(--text)] rounded-full hover:bg-[var(--well)] transition"
+                      title="Back to conversation list"
+                    >
+                      <ArrowLeft size={18} />
+                    </button>
+                    <div>
+                      <h3 className="font-semibold text-xs text-[var(--text)]">
+                        {selectedConv.contact?.name || "Contact"}
+                      </h3>
+                      <p className="text-[11px] font-mono text-[var(--muted)]">
+                        {selectedConv.contact?.phone_number}
+                      </p>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setMobileTab("details")}
+                      className="lg:hidden p-1.5 text-[var(--muted)] hover:text-[var(--text)] rounded-full hover:bg-[var(--well)] transition"
+                      title="Contact details & notes"
+                    >
+                      <Info size={18} />
+                    </button>
                     <button
                       onClick={handleSendInvoiceMessage}
                       className="btn btn--ghost btn--sm inline-flex items-center gap-1.5 text-xs"
                       title="Send commercial proposal into chat"
                     >
                       <Receipt size={14} />
-                      Send Invoice
+                      <span className="hidden sm:inline">Send Invoice</span>
                     </button>
                   </div>
                 </div>
@@ -518,7 +553,7 @@ export function WhatsAppFlagshipViewClient({
                   {messages.map((m) => (
                     <div
                       key={m.id}
-                      className={`flex flex-col max-w-[80%] p-3 text-xs shadow-sm transition-all ${
+                      className={`flex flex-col max-w-[85%] sm:max-w-[80%] p-3 text-xs shadow-sm transition-all ${
                         m.direction === "outbound"
                           ? "ml-auto bg-[var(--pill)] text-[var(--on-pill)] rounded-[20px] rounded-br-[4px]"
                           : "mr-auto bg-[var(--solid)] text-[var(--text)] border border-[var(--line-2)] rounded-[20px] rounded-bl-[4px]"
@@ -553,7 +588,7 @@ export function WhatsAppFlagshipViewClient({
                     type="text"
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Type your WhatsApp reply... (or type /quick for templates)"
+                    placeholder="Type your WhatsApp reply..."
                     className="flex-1 text-xs px-4 py-2.5 rounded-full border border-[var(--line-2)] bg-[var(--well)] text-[var(--text)] focus:outline-none focus:border-[var(--pill)]"
                   />
                   <button
@@ -567,16 +602,32 @@ export function WhatsAppFlagshipViewClient({
                 </form>
               </>
             ) : (
-              <div className="flex-1 flex items-center justify-center text-xs text-[var(--muted)]">
+              <div className="flex-1 flex items-center justify-center text-xs text-[var(--muted)] p-8">
                 Select a conversation on the left to view message history.
               </div>
             )}
           </div>
 
           {/* Right Column: Contact, Deal & Internal Team Notes */}
-          <div className="lg:col-span-3 flex flex-col h-full p-4 overflow-y-auto space-y-4 bg-[var(--well)]">
+          <div
+            className={cn(
+              "lg:col-span-3 flex flex-col h-full p-4 overflow-y-auto space-y-4 bg-[var(--well)]",
+              mobileTab !== "details" && "hidden lg:flex"
+            )}
+          >
             {selectedConv && (
               <>
+                <div className="lg:hidden pb-2 border-b border-[var(--line-2)] flex items-center justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setMobileTab("chat")}
+                    className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text)] hover:text-[var(--tomato)] transition"
+                  >
+                    <ArrowLeft size={16} /> Back to Chat
+                  </button>
+                  <span className="badge badge--plain text-[10px]">Contact Info</span>
+                </div>
+
                 <div className="p-3.5 rounded-[var(--r-tile)] border border-[var(--line-2)] bg-[var(--solid)] space-y-1.5 text-xs shadow-sm">
                   <p className="font-semibold text-[var(--text)]">Customer Profile</p>
                   <p className="text-[var(--muted)]">Name: <span className="text-[var(--text)]">{selectedConv.contact?.name}</span></p>

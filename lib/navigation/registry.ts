@@ -7,6 +7,7 @@ import {
   Brain,
   Buildings,
   CalendarBlank,
+  CalendarCheck,
   ChartBar,
   ChartLineUp,
   ClipboardText,
@@ -17,6 +18,7 @@ import {
   FlowArrow,
   Funnel,
   Gauge,
+  Handshake,
   Inbox,
   Kanban,
   Key,
@@ -24,6 +26,7 @@ import {
   ListChecks,
   Lock,
   Megaphone,
+  Package,
   Palette,
   PaperPlaneTilt,
   Phone,
@@ -35,6 +38,7 @@ import {
   ScalesSimple,
   ShieldCheck,
   Signpost,
+  Sparkle,
   Storefront,
   Tag,
   UserCircle,
@@ -58,12 +62,13 @@ import type { CapacidadeDaOrganizacao } from "@/lib/organizacao/capacidades";
 import { destinosDaInterface, type InterfaceSettings } from "./interface";
 export { NAV_GROUPS, GRUPO_NO_RODAPE } from "./catalogo";
 export type { NavGroup, NavGroupId } from "./catalogo";
-const ICONS = {
+const ICONS: Record<string, PhosphorIcon> = {
   Bell,
   BookOpen,
   Brain,
   Buildings,
   CalendarBlank,
+  CalendarCheck,
   ChartBar,
   ChartLineUp,
   ClipboardText,
@@ -74,6 +79,7 @@ const ICONS = {
   FlowArrow,
   Funnel,
   Gauge,
+  Handshake,
   Inbox,
   Kanban,
   Key,
@@ -81,6 +87,7 @@ const ICONS = {
   ListChecks,
   Lock,
   Megaphone,
+  Package,
   Palette,
   PaperPlaneTilt,
   Phone,
@@ -92,6 +99,7 @@ const ICONS = {
   ScalesSimple,
   ShieldCheck,
   Signpost,
+  Sparkle,
   Storefront,
   Tag,
   UserCircle,
@@ -105,7 +113,7 @@ export interface NavDestination extends Omit<NavMetadata, "icon"> {
 }
 export const NAV_DESTINATIONS: NavDestination[] = NAV_CATALOG.map((d) => ({
   ...d,
-  icon: ICONS[d.icon],
+  icon: ICONS[d.icon] || Sparkle || Funnel,
 }));
 /**
  * Único ponto de decisão de permissão da navegação.

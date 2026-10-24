@@ -12,7 +12,7 @@ import type { ExtensionGuideView } from "@/lib/extensions/view";
 import { traduzir } from "@/lib/i18n/dicionario";
 import { IDIOMA_PADRAO, type Idioma } from "@/lib/i18n/idiomas";
 import { hubSections, type NavGroupId } from "@/lib/navigation/registry";
-import { BookOpen, Lightbulb, ListChecks, Warning } from "@/lib/ui/icons";
+import { BookOpen, Lightbulb, ListChecks, Sparkle, Warning } from "@/lib/ui/icons";
 
 interface NavHubProps {
   interfaceSettings?: InterfaceSettings;
@@ -108,16 +108,18 @@ export function NavHub({
           </h2>
           <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-3">
             {items.map((item) => {
-              const Icon = item.icon;
+              const Icon = item.icon || Sparkle;
               return (
                 <Link key={item.href} href={item.href} className="block">
                   <Card className="flex h-full gap-3 p-4 transition-colors hover:border-border-strong">
-                    <Icon
-                      size={20}
-                      weight="regular"
-                      aria-hidden
-                      className="mt-0.5 shrink-0 text-muted-foreground"
-                    />
+                    {Icon ? (
+                      <Icon
+                        size={20}
+                        weight="regular"
+                        aria-hidden
+                        className="mt-0.5 shrink-0 text-muted-foreground"
+                      />
+                    ) : null}
                     <div>
                       <h3 className="text-sm font-semibold">{traduzir(item.label, locale)}</h3>
                       <p className="mt-1 text-xs text-muted-foreground">

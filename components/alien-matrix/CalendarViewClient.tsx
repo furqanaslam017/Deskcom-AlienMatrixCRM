@@ -123,7 +123,7 @@ export function CalendarViewClient({ initialEvents, contacts }: CalendarViewClie
 
         <button
           onClick={() => setIsModalOpen(true)}
-          className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+          className="btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 w-full sm:w-auto"
         >
           <Plus size={15} weight="bold" />
           Log Activity / Meeting

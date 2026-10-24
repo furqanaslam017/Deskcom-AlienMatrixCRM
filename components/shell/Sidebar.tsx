@@ -3,7 +3,7 @@ import Link from "next/link";
 import { useT } from "@/hooks/i18n/useT";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
-import { ArrowRight, CaretDoubleLeft, CaretDoubleRight, CaretDown, Gear, Moon, Sun } from "@/lib/ui/icons";
+import { ArrowRight, CaretDoubleLeft, CaretDoubleRight, CaretDown, Gear, Moon, Sparkle, Sun } from "@/lib/ui/icons";
 import { useTheme } from "@/lib/theme";
 import { cn } from "@/lib/utils";
 import { toggleSidebar } from "@/app/actions/shell/toggleSidebar";
@@ -329,7 +329,7 @@ export function SidebarContent({
                 >
                   {items.map((item) => {
                     const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
-                    const Icon = item.icon;
+                    const Icon = item.icon || Sparkle;
                     return (
                       <li key={item.href}>
                         <Link
@@ -345,7 +345,9 @@ export function SidebarContent({
                             collapsed && "justify-center px-0 w-10 h-10 mx-auto",
                           )}
                         >
-                          <Icon size={18} weight={isActive ? "fill" : "regular"} aria-hidden />
+                          {Icon ? (
+                            <Icon size={18} weight={isActive ? "fill" : "regular"} aria-hidden />
+                          ) : null}
                           {!collapsed && <span className="truncate">{t(item.label)}</span>}
                           {collapsed && isActive && (
                             <span className="absolute right-1 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-[var(--butter)]" />
