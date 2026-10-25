@@ -133,35 +133,37 @@ export function Parcelas({
       {lista.length === 0 ? (
         <p className="text-sm text-text-muted">{t("Nenhuma parcela ainda.")}</p>
       ) : (
-        <table className="w-full text-sm">
-          <tbody>
-            {lista.map((p) => (
-              <tr key={p.id} className="border-b border-border/60" data-testid={`parcela-${p.id}`}>
-                <td className="py-1 text-text-muted">#{p.numero}</td>
-                <td className="py-1">{new Date(p.vencimento).toLocaleDateString(tagDoIdioma)}</td>
-                <td className="py-1 text-right tabular-nums">
-                  {formatCents(p.valor_cents, "BRL")}
-                </td>
-                <td className="py-1 text-right text-xs text-text-muted">
-                  {p.status === "pago" ? t("pago") : t("pendente")}
-                </td>
-                <td className="w-24 py-1 text-right">
-                  {podeGerenciar && p.status === "pendente" ? (
-                    <button
-                      type="button"
-                      disabled={!contaId || pagar.isPending}
-                      onClick={() => pagar.mutate(p.id)}
-                      className="text-xs text-accent disabled:opacity-50"
-                      data-testid={`pagar-parcela-${p.id}`}
-                    >
-                      {t("Pagar")}
-                    </button>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-sm">
+            <tbody>
+              {lista.map((p) => (
+                <tr key={p.id} className="border-b border-border/60" data-testid={`parcela-${p.id}`}>
+                  <td className="py-1 text-text-muted">#{p.numero}</td>
+                  <td className="py-1">{new Date(p.vencimento).toLocaleDateString(tagDoIdioma)}</td>
+                  <td className="py-1 text-right tabular-nums">
+                    {formatCents(p.valor_cents, "BRL")}
+                  </td>
+                  <td className="py-1 text-right text-xs text-text-muted">
+                    {p.status === "pago" ? t("pago") : t("pendente")}
+                  </td>
+                  <td className="w-24 py-1 text-right">
+                    {podeGerenciar && p.status === "pendente" ? (
+                      <button
+                        type="button"
+                        disabled={!contaId || pagar.isPending}
+                        onClick={() => pagar.mutate(p.id)}
+                        className="text-xs text-accent disabled:opacity-50"
+                        data-testid={`pagar-parcela-${p.id}`}
+                      >
+                        {t("Pagar")}
+                      </button>
+                    ) : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );

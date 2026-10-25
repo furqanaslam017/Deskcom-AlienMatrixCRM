@@ -7,7 +7,7 @@ import { importRecords, parseCsv } from "@/lib/alien-matrix/import-export-servic
 const importSchema = z.object({
   entity: z.enum(["contacts", "leads", "products"]),
   csvContent: z.string().min(1),
-  fieldMapping: z.record(z.string()),
+  fieldMapping: z.record(z.string(), z.string()),
 });
 
 export async function POST(req: Request) {

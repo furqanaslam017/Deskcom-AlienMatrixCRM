@@ -16466,8 +16466,12 @@ export const DICIONARIO: Traducoes = {
  * português, que é exatamente o comportamento de antes desta feature. Uma
  * tradução parcial não pode deixar a tela PIOR do que estava.
  */
-export function traduzir(texto: string, _idioma?: Idioma): string {
+export function traduzir(texto: string, idioma?: Idioma): string {
   if (!texto) return texto;
+  if (idioma === "pt-BR") return texto;
+  if (idioma === "es") {
+    return (DICIONARIO[texto] as any)?.es ?? texto;
+  }
   const emIngles = (enCatalog as Record<string, string>)[texto];
   if (emIngles) return emIngles;
   return (DICIONARIO[texto] as any)?.es ?? texto;

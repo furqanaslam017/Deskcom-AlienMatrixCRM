@@ -33,7 +33,7 @@ export function WebhooksClient({ abaInicial }: { abaInicial?: AbaDosWebhooks }) 
     // estima a olho.
     return (
       <div className="flex-1">
-        <Skeleton className="h-9 w-[432px]" />
+        <Skeleton className="h-9 w-full max-w-[432px]" />
       </div>
     );
   }

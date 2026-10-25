@@ -321,11 +321,11 @@ export function WorkflowsViewClient({
         </div>
 
         {/* Action Button based on Tab */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 w-full sm:w-auto">
           {activeTab === "workflows" && (
             <button
               onClick={() => setShowWorkflowModal(true)}
-              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+              className="btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 w-full sm:w-auto"
             >
               <Plus size={14} weight="bold" />
               New Workflow
@@ -334,7 +334,7 @@ export function WorkflowsViewClient({
           {activeTab === "forms" && (
             <button
               onClick={() => setShowFormModal(true)}
-              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+              className="btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 w-full sm:w-auto"
             >
               <Plus size={14} weight="bold" />
               New Lead Form
@@ -343,7 +343,7 @@ export function WorkflowsViewClient({
           {activeTab === "webhooks" && (
             <button
               onClick={() => setShowWebhookModal(true)}
-              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+              className="btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 w-full sm:w-auto"
             >
               <Plus size={14} weight="bold" />
               New Inbound Webhook
@@ -659,47 +659,49 @@ export function WorkflowsViewClient({
       {/* TAB 4: EXECUTIONS */}
       {activeTab === "executions" && (
         <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden">
-          <table className="w-full text-xs text-left">
-            <thead className="bg-[var(--well)]/80 border-b border-[var(--line-2)] text-[var(--muted)] uppercase font-semibold tracking-wider">
-              <tr>
-                <th className="py-3 px-4">Status</th>
-                <th className="py-3 px-4">Workflow</th>
-                <th className="py-3 px-4">Actions Completed</th>
-                <th className="py-3 px-4">Duration</th>
-                <th className="py-3 px-4">Execution Time</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-[var(--line-2)]">
-              {executions.map((exec) => (
-                <tr key={exec.id} className="hover:bg-[var(--well)]/50 transition-colors">
-                  <td className="py-3.5 px-4">
-                    <span className="badge badge--pine text-[10px] font-bold uppercase inline-flex items-center gap-1">
-                      <CheckCircle size={12} weight="fill" />
-                      {exec.status}
-                    </span>
-                  </td>
-                  <td className="py-3.5 px-4 font-semibold text-[var(--text)]">{exec.workflow_name}</td>
-                  <td className="py-3.5 px-4 text-[var(--muted)]">{exec.actions_run} steps completed</td>
-                  <td className="py-3.5 px-4 font-mono text-[var(--muted)] font-numeric">{exec.duration_ms} ms</td>
-                  <td className="py-3.5 px-4 text-[var(--muted)]">{new Date(exec.created_at).toLocaleTimeString()}</td>
-                </tr>
-              ))}
-              {executions.length === 0 && (
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-xs text-left min-w-[550px] sm:min-w-full">
+              <thead className="bg-[var(--well)]/80 border-b border-[var(--line-2)] text-[var(--muted)] uppercase font-semibold tracking-wider">
                 <tr>
-                  <td colSpan={5} className="py-12 text-center text-xs text-[var(--muted)]">
-                    No executions recorded recently. Trigger a simulation run above to generate logs.
-                  </td>
+                  <th className="py-3 px-4">Status</th>
+                  <th className="py-3 px-4">Workflow</th>
+                  <th className="py-3 px-4">Actions Completed</th>
+                  <th className="py-3 px-4">Duration</th>
+                  <th className="py-3 px-4">Execution Time</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
+              </thead>
+              <tbody className="divide-y divide-[var(--line-2)]">
+                {executions.map((exec) => (
+                  <tr key={exec.id} className="hover:bg-[var(--well)]/50 transition-colors">
+                    <td className="py-3.5 px-4">
+                      <span className="badge badge--pine text-[10px] font-bold uppercase inline-flex items-center gap-1">
+                        <CheckCircle size={12} weight="fill" />
+                        {exec.status}
+                      </span>
+                    </td>
+                    <td className="py-3.5 px-4 font-semibold text-[var(--text)]">{exec.workflow_name}</td>
+                    <td className="py-3.5 px-4 text-[var(--muted)]">{exec.actions_run} steps completed</td>
+                    <td className="py-3.5 px-4 font-mono text-[var(--muted)] font-numeric">{exec.duration_ms} ms</td>
+                    <td className="py-3.5 px-4 text-[var(--muted)]">{new Date(exec.created_at).toLocaleTimeString()}</td>
+                  </tr>
+                ))}
+                {executions.length === 0 && (
+                  <tr>
+                    <td colSpan={5} className="py-12 text-center text-xs text-[var(--muted)]">
+                      No executions recorded recently. Trigger a simulation run above to generate logs.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
 
       {/* MODAL: NEW WORKFLOW */}
       {showWorkflowModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-lg w-full p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
             <h2 className="text-base font-bold text-[var(--text)] mb-1">New Automation Workflow</h2>
             <p className="text-xs text-[var(--muted)] mb-4">
               Configure event triggers, conditional validation gates, and automated actions.
@@ -831,7 +833,7 @@ export function WorkflowsViewClient({
       {/* MODAL: NEW FORM */}
       {showFormModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-md w-full p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-md w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
             <h2 className="text-base font-bold text-[var(--text)] mb-1">Create Lead Capture Form</h2>
             <p className="text-xs text-[var(--muted)] mb-4">
               Generate a public form endpoint with iframe embed code for websites.
@@ -902,7 +904,7 @@ export function WorkflowsViewClient({
       {/* MODAL: NEW WEBHOOK */}
       {showWebhookModal && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-md w-full p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-md w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
             <h2 className="text-base font-bold text-[var(--text)] mb-1">Create Inbound Webhook</h2>
             <p className="text-xs text-[var(--muted)] mb-4">
               Generate a unique webhook URL to connect with Zapier, Make, Typeform, or n8n.
@@ -959,7 +961,7 @@ export function WorkflowsViewClient({
       {/* MODAL: EMBED CODE */}
       {embedModalForm && (
         <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-lg w-full p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
+          <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] max-w-lg w-full max-h-[90vh] overflow-y-auto p-5 sm:p-6 shadow-[var(--shadow-pop)] animate-in fade-in zoom-in-95 duration-150">
             <h2 className="text-base font-bold text-[var(--text)] mb-1">Embed Snippet (Iframe)</h2>
             <p className="text-xs text-[var(--muted)] mb-4">
               Copy and paste this HTML snippet into your external site or WordPress theme:

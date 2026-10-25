@@ -15,7 +15,7 @@ const updateProductSchema = z.object({
   taxRatePercent: z.number().min(0).max(100).optional(),
   stockQuantity: z.number().int().optional(),
   isActive: z.boolean().optional(),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function PATCH(

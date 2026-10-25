@@ -254,7 +254,7 @@ export async function convertLead(
   return {
     success: true,
     leadId: lead.id,
-    contactId,
+    contactId: contactId || "",
     companyId,
     dealId,
     conversionId: conversionRecord?.id || "",

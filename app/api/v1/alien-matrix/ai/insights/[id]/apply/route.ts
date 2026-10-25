@@ -18,7 +18,7 @@ export async function POST(
   const hdrs = await headers();
   const requestId = hdrs.get("x-request-id") ?? undefined;
 
-  const authz = await requireRole("member", { requestId });
+  const authz = await requireRole("agent", { requestId });
   if (!authz.ok) return authz.response;
   const { user, org } = authz;
 

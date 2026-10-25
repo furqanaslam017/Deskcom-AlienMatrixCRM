@@ -244,47 +244,49 @@ export function Comandas({
               </span>
             </header>
 
-            <table className="w-full text-sm">
-              <tbody>
-                {(comanda.sale_items ?? []).map((i) => (
-                  <tr key={i.id} className="border-b border-border/60">
-                    <td className="py-1">
-                      {i.description}
-                      {i.quantity > 1 ? ` ×${i.quantity}` : ""}
-                      {i.commission_percent > 0 ? (
-                        <span className="ml-2 text-xs text-text-muted">
-                          {t("comissão")} {i.commission_percent}%
-                        </span>
-                      ) : null}
+            <div className="overflow-x-auto w-full">
+              <table className="w-full text-sm">
+                <tbody>
+                  {(comanda.sale_items ?? []).map((i) => (
+                    <tr key={i.id} className="border-b border-border/60">
+                      <td className="py-1">
+                        {i.description}
+                        {i.quantity > 1 ? ` ×${i.quantity}` : ""}
+                        {i.commission_percent > 0 ? (
+                          <span className="ml-2 text-xs text-text-muted">
+                            {t("comissão")} {i.commission_percent}%
+                          </span>
+                        ) : null}
+                      </td>
+                      <td className="py-1 text-right tabular-nums">
+                        {formatCents(i.total_cents, moeda)}
+                      </td>
+                      <td className="w-8 text-right">
+                        {comanda.status === "open" && podeLancar ? (
+                          <button
+                            type="button"
+                            aria-label={t("Remover item")}
+                            onClick={() => removerItem.mutate(i.id)}
+                            className="text-text-muted hover:text-text"
+                          >
+                            ×
+                          </button>
+                        ) : null}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td className="pt-2 font-medium">{t("Total")}</td>
+                    <td className="pt-2 text-right font-medium tabular-nums" data-testid="total-da-comanda">
+                      {formatCents(comanda.total_cents, moeda)}
                     </td>
-                    <td className="py-1 text-right tabular-nums">
-                      {formatCents(i.total_cents, moeda)}
-                    </td>
-                    <td className="w-8 text-right">
-                      {comanda.status === "open" && podeLancar ? (
-                        <button
-                          type="button"
-                          aria-label={t("Remover item")}
-                          onClick={() => removerItem.mutate(i.id)}
-                          className="text-text-muted hover:text-text"
-                        >
-                          ×
-                        </button>
-                      ) : null}
-                    </td>
+                    <td />
                   </tr>
-                ))}
-              </tbody>
-              <tfoot>
-                <tr>
-                  <td className="pt-2 font-medium">{t("Total")}</td>
-                  <td className="pt-2 text-right font-medium tabular-nums" data-testid="total-da-comanda">
-                    {formatCents(comanda.total_cents, moeda)}
-                  </td>
-                  <td />
-                </tr>
-              </tfoot>
-            </table>
+                </tfoot>
+              </table>
+            </div>
 
             {comanda.status === "open" && podeLancar ? (
               <FormularioDeItem

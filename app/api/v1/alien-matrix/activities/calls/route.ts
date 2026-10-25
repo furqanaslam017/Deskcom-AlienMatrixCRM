@@ -16,7 +16,7 @@ const createCallLogSchema = z.object({
   scheduledAt: z.string().optional(),
   performedAt: z.string().optional(),
   recordingUrl: z.string().url().optional().or(z.literal("")),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function GET(req: Request) {

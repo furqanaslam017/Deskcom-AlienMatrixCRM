@@ -45,51 +45,53 @@ export function NotificationPrefsClient() {
 
   return (
     <Card className="p-0">
-      <table className="w-full text-sm">
-        <thead className="border-b">
-          <tr>
-            <th className="px-4 py-3 text-left font-medium">{t("Categoria")}</th>
-            <th className="px-4 py-3 text-center font-medium">Email</th>
-            <th className="px-4 py-3 text-center font-medium">In-app</th>
-            <th className="px-4 py-3 text-center font-medium">Push</th>
-          </tr>
-        </thead>
-        <tbody>
-          {NOTIFY_UI_CATEGORIES.map((cat) => (
-            <tr key={cat} className="border-b last:border-0">
-              <td className="px-4 py-3">
-                {t(LABELS[cat])}
-                {cat === "message" && denied ? (
-                  <p className="mt-1 text-xs text-muted-foreground">
-                    {t(
-                      "O navegador bloqueou as notificações. Libere-as nas configurações do site e recarregue.",
-                    )}
-                  </p>
-                ) : null}
-              </td>
-              <td className="px-4 py-3 text-center">
-                <Switch checked={false} disabled aria-label={`${t(LABELS[cat])} via email`} />
-              </td>
-              <td className="px-4 py-3 text-center">
-                <Switch
-                  checked={prefs[cat].in_app}
-                  onCheckedChange={(on) => void onToggle(cat, "in_app", on)}
-                  aria-label={`${t(LABELS[cat])} via in_app`}
-                />
-              </td>
-              <td className="px-4 py-3 text-center">
-                <Switch
-                  checked={prefs[cat].push}
-                  disabled={denied || unsupported}
-                  onCheckedChange={(on) => void onToggle(cat, "push", on)}
-                  aria-label={`${t(LABELS[cat])} via push`}
-                  data-testid={cat === "message" ? (prefs.message.push ? "alerts-toggle" : "alerts-enable") : undefined}
-                />
-              </td>
+      <div className="overflow-x-auto w-full">
+        <table className="w-full text-sm min-w-[420px]">
+          <thead className="border-b">
+            <tr>
+              <th className="px-4 py-3 text-left font-medium">{t("Categoria")}</th>
+              <th className="px-4 py-3 text-center font-medium">Email</th>
+              <th className="px-4 py-3 text-center font-medium">In-app</th>
+              <th className="px-4 py-3 text-center font-medium">Push</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {NOTIFY_UI_CATEGORIES.map((cat) => (
+              <tr key={cat} className="border-b last:border-0">
+                <td className="px-4 py-3">
+                  {t(LABELS[cat])}
+                  {cat === "message" && denied ? (
+                    <p className="mt-1 text-xs text-muted-foreground">
+                      {t(
+                        "O navegador bloqueou as notificações. Libere-as nas configurações do site e recarregue.",
+                      )}
+                    </p>
+                  ) : null}
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <Switch checked={false} disabled aria-label={`${t(LABELS[cat])} via email`} />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <Switch
+                    checked={prefs[cat].in_app}
+                    onCheckedChange={(on) => void onToggle(cat, "in_app", on)}
+                    aria-label={`${t(LABELS[cat])} via in_app`}
+                  />
+                </td>
+                <td className="px-4 py-3 text-center">
+                  <Switch
+                    checked={prefs[cat].push}
+                    disabled={denied || unsupported}
+                    onCheckedChange={(on) => void onToggle(cat, "push", on)}
+                    aria-label={`${t(LABELS[cat])} via push`}
+                    data-testid={cat === "message" ? (prefs.message.push ? "alerts-toggle" : "alerts-enable") : undefined}
+                  />
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </Card>
   );
 }

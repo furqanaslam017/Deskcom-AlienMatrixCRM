@@ -8,7 +8,7 @@ const createWorkflowSchema = z.object({
   name: z.string().min(1).max(100),
   description: z.string().max(500).optional(),
   triggerType: z.enum(["record_created", "stage_changed", "message_received", "time_based", "webhook"]),
-  triggerConfig: z.record(z.unknown()).optional(),
+  triggerConfig: z.record(z.string(), z.unknown()).optional(),
   conditions: z.array(z.object({
     field: z.string(),
     op: z.enum(["equals", "not_equals", "contains", "gte", "lte", "is_empty", "is_not_empty"]),
@@ -16,7 +16,7 @@ const createWorkflowSchema = z.object({
   })).optional(),
   actions: z.array(z.object({
     type: z.enum(["send_whatsapp", "send_email", "create_task", "update_field", "assign_owner", "call_webhook", "run_ai_agent"]),
-    params: z.record(z.unknown()),
+    params: z.record(z.string(), z.unknown()),
   })).min(1, "Workflow must have at least 1 action"),
   isActive: z.boolean().optional(),
 });

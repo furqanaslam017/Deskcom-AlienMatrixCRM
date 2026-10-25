@@ -60,18 +60,38 @@ export const IDIOMA_PADRAO: Idioma = "en";
 /**
  * Normaliza o idioma da interface — AlienMatrix é 100% em Inglês.
  */
-export function normalizarIdioma(_bruto?: string | null | undefined): Idioma {
-  return IDIOMA_PADRAO;
+export function normalizarIdioma(bruto?: string | null | undefined): Idioma {
+  return (IDIOMAS as readonly string[]).includes(bruto ?? "")
+    ? (bruto as Idioma)
+    : IDIOMA_PADRAO;
 }
 
-export function parseAcceptLanguage(_header?: string | null | undefined): Idioma {
-  return IDIOMA_PADRAO;
+export function parseAcceptLanguage(header?: string | null | undefined): Idioma | null {
+  if (!header) return null;
+  const candidatos = header
+    .split(",")
+    .map((parte) => {
+      const [tagBruta, qBruto] = parte.trim().split(";q=");
+      const q = qBruto ? Number.parseFloat(qBruto) : 1;
+      return { tag: tagBruta?.trim().toLowerCase() ?? "", q: Number.isFinite(q) ? q : 1 };
+    })
+    .filter((candidato) => candidato.tag.length > 0)
+    .sort((a, b) => b.q - a.q);
+
+  for (const { tag } of candidatos) {
+    const primario = tag.split("-")[0] ?? "";
+    const servido = IDIOMAS_VISIVEIS.find((idioma) =>
+      idioma.subtagsDoNavegador.some((subtag) => subtag === primario),
+    );
+    if (servido) return servido.codigo;
+  }
+  return null;
 }
 
-export function idiomaDelNavegador(_languages?: readonly string[]): Idioma {
-  return IDIOMA_PADRAO;
+export function idiomaDelNavegador(languages: readonly string[]): Idioma {
+  return parseAcceptLanguage(languages.join(",")) ?? IDIOMA_PADRAO;
 }
 
-export function idiomaDoTexto(_tag?: string | null | undefined): Idioma {
-  return IDIOMA_PADRAO;
+export function idiomaDoTexto(tag: string | null | undefined): Idioma {
+  return parseAcceptLanguage(tag) ?? IDIOMA_PADRAO;
 }

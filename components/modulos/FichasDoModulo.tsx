@@ -143,35 +143,37 @@ export function FichasDoModulo({
         {dados.fichas.length === 0 ? (
           <p className="text-sm text-muted-foreground">{t("Nada guardado aqui ainda.")}</p>
         ) : (
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left text-muted-foreground">
-                {dados.campos.map((c) => (
-                  <th key={c.slug} className="pb-1 pr-4 font-medium">
-                    {/*
-                      SEM `t()`: o nome do campo é do AUTOR do módulo, não do produto. Passá-lo pelo
-                      dicionário procuraria uma chave que nunca existirá, e a frase montada em tempo
-                      de execução também escaparia do gate de tradução — que foi o que me fez olhar.
-                      Internacionalizar rótulo de terceiro pede `rotulo` por idioma no manifesto, o
-                      que a onda 1 ainda não tem.
-                    */}
-                    {rotuloDoCampo(c.slug)}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {dados.fichas.map((f) => (
-                <tr key={String(f.id)} className="border-t">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-muted-foreground">
                   {dados.campos.map((c) => (
-                    <td key={c.slug} className="py-1 pr-4">
-                      {valorDoCampo(f, c, idioma)}
-                    </td>
+                    <th key={c.slug} className="pb-1 pr-4 font-medium">
+                      {/*
+                        SEM `t()`: o nome do campo é do AUTOR do módulo, não do produto. Passá-lo pelo
+                        dicionário procuraria uma chave que nunca existirá, e a frase montada em tempo
+                        de execução também escaparia do gate de tradução — que foi o que me fez olhar.
+                        Internacionalizar rótulo de terceiro pede `rotulo` por idioma no manifesto, o
+                        que a onda 1 ainda não tem.
+                      */}
+                      {rotuloDoCampo(c.slug)}
+                    </th>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {dados.fichas.map((f) => (
+                  <tr key={String(f.id)} className="border-t">
+                    {dados.campos.map((c) => (
+                      <td key={c.slug} className="py-1 pr-4">
+                        {valorDoCampo(f, c, idioma)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </CardContent>
     </Card>

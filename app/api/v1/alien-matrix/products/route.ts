@@ -15,7 +15,7 @@ const createProductSchema = z.object({
   taxRatePercent: z.number().min(0).max(100).optional(),
   stockQuantity: z.number().int().optional().default(0),
   isActive: z.boolean().optional().default(true),
-  metadata: z.record(z.unknown()).optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
 });
 
 export async function GET(req: Request) {

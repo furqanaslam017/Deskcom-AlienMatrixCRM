@@ -98,26 +98,28 @@ export function Honorarios({ podeGerenciar }: { podeGerenciar: boolean }) {
         {(contratos.data ?? []).length === 0 ? (
           <p className="text-sm text-text-muted">{t("Nenhum contrato ainda.")}</p>
         ) : (
-          <table className="w-full text-sm">
-            <tbody>
-              {(contratos.data ?? []).map((c) => (
-                <tr
-                  key={c.id}
-                  className={`cursor-pointer border-b border-border/60 ${
-                    selecionado === c.id ? "bg-surface-elevated" : ""
-                  }`}
-                  onClick={() => setSelecionado(c.id)}
-                  data-testid={`contrato-${c.id}`}
-                >
-                  <td className="py-2">{rotuloDoModelo(c.modelo, t)}</td>
-                  <td className="py-2 tabular-nums">{resumoDoValor(c, t)}</td>
-                  <td className="py-2 text-right text-xs text-text-muted">
-                    {new Date(c.created_at).toLocaleDateString(tagDoIdioma)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-sm">
+              <tbody>
+                {(contratos.data ?? []).map((c) => (
+                  <tr
+                    key={c.id}
+                    className={`cursor-pointer border-b border-border/60 ${
+                      selecionado === c.id ? "bg-surface-elevated" : ""
+                    }`}
+                    onClick={() => setSelecionado(c.id)}
+                    data-testid={`contrato-${c.id}`}
+                  >
+                    <td className="py-2">{rotuloDoModelo(c.modelo, t)}</td>
+                    <td className="py-2 tabular-nums">{resumoDoValor(c, t)}</td>
+                    <td className="py-2 text-right text-xs text-text-muted">
+                      {new Date(c.created_at).toLocaleDateString(tagDoIdioma)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </section>
 

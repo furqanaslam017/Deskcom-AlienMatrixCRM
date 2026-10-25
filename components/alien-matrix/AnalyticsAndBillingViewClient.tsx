@@ -431,7 +431,7 @@ export function AnalyticsAndBillingViewClient({
                 Operational Efficiency: AI vs Human
               </h3>
 
-              <div className="grid grid-cols-2 gap-3 text-xs">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                 <div className="p-3.5 rounded-[var(--r-tile)] bg-[var(--solid)] border border-[var(--line-2)] shadow-sm">
                   <span className="text-[var(--muted)] block mb-1">WhatsApp Volume</span>
                   <p className="text-lg font-bold text-[var(--text)] font-numeric">
@@ -473,11 +473,11 @@ export function AnalyticsAndBillingViewClient({
               </p>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <a
                 href="/api/v1/alien-matrix/analytics/reports/export?type=sales_funnel"
                 download
-                className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
+                className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center justify-center gap-1.5 flex-1 sm:flex-none"
               >
                 <Download size={14} />
                 Export Funnel CSV
@@ -486,7 +486,7 @@ export function AnalyticsAndBillingViewClient({
               <a
                 href="/api/v1/alien-matrix/analytics/reports/export?type=rep_leaderboard"
                 download
-                className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center gap-1.5"
+                className="btn btn--ghost btn--sm text-xs font-semibold inline-flex items-center justify-center gap-1.5 flex-1 sm:flex-none"
               >
                 <Download size={14} />
                 Export Leaderboard CSV
@@ -494,7 +494,7 @@ export function AnalyticsAndBillingViewClient({
 
               <button
                 onClick={() => setShowReportModal(true)}
-                className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+                className="btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 w-full sm:w-auto"
               >
                 <Plus size={14} weight="bold" />
                 New Report
@@ -551,7 +551,7 @@ export function AnalyticsAndBillingViewClient({
           {/* Modal New Report */}
           {showReportModal && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between border-b border-[var(--line-2)] pb-3">
                   <h3 className="font-bold text-sm text-[var(--text)]">Create Custom Report</h3>
                   <button
@@ -665,7 +665,7 @@ export function AnalyticsAndBillingViewClient({
           {/* Modal Schedule */}
           {showScheduleModal && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-md p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-md max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between border-b border-[var(--line-2)] pb-3">
                   <h3 className="font-bold text-sm text-[var(--text)]">Schedule Periodic Report</h3>
                   <button
@@ -692,7 +692,7 @@ export function AnalyticsAndBillingViewClient({
                     </select>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-[var(--text)] block mb-1">Frequency</label>
                       <select

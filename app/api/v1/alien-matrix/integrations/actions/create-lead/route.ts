@@ -114,9 +114,9 @@ export async function POST(req: NextRequest) {
     }
 
     await audit({
-      action: "crm_lead.created",
+      action: "lead.created",
       organizationId,
-      actorUserId: actor.userId || null,
+      actorUserId: actor.type === "user" ? actor.id : null,
       resourceType: "crm_leads",
       resourceId: lead.id,
       requestId,

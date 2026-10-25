@@ -403,9 +403,11 @@ function Tabela({
     <section className="rounded-md border border-border p-3">
       <h2 className="mb-2 text-sm font-semibold">{titulo}</h2>
       {temLinha ? (
-        <table className="w-full text-sm">
-          <tbody>{children}</tbody>
-        </table>
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-sm">
+            <tbody>{children}</tbody>
+          </table>
+        </div>
       ) : (
         <p className="text-sm text-text-muted">{vazio}</p>
       )}

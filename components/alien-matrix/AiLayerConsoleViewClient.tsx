@@ -706,7 +706,7 @@ export function AiLayerConsoleViewClient({
           {/* Modal New Persona */}
           {showPersonaModal && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-lg p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between border-b border-[var(--line-2)] pb-3">
                   <h3 className="font-bold text-sm text-[var(--text)]">Create AI Agent Persona</h3>
                   <button
@@ -729,7 +729,7 @@ export function AiLayerConsoleViewClient({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-[var(--text)] block mb-1">Role Title</label>
                       <input
@@ -812,7 +812,7 @@ export function AiLayerConsoleViewClient({
             </div>
             <button
               onClick={() => setShowKnowledgeModal(true)}
-              className="btn btn--ink inline-flex items-center gap-1.5 text-xs font-semibold px-4 py-2"
+              className="btn btn--ink inline-flex items-center justify-center gap-1.5 text-xs font-semibold px-4 py-2 w-full sm:w-auto"
             >
               <Plus size={14} weight="bold" />
               Add Knowledge Document
@@ -825,7 +825,7 @@ export function AiLayerConsoleViewClient({
               <MagnifyingGlass size={16} className="text-[var(--tomato)]" />
               Interactive RAG Semantic Search Simulator
             </span>
-            <div className="flex gap-2">
+            <div className="flex flex-col sm:flex-row gap-2">
               <input
                 type="text"
                 placeholder="e.g. pricing conditions for enterprise plan or cancellation policy terms..."
@@ -837,7 +837,7 @@ export function AiLayerConsoleViewClient({
               <button
                 onClick={handleRagSearch}
                 disabled={isSearchingRag}
-                className="btn btn--ink text-xs font-semibold px-4 py-2"
+                className="btn btn--ink text-xs font-semibold px-4 py-2 w-full sm:w-auto justify-center"
               >
                 {isSearchingRag ? "Searching..." : "Simulate Search"}
               </button>
@@ -903,7 +903,7 @@ export function AiLayerConsoleViewClient({
           {/* Modal New Knowledge */}
           {showKnowledgeModal && (
             <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-lg p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
+              <div className="bg-[var(--solid)] border border-[var(--rim)] rounded-[var(--r-card)] shadow-[var(--shadow-pop)] w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 sm:p-6 space-y-4 animate-in fade-in zoom-in-95 duration-150">
                 <div className="flex items-center justify-between border-b border-[var(--line-2)] pb-3">
                   <h3 className="font-bold text-sm text-[var(--text)]">Add Document to Knowledge Base</h3>
                   <button
@@ -926,7 +926,7 @@ export function AiLayerConsoleViewClient({
                     />
                   </div>
 
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div>
                       <label className="text-xs font-semibold text-[var(--text)] block mb-1">Material Classification</label>
                       <select

@@ -7,7 +7,7 @@ import { executeWorkflow } from "@/lib/alien-matrix/workflow-engine";
 const executeSchema = z.object({
   entityType: z.string().default("lead"),
   entityId: z.string().default("test-entity"),
-  payload: z.record(z.unknown()).default({}),
+  payload: z.record(z.string(), z.unknown()).default({}),
 });
 
 export async function POST(

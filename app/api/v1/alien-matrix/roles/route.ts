@@ -9,8 +9,8 @@ const createRoleSchema = z.object({
   slug: z.string().min(1).max(50),
   description: z.string().max(500).optional(),
   permissions: z.object({
-    objects: z.record(z.array(z.string())).optional(),
-    fields: z.record(z.enum(["readonly", "hidden", "editable"])).optional(),
+    objects: z.record(z.string(), z.array(z.string())).optional(),
+    fields: z.record(z.string(), z.enum(["readonly", "hidden", "editable"])).optional(),
     allRecordsVisibility: z.boolean().optional(),
   }),
 });

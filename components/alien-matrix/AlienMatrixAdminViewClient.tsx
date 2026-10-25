@@ -605,8 +605,8 @@ export function AlienMatrixAdminViewClient({
             </a>
           </div>
 
-          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-hidden">
-            <table className="w-full text-left text-xs">
+          <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] shadow-[var(--shadow-bento)] backdrop-blur-md overflow-x-auto">
+            <table className="w-full text-left text-xs min-w-[500px]">
               <thead className="bg-[var(--well)]/80 border-b border-[var(--line-2)] uppercase font-semibold text-[var(--muted)] tracking-wider">
                 <tr>
                   <th className="py-3 px-4">Entity Type</th>
@@ -654,7 +654,7 @@ export function AlienMatrixAdminViewClient({
       {/* New Role Modal */}
       {isRoleModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-          <div className="relative w-full max-w-md rounded-[var(--r-card)] bg-[var(--solid)] border border-[var(--rim)] shadow-[var(--shadow-pop)] p-6 overflow-hidden animate-in fade-in zoom-in-95 duration-150">
+          <div className="relative w-full max-w-md max-h-[90vh] overflow-y-auto rounded-[var(--r-card)] bg-[var(--solid)] border border-[var(--rim)] shadow-[var(--shadow-pop)] p-5 sm:p-6 animate-in fade-in zoom-in-95 duration-150">
             <div className="flex items-center justify-between pb-3.5 border-b border-[var(--line-2)]">
               <div className="flex items-center gap-2">
                 <span className="w-8 h-8 rounded-full bg-[var(--well)] border border-[var(--line-2)] flex items-center justify-center text-[var(--tomato)]">

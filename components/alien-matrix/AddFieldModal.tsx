@@ -101,7 +101,7 @@ export function AddFieldModal({ isOpen, onClose, onAddField }: AddFieldModalProp
 
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="sm:max-w-md">
+      <DialogContent className="sm:max-w-md max-h-[90vh] overflow-y-auto">
         <form onSubmit={handleSubmit}>
           <DialogHeader className="pb-3 border-b border-[var(--line-2)]">
             <DialogTitle className="text-base font-bold text-[var(--ink)]">Add Custom Field</DialogTitle>

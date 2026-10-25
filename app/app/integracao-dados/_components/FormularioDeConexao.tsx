@@ -292,8 +292,8 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
             {erros.label && <p className="text-xs text-destructive">{erros.label}</p>}
           </div>
 
-          <div className="grid grid-cols-3 gap-3">
-            <div className="col-span-2 space-y-2">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="sm:col-span-2 space-y-2">
               <Label htmlFor="ext-host">{t("Host")}</Label>
               <Input
                 id="ext-host"
@@ -433,7 +433,7 @@ export function FormularioDeConexao({ open, onOpenChange, conexao }: Props) {
             <p className="text-xs text-muted-foreground">
               {t("Quanto o assistente e a grade podem ler desta fonte. Aumente se o seu processo precisar.")}
             </p>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-2">
                 <Label htmlFor="ext-max-rows">{t("Linhas por consulta")}</Label>
                 <Input

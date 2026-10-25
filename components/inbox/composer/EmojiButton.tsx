@@ -34,7 +34,7 @@ export function EmojiButton({ disabled, onPick }: Props) {
       </PopoverTrigger>
       <PopoverContent align="start" side="top" className="w-auto border-none p-0 shadow-lg">
         {open && (
-          <Suspense fallback={<Skeleton className="h-[420px] w-[352px]" />}>
+          <Suspense fallback={<Skeleton className="h-[420px] w-[calc(100vw-32px)] sm:w-[352px]" />}>
             <EmojiPickerLazy onPick={onPick} />
           </Suspense>
         )}

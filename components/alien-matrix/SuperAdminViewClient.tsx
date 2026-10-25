@@ -126,72 +126,74 @@ export function SuperAdminViewClient({ metrics, tenants }: SuperAdminViewClientP
 
       {/* Tenants Table Container */}
       <div className="rounded-[var(--r-card)] border border-[var(--rim)] bg-[var(--glass)] overflow-hidden shadow-[var(--shadow-bento)] backdrop-blur-md">
-        <table className="w-full text-left text-xs">
-          <thead className="bg-[var(--surface-tint)] border-b border-[var(--line-2)] uppercase font-semibold text-[var(--muted)] text-[11px] tracking-wider">
-            <tr>
-              <th className="py-3.5 px-5">Company / Organization</th>
-              <th className="py-3.5 px-4">Slug</th>
-              <th className="py-3.5 px-4">Locale / Currency</th>
-              <th className="py-3.5 px-4">Created Date</th>
-              <th className="py-3.5 px-5 text-right">Members</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-[var(--line-2)]/50">
-            {filteredTenants.length === 0 ? (
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-xs min-w-[600px] sm:min-w-full">
+            <thead className="bg-[var(--surface-tint)] border-b border-[var(--line-2)] uppercase font-semibold text-[var(--muted)] text-[11px] tracking-wider">
               <tr>
-                <td colSpan={5} className="py-12 text-center text-xs text-[var(--muted)]">
-                  No organization tenants matched your search query.
-                </td>
+                <th className="py-3.5 px-5">Company / Organization</th>
+                <th className="py-3.5 px-4">Slug</th>
+                <th className="py-3.5 px-4">Locale / Currency</th>
+                <th className="py-3.5 px-4">Created Date</th>
+                <th className="py-3.5 px-5 text-right">Members</th>
               </tr>
-            ) : (
-              filteredTenants.map((org) => {
-                const cs = org.custom_settings?.[0] || {};
-                const memberCount = org.members?.[0]?.count ?? 1;
+            </thead>
+            <tbody className="divide-y divide-[var(--line-2)]/50">
+              {filteredTenants.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="py-12 text-center text-xs text-[var(--muted)]">
+                    No organization tenants matched your search query.
+                  </td>
+                </tr>
+              ) : (
+                filteredTenants.map((org) => {
+                  const cs = org.custom_settings?.[0] || {};
+                  const memberCount = org.members?.[0]?.count ?? 1;
 
-                return (
-                  <tr
-                    key={org.id}
-                    className="hover:bg-[var(--surface-tint)]/60 transition-colors"
-                  >
-                    <td className="py-4 px-5">
-                      <div className="font-semibold text-[var(--ink)] flex items-center gap-2.5">
-                        <span
-                          className="h-2.5 w-2.5 rounded-full ring-2 ring-[var(--line-2)]"
-                          style={{ backgroundColor: cs.primary_color_hex || "var(--accent)" }}
-                        />
-                        <span>{cs.brand_name || org.name}</span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4 font-mono text-[11px] text-[var(--muted)]">
-                      {org.slug || "—"}
-                    </td>
-                    <td className="py-4 px-4">
-                      <span className="inline-flex items-center gap-1.5 font-medium text-[var(--ink)]">
-                        <span className="uppercase font-bold text-[10px] bg-[var(--surface-tint)] border border-[var(--line-2)] px-2 py-0.5 rounded-[var(--r-ctl)] text-[var(--muted)]">
-                          {cs.language || "en"}
+                  return (
+                    <tr
+                      key={org.id}
+                      className="hover:bg-[var(--surface-tint)]/60 transition-colors"
+                    >
+                      <td className="py-4 px-5">
+                        <div className="font-semibold text-[var(--ink)] flex items-center gap-2.5">
+                          <span
+                            className="h-2.5 w-2.5 rounded-full ring-2 ring-[var(--line-2)]"
+                            style={{ backgroundColor: cs.primary_color_hex || "var(--accent)" }}
+                          />
+                          <span>{cs.brand_name || org.name}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 px-4 font-mono text-[11px] text-[var(--muted)]">
+                        {org.slug || "—"}
+                      </td>
+                      <td className="py-4 px-4">
+                        <span className="inline-flex items-center gap-1.5 font-medium text-[var(--ink)]">
+                          <span className="uppercase font-bold text-[10px] bg-[var(--surface-tint)] border border-[var(--line-2)] px-2 py-0.5 rounded-[var(--r-ctl)] text-[var(--muted)]">
+                            {cs.language || "en"}
+                          </span>
+                          <span className="text-xs font-mono">{cs.currency || "USD"}</span>
                         </span>
-                        <span className="text-xs font-mono">{cs.currency || "USD"}</span>
-                      </span>
-                    </td>
-                    <td className="py-4 px-4 text-[var(--muted)] font-mono text-[11px]">
-                      {new Date(org.created_at).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })}
-                    </td>
-                    <td className="py-4 px-5 text-right font-numeric font-medium text-[var(--ink)]">
-                      <span className="inline-flex items-center gap-1">
-                        <Users size={13} className="text-[var(--muted)]" />
-                        {memberCount}
-                      </span>
-                    </td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      </td>
+                      <td className="py-4 px-4 text-[var(--muted)] font-mono text-[11px]">
+                        {new Date(org.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        })}
+                      </td>
+                      <td className="py-4 px-5 text-right font-numeric font-medium text-[var(--ink)]">
+                        <span className="inline-flex items-center gap-1">
+                          <Users size={13} className="text-[var(--muted)]" />
+                          {memberCount}
+                        </span>
+                      </td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

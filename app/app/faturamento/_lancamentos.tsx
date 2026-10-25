@@ -173,52 +173,54 @@ export function ListaDeLancamentos({
       {lancamentos.length === 0 ? (
         <p className="text-sm text-text-muted">{t("Nenhum lançamento no período.")}</p>
       ) : (
-        <table className="w-full text-sm">
-          <tbody>
-            {lancamentos.map((l) => (
-              <tr key={l.id} className="border-b border-border/60">
-                <td className="py-1 text-text-muted">{l.entry_date}</td>
-                <td className="py-1">
-                  {l.description ?? "—"}
-                  {l.origin !== "manual" ? (
-                    <span className="ml-2 text-xs text-text-muted">{t("de comanda")}</span>
-                  ) : null}
-                </td>
-                <td className="py-1 text-right tabular-nums">
-                  {l.direction === "out" ? "-" : "+"}
-                  {formatCents(l.amount_cents, l.currency)}
-                </td>
-                <td className="py-1 text-right text-xs text-text-muted">
-                  {l.status === "paid" ? t("pago") : t("pendente")}
-                </td>
-                <td className="w-24 py-1 text-right">
-                  {podeLancar && l.status === "pending" ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => onPagar(l.id)}
-                        className="text-xs text-accent"
-                        data-testid={`pagar-${l.id}`}
-                      >
-                        {t("Pagar")}
-                      </button>
-                      {l.origin === "manual" ? (
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-sm">
+            <tbody>
+              {lancamentos.map((l) => (
+                <tr key={l.id} className="border-b border-border/60">
+                  <td className="py-1 text-text-muted">{l.entry_date}</td>
+                  <td className="py-1">
+                    {l.description ?? "—"}
+                    {l.origin !== "manual" ? (
+                      <span className="ml-2 text-xs text-text-muted">{t("de comanda")}</span>
+                    ) : null}
+                  </td>
+                  <td className="py-1 text-right tabular-nums">
+                    {l.direction === "out" ? "-" : "+"}
+                    {formatCents(l.amount_cents, l.currency)}
+                  </td>
+                  <td className="py-1 text-right text-xs text-text-muted">
+                    {l.status === "paid" ? t("pago") : t("pendente")}
+                  </td>
+                  <td className="w-24 py-1 text-right">
+                    {podeLancar && l.status === "pending" ? (
+                      <>
                         <button
                           type="button"
-                          aria-label={t("Remover lançamento")}
-                          onClick={() => onRemover(l.id)}
-                          className="ml-2 text-text-muted hover:text-text"
+                          onClick={() => onPagar(l.id)}
+                          className="text-xs text-accent"
+                          data-testid={`pagar-${l.id}`}
                         >
-                          ×
+                          {t("Pagar")}
                         </button>
-                      ) : null}
-                    </>
-                  ) : null}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                        {l.origin === "manual" ? (
+                          <button
+                            type="button"
+                            aria-label={t("Remover lançamento")}
+                            onClick={() => onRemover(l.id)}
+                            className="ml-2 text-text-muted hover:text-text"
+                          >
+                            ×
+                          </button>
+                        ) : null}
+                      </>
+                    ) : null}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       )}
     </section>
   );

@@ -190,7 +190,7 @@ export function ConvertLeadModal({
                 className="w-full rounded-[var(--r-ctl)] border border-[var(--line-2)] bg-[var(--glass)] px-3.5 py-2 text-xs text-[var(--ink)] placeholder-[var(--muted)] shadow-sm focus:outline-none focus:border-[var(--accent)]"
               />
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
               <div>
                 <label className="block text-xs font-medium text-[var(--ink)] mb-1">
                   Estimated Value
@@ -235,19 +235,19 @@ export function ConvertLeadModal({
             />
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[var(--line-2)]">
+          <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-end gap-2 sm:gap-3 pt-4 border-t border-[var(--line-2)]">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2 text-xs font-semibold text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-tint)] rounded-[var(--r-ctl)] border border-[var(--line-2)] transition-colors"
+              className="px-4 py-2 text-xs font-semibold text-[var(--muted)] hover:text-[var(--ink)] hover:bg-[var(--surface-tint)] rounded-[var(--r-ctl)] border border-[var(--line-2)] transition-colors text-center"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 rounded-[var(--r-ctl)] bg-[var(--ink)] text-[var(--solid)] hover:opacity-90 px-5 py-2 text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+              className="inline-flex items-center justify-center gap-2 rounded-[var(--r-ctl)] bg-[var(--ink)] text-[var(--solid)] hover:opacity-90 px-5 py-2 text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
             >
               {isSubmitting ? (
                 <>

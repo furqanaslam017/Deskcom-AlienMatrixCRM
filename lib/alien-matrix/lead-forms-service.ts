@@ -14,7 +14,7 @@ export interface FormFieldConfig {
 export interface CreateLeadFormInput {
   title: string;
   slug: string;
-  description?: string;
+  description?: string | null;
   targetPipelineId?: string | null;
   targetStageId?: string | null;
   fieldsConfig: FormFieldConfig[];
